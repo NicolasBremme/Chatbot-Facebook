@@ -22,6 +22,7 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i]
         let sender = event.sender.id
         if (event.message && event.message.text) {
+            checkURL(event.message.text);
             sendTextMessage(sender, "Text received, echo: " + event.message.text);
             createBtn(sender);
         }
@@ -45,6 +46,15 @@ app.get('/webhook/', (req, res) => {
         }
     }
 });
+
+function checkURL(message) {
+    var http = require('http'),
+        options = {method: 'HEAD', host: 'stackoverflow.com', port: 80, path: '/'},
+        req = http.request(options, function(r) {
+            console.log(JSON.stringify(r.headers));
+        });
+    req.end();
+}
 
 function createBtn(sender)
 {
