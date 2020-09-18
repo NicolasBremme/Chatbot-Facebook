@@ -22,7 +22,7 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i]
         let sender = event.sender.id
         if (event.message && event.message.text) {
-            sendTextMessage(sender, "\"" + event.message.text + "\"");
+            sendTextMessage(sender, "Text received, echo: " + event.message.text);
             createBtn(sender);
         }
     }
@@ -45,10 +45,6 @@ app.get('/webhook/', (req, res) => {
         }
     }
 });
-
-function checkURL(message, callback) {
-
-}
 
 function createBtn(sender)
 {
