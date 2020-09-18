@@ -1,6 +1,6 @@
 'use strict';
 
-const VERIFY_TOKEN = "EAAFDmBZCfuxQBAHTN5tUQiWEWq51XwcZA1EOzo1c4A4JA3RxBHjJZCHqoDYhmGn7ivfUMXsKcMI49G31iEd28ZCOC8JPgqGUmymM8N5o3ufKzLITcYVfwnsJ4CsYGTLqTmAYM7ioKPSF5tIzH3y6ZCmLGFd1eocA252vZCSS9OPQZDZD";
+const VERIFY_TOKEN = "";
 // Imports dependencies and set up http server
 const 
   request = require('request'),
@@ -22,9 +22,8 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i]
         let sender = event.sender.id
         if (event.message && event.message.text) {
-            console.log(checkURL(event.message.text));
-            //sendTextMessage(sender, "Text received, echo: " + event.message.text);
-            //createBtn(sender);
+            sendTextMessage(sender, "\"" + event.message.text + "\"");
+            createBtn(sender);
         }
     }
     res.sendStatus(200)
@@ -35,7 +34,7 @@ app.get('/webhook/', (req, res) => {
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
-
+      
     if (mode && token) {
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
           console.log('WEBHOOK_VERIFIED');
@@ -47,15 +46,10 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
-function checkURL(message) {
-    options = {method: 'HEAD', host: 'stackoverflow.com', port: 80, path: '/'},
-    req = http.request(options, function(r) {
-        console.log(JSON.stringify(r.headers));
-    });
-    console.log(req);
-    req.end();
+function checkURL(message, callback) {
+
 }
-//-----------------------------------------------------------------------------------//
+
 function createBtn(sender)
 {
     let btnData = {
@@ -115,4 +109,3 @@ function sendTextMessage(sender, text)
         }
     });
 }
-//-----------------------------------------------------------------------------------//
