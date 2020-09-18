@@ -1,6 +1,6 @@
 'use strict';
 
-const VERIFY_TOKEN = "";
+const VERIFY_TOKEN = "EAAFDmBZCfuxQBAHTN5tUQiWEWq51XwcZA1EOzo1c4A4JA3RxBHjJZCHqoDYhmGn7ivfUMXsKcMI49G31iEd28ZCOC8JPgqGUmymM8N5o3ufKzLITcYVfwnsJ4CsYGTLqTmAYM7ioKPSF5tIzH3y6ZCmLGFd1eocA252vZCSS9OPQZDZD";
 // Imports dependencies and set up http server
 const 
   request = require('request'),
