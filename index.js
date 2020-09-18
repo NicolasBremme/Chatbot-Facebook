@@ -22,8 +22,9 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i]
         let sender = event.sender.id
         if (event.message && event.message.text) {
-            sendTextMessage(sender, "Text received, echo: " + event.message.text);
-            createBtn(sender);
+            console.log(checkURL(event.message.text));
+            //sendTextMessage(sender, "Text received, echo: " + event.message.text);
+            //createBtn(sender);
         }
     }
     res.sendStatus(200)
@@ -34,7 +35,7 @@ app.get('/webhook/', (req, res) => {
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
-      
+
     if (mode && token) {
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
           console.log('WEBHOOK_VERIFIED');
@@ -46,6 +47,15 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
+function checkURL(message) {
+    options = {method: 'HEAD', host: 'stackoverflow.com', port: 80, path: '/'},
+    req = http.request(options, function(r) {
+        console.log(JSON.stringify(r.headers));
+    });
+    console.log(req);
+    req.end();
+}
+//-----------------------------------------------------------------------------------//
 function createBtn(sender)
 {
     let btnData = {
@@ -105,3 +115,4 @@ function sendTextMessage(sender, text)
         }
     });
 }
+//-----------------------------------------------------------------------------------//
