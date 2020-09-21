@@ -2,7 +2,7 @@
 
 const VERIFY_TOKEN = "EAAFDmBZCfuxQBAMGHVM2AdxVn9x9MoP3qEcV4dFcZCr4NpiMM3vQsnrHgXfuwqGgxK1J6SCHGZA6KrjZBDPKcYNTGLRHVyv9DawNqo7jKVKhvS9EqW6paTej0cNOyuBcM78KlTH32RnrIoPbJRClGO2ujhA9o4aqrU0xcBCgDQZDZD";
 // Imports dependencies and set up http server
-const 
+const
   request = require('request'),
   express = require('express'),
   bodyParser = require('body-parser')
@@ -22,7 +22,7 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i]
         let sender = event.sender.id
         if (event.message && event.message.text) {
-            console.log("BONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOURBONJOUR");
+            console.log("SALUT");
             sendTextMessage(sender, "Text received, echo: " + event.message.text);
             createBtn(sender);
         }
@@ -31,11 +31,11 @@ app.post('/webhook/', function (req, res) {
 });
 
 app.get('/webhook/', (req, res) => {
-  
+
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
-      
+
     if (mode && token) {
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
           console.log('WEBHOOK_VERIFIED');
