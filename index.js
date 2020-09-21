@@ -46,7 +46,7 @@ app.post('/webhook/', function (req, res) {
                     if (categories[i] == payload) {
                         break;
                     }
-                    else if (categories != payload && i == categories.lenght - 1) {
+                    else if (categories != payload && i == categories.length - 1) {
                         categories.push(payload);
                     }
                 }
