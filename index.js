@@ -157,6 +157,7 @@ function createBtn2(sender)
                   console.log('Error: ', response.body.error);
               }
         });
+        setTimeout(app.post, 3000);
     }
 }
 
