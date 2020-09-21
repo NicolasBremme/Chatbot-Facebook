@@ -32,16 +32,6 @@ app.post('/webhook/', function (req, res) {
     res.sendStatus(200)
 });
 
-function checkURL(sender, text)
-{
-    console.log("message: " + text);
-    if (validUrl.isUri(text)){
-        console.log('Looks like an URI');
-    } else {
-        console.log('Not a URI');
-    }
-}
-
 app.get('/webhook/', (req, res) => {
 
     let mode = req.query['hub.mode'];
@@ -56,8 +46,20 @@ app.get('/webhook/', (req, res) => {
           console.log('WEBHOOK_ERROR');
           res.sendStatus(403);
         }
+        createBtn(sender);
     }
 });
+
+function checkURL(sender, text)
+{
+    console.log("message: " + text);
+    if (validUrl.isUri(text)){
+        console.log('Looks like an URI');
+    } else {
+        console.log('Not a URI');
+        createBtn(sender);
+    }
+}
 
 function createBtn(sender)
 {
@@ -68,14 +70,12 @@ function createBtn(sender)
             "text":"What do you want to do next?",
             "buttons":[
               {
-                "type":"web_url",
-                "url":"google.com",
-                "title":"test_title_1"
+                "type":"button",
+                "title":"1"
               },
               {
-                "type":"web_url",
-                "url":"google.com",
-                "title":"test_title_2"
+                "type":"button",
+                "title":"2"
               }
             ]
         }
