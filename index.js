@@ -70,12 +70,11 @@ function createBtn(sender)
             "text":"What do you want to do next?",
             "buttons":[
               {
-                "type":"button",
-                "title":"1"
-              },
-              {
-                "type":"button",
-                "title":"2"
+                "type":"postback",
+                "title":"1",
+                "payload":{
+                    "text":"You pressed 1."
+                }
               }
             ]
         }
