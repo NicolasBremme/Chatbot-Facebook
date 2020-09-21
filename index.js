@@ -58,13 +58,13 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
-        createBtnNew(sender);
+        createBtn(sender);
     } else {
         console.log('Not an URI');
     }
 }
 
-function createBtnNew(sender)
+function createBtn(sender)
 {
     let btnData = {
         "type": "template",
@@ -81,17 +81,7 @@ function createBtnNew(sender)
                     "type": "web_url",
                     "title": "test 2",
                     "url": appUrl
-                },
-                {
-                    "type": "web_url",
-                    "title": "test 3",
-                    "url": appUrl
-                },
-                {
-                    "type": "web_url",
-                    "title": "test 3",
-                    "url": appUrl
-                },
+                }
             ]
         }
     };
@@ -113,64 +103,8 @@ function createBtnNew(sender)
     });
 }
 
-function createBtn(sender)
+function createBtn (sender, btnData)
 {
-    let btnData = [{
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Choisissez la catégorie :",
-            "buttons": [
-                {
-                "type": "postback",
-                "title": "Acquisition",
-                "payload": "acquisition"
-                },
-                {
-                "type": "postback",
-                "title": "Retention",
-                "payload": "retention"
-                }
-            ]
-        }
-    },
-    {
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Ou :",
-            "buttons": [
-                {
-                "type": "postback",
-                "title": "Uncategorized",
-                "payload": "uncategorized"
-                },
-                {
-                "type": "postback",
-                "title": "Viralité",
-                "payload": "viralité"
-                }
-            ]
-        }
-    }];
-    for (let i = 0; i < 2; i++) {
-        request({
-            url: 'https://graph.facebook.com/v2.6/me/messages',
-            qs: {access_token:VERIFY_TOKEN},
-            method: 'POST',
-            json: {
-                recipient: {id:sender},
-                "message": {attachment:btnData[i]}
-            }
-        }, function(error, response, body) {
-            if (error) {
-                console.log('Error creating button: ', error);
-            }
-            else if (response.body.error) {
-                console.log('Error: ', response.body.error);
-            }
-        });
-    }
 }
 
 function sendTextMessage(sender, text)
