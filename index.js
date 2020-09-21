@@ -23,6 +23,7 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 let categories = [];
 let categoriesSelected = 0;
 let urlEntered = 0;
+let keepTweet = -1;
 
 app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
@@ -36,7 +37,7 @@ app.post('/webhook/', function (req, res) {
             }
         }
         else if (event.postback && event.postback.payload) {
-            doPostback(event);
+            doPostback(sender, event);
         }
     }
     res.sendStatus(200)
@@ -59,12 +60,13 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
-function doPostback(event) {
+function doPostback(sender, event) {
     let payload = event.postback.payload;
-    if (payload == "send" && categoriesSelected == 0) {
+    if ((payload == "send" && categoriesSelected == 0) || categories.length == 3) {
         console.log("finish !");
         console.log("categories :" + categories);
         categoriesSelected = 1;
+        askTweet(sender);
     }
     else if (categoriesSelected == 0) {
         let newCategorie = 1;
@@ -78,6 +80,30 @@ function doPostback(event) {
             categories.push(payload);
         }
     }
+    if (categoriesSelected == 1 && keepTweet == -1) {
+        if (payload == "no") {
+            keepTweet = 0;
+        }
+        if (payload == "yes") {
+            keepTweet = 1;
+        }
+    }
+}
+
+function askTweet(sender)
+{
+    let btnData = {
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "Vous avez choisis vos catégories. Voulez vous envoyer le tweet tel quel ?",
+            "buttons": [
+                {"type": "postback", "title": "Oui", "payload": "yes"},
+                {"type": "postback", "title": "Non", "payload": "no"}
+            ]
+        }
+    };
+    createBtn(sender, btnData, 0, 0, undefined);
 }
 
 function checkURL(sender, text)
