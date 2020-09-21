@@ -64,52 +64,13 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
-        //------------------------------------------------------------// Test 1 bouttons
-        //sendTextMessage(sender, "Choisissez la catégorie :");
-        //createBtn1(sender, "Type 1:", "Acquisition", "acquisition");
-        //createBtn1(sender, "Type 2:", "Retention", "retention");
-        //createBtn1(sender, "Type 3:", "Uncategorized", "uncategorized");
-        //createBtn1(sender, "Type 4:", "Viralité", "viralité");
-        //------------------------------------------------------------// Test 2 bouttons
-        createBtn2(sender);
+        createBtn(sender);
     } else {
         console.log('Not a URI');
     }
 }
 
-function createBtn1(sender, text, title, payload)
-{
-    let btnData = {
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": text,
-            "buttons": [
-                {
-                "type": "postback",
-                "title": title,
-                "payload": payload
-                }
-            ]
-        }
-    };
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:VERIFY_TOKEN},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            "message": {attachment:btnData}
-        }
-    }, function(error, response, body) {
-          if (error) {
-              console.log('Error creating button: ', error);
-          } else if (response.body.error) {
-              console.log('Error: ', response.body.error);
-          }
-    });
-}
-function createBtn2(sender)
+function createBtn(sender)
 {
     let btnData = [{
         "type": "template",
@@ -159,13 +120,14 @@ function createBtn2(sender)
                 "message": {attachment:btnData[i]}
             }
         }, function(error, response, body) {
-              if (error) {
-                  console.log('Error creating button: ', error);
-              } else if (response.body.error) {
-                  console.log('Error: ', response.body.error);
-              }
+            if (error) {
+                console.log('Error creating button: ', error);
+            }
+            else if (response.body.error) {
+                console.log('Error: ', response.body.error);
+            }
+            sleep(1000);
         });
-        sleep(1000);
     }
 }
 
@@ -185,7 +147,8 @@ function sendTextMessage(sender, text)
     }, function(error, response, body) {
         if (error) {
             console.log('Error sending message: ', error);
-        } else if (response.body.error) {
+        }
+        else if (response.body.error) {
             console.log('Error: ', response.body.error);
         }
     });
