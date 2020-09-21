@@ -5,7 +5,10 @@ const VERIFY_TOKEN = "EAAFDmBZCfuxQBAMGHVM2AdxVn9x9MoP3qEcV4dFcZCr4NpiMM3vQsnrHg
 const
   request = require('request'),
   express = require('express'),
-  bodyParser = require('body-parser')
+  bodyParser = require('body-parser'),
+  validUrl = require('valid-url');
+
+var session = ping.createSession ();
 
 let app = express();
 app.use(bodyParser.json());
@@ -22,13 +25,22 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i]
         let sender = event.sender.id
         if (event.message && event.message.text) {
-            console.log("SALUT");
-            sendTextMessage(sender, "Text received, echo: " + event.message.text);
-            createBtn(sender);
+            console.log("Received.");
+            //sendTextMessage(sender, "Response");
+            //createBtn(sender);
         }
     }
     res.sendStatus(200)
 });
+
+function checkURL(sender, text)
+{
+    if (validUrl.isUri(text)){
+        console.log('Looks like an URI');
+    } else {
+        console.log('Not a URI');
+    }
+}
 
 app.get('/webhook/', (req, res) => {
 
