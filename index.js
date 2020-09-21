@@ -103,7 +103,7 @@ function createBtn1(sender, text, title, payload)
 }
 function createBtn2(sender)
 {
-    let btnData = {
+    let btnData1 = {
         "type": "template",
         "payload": {
             "template_type": "button",
@@ -119,7 +119,13 @@ function createBtn2(sender)
                 "title": "Retention",
                 "payload": "retention"
                 }
-            ],
+            ]
+        }
+    };
+    let btnData2 = {
+        "type": "template",
+        "payload": {
+            "template_type": "button",
             "buttons": [
                 {
                 "type": "postback",
@@ -133,14 +139,29 @@ function createBtn2(sender)
                 }
             ]
         }
-    };
+    }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:VERIFY_TOKEN},
         method: 'POST',
         json: {
             recipient: {id:sender},
-            "message": {attachment:btnData}
+            "message": {attachment:btnData1}
+        }
+    }, function(error, response, body) {
+          if (error) {
+              console.log('Error creating button: ', error);
+          } else if (response.body.error) {
+              console.log('Error: ', response.body.error);
+          }
+    });
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:VERIFY_TOKEN},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            "message": {attachment:btnData2}
         }
     }, function(error, response, body) {
           if (error) {
