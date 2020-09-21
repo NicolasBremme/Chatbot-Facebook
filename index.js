@@ -92,7 +92,7 @@ function doPostback(sender, event) {
 
 function askTweet(sender)
 {
-    let btnData = {
+    let btnData = [{
         "type": "template",
         "payload": {
             "template_type": "button",
@@ -102,7 +102,7 @@ function askTweet(sender)
                 {"type": "postback", "title": "Non", "payload": "no"}
             ]
         }
-    };
+    }];
     createBtn(sender, btnData, 0, 0, undefined);
 }
 
