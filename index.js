@@ -31,6 +31,7 @@ app.post('/webhook/', function (req, res) {
         }
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
+            console.log("payload: ", payload);
             //sendTextMessage(sender, payload);
         }
     }
@@ -108,7 +109,7 @@ function createBtn(sender, btnData, index, indexLimit, callback)
         else if (response.body.error) {
             console.log('Error: ', response.body.error);
         }
-        if (index <= indexLimit)
+        if (index < indexLimit)
             callback(sender, btnData, index + 1, indexLimit, callback);
     });
 }
