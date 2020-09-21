@@ -31,7 +31,7 @@ app.post('/webhook/', function (req, res) {
         }
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
-            sendTextMessage(sender, payload);
+            //sendTextMessage(sender, payload);
         }
     }
     res.sendStatus(200)
@@ -56,7 +56,6 @@ app.get('/webhook/', (req, res) => {
 
 function checkURL(sender, text)
 {
-    let bubbleCount = 3;
     let btnData = [{
         "type": "template",
         "payload": {
@@ -69,24 +68,24 @@ function checkURL(sender, text)
             ]
         }
     }];
-    for (let i = 3; i < bubbleCount; i += 3) {
-        btnData.push({
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": "---------------------------",
-                "buttons": [
-                    {"type": "postback", "title": "test " + i, "payload": (i).toString},
-                    {"type": "postback", "title": "test " + (i + 1).toString, "payload": (i + 1).toString},
-                    {"type": "postback", "title": "test " + (i + 2).toString, "payload": (i + 2).toString}
-                ]
-            }
-        });
-    }
+    btnData.push({
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "---------------------------",
+            "buttons": [
+                {"type": "postback", "title": "test 4", "payload": "4"},
+                {"type": "postback", "title": "test 5", "payload": "5"},
+                {"type": "postback", "title": "test 6", "payload": "6"}
+            ]
+        }
+    });
     console.log("message: " + text);
     if (validUrl.isUri(text)){
+        let index = 0;
+        let indexLimit = 1;
         console.log('Looks like an URI');
-        createBtn(sender, btnData, 0, bubbleCount - 1, createBtn);
+        createBtn(sender, btnData, index, indexLimit, createBtn);
     } else {
         console.log('Not an URI');
     }
