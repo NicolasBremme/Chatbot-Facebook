@@ -21,6 +21,7 @@ app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
 let categories = [];
+let categoriesSelected = 0;
 
 app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
@@ -34,21 +35,21 @@ app.post('/webhook/', function (req, res) {
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
             console.log(payload);
-            if (payload == "send") {
+            if (payload == "send" && categoriesSelected == 0) {
                 console.log("finish !");
                 console.log("categories :" + categories);
+                categoriesSelected = 1;
             }
-            else if (categories.length == 0) {
-                categories.push(payload);
-            }
-            else {
+            else if (categoriesSelected == 0) {
+                let newCategorie = 1;
                 for (let i = 0; i < categories.length; i++) {
                     if (categories[i] == payload) {
+                        newCategorie = 0;
                         break;
                     }
-                    else if (categories != payload && i == categories.length - 1) {
-                        categories.push(payload);
-                    }
+                }
+                if (newCategorie == 1) {
+                    categories.push(payload);
                 }
             }
         }
@@ -125,8 +126,9 @@ function createBtn(sender, btnData, index, indexLimit, callback)
         else if (response.body.error) {
             console.log('Error: ', response.body.error);
         }
-        if (index < indexLimit)
+        if (index < indexLimit) {
             callback(sender, btnData, index + 1, indexLimit, callback);
+        }
     });
 }
 
@@ -152,42 +154,3 @@ function sendTextMessage(sender, text)
         }
     });
 }
-
-/*function createBtn(sender)
-{
-    let btnData = {
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Choisissez les catégories :",
-            "buttons": [
-                {
-                    "type": "postback",
-                    "title": "test 1",
-                    "payload": "1"
-                },
-                {
-                    "type": "postback",
-                    "title": "test 2",
-                    "payload": "2"
-                }
-            ]
-        }
-    };
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:VERIFY_TOKEN},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            "message": {attachment:btnData}
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error creating button: ', error);
-        }
-        else if (response.body.error) {
-            console.log('Error: ', response.body.error);
-        }
-    });
-}*/
