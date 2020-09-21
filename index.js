@@ -103,11 +103,11 @@ function createBtn1(sender, text, title, payload)
 }
 function createBtn2(sender)
 {
-    let btnData1 = {
+    let btnData = [{
         "type": "template",
         "payload": {
             "template_type": "button",
-            "text": "Choisissez la catégorie:",
+            "text": "Choisissez la catégorie :",
             "buttons": [
                 {
                 "type": "postback",
@@ -121,12 +121,12 @@ function createBtn2(sender)
                 }
             ]
         }
-    };
-    let btnData2 = {
+    },
+    {
         "type": "template",
         "payload": {
             "template_type": "button",
-            "text": " ",
+            "text": "Ou :",
             "buttons": [
                 {
                 "type": "postback",
@@ -140,37 +140,24 @@ function createBtn2(sender)
                 }
             ]
         }
+    }];
+    for (let i = 0; i < 2; i++) {
+        request({
+            url: 'https://graph.facebook.com/v2.6/me/messages',
+            qs: {access_token:VERIFY_TOKEN},
+            method: 'POST',
+            json: {
+                recipient: {id:sender},
+                "message": {attachment:btnData[i]}
+            }
+        }, function(error, response, body) {
+              if (error) {
+                  console.log('Error creating button: ', error);
+              } else if (response.body.error) {
+                  console.log('Error: ', response.body.error);
+              }
+        });
     }
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:VERIFY_TOKEN},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            "message": {attachment:btnData1}
-        }
-    }, function(error, response, body) {
-          if (error) {
-              console.log('Error creating button: ', error);
-          } else if (response.body.error) {
-              console.log('Error: ', response.body.error);
-          }
-    });
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:VERIFY_TOKEN},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            "message": {attachment:btnData2}
-        }
-    }, function(error, response, body) {
-          if (error) {
-              console.log('Error creating button: ', error);
-          } else if (response.body.error) {
-              console.log('Error: ', response.body.error);
-          }
-    });
 }
 
 function sendTextMessage(sender, text)
