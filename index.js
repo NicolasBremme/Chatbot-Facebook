@@ -8,6 +8,7 @@ const
   bodyParser = require('body-parser'),
   validUrl = require('valid-url');
 
+let response_count = 0;
 let app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended": false}));
@@ -28,6 +29,7 @@ app.post('/webhook/', function (req, res) {
         }
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
+            console.log(event.postback);
             sendTextMessage(sender, payload);
         }
     }
@@ -51,14 +53,6 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
-function sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-        currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
-}
-
 function checkURL(sender, text)
 {
     console.log("message: " + text);
@@ -66,7 +60,7 @@ function checkURL(sender, text)
         console.log('Looks like an URI');
         createBtn(sender);
     } else {
-        console.log('Not a URI');
+        console.log('Not an URI');
     }
 }
 
@@ -126,7 +120,6 @@ function createBtn(sender)
             else if (response.body.error) {
                 console.log('Error: ', response.body.error);
             }
-            sleep(1000);
         });
     }
 }
