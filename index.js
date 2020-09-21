@@ -103,7 +103,7 @@ function askTweet(sender)
             ]
         }
     }];
-    createBtn(sender, btnData);
+    createBtn(sender, btnData, 0);
 }
 
 function checkURL(sender, text)
@@ -144,13 +144,14 @@ function checkURL(sender, text)
 
 function createBtn(sender, btnData, index, indexLimit, callback)
 {
+    console.log("index :" + index);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:VERIFY_TOKEN},
         method: 'POST',
         json: {
             recipient: {id:sender},
-            "message": {attachment:btnData[index]}
+            "message": {attachment:(index != 0) ? btnData[index] : btnData}
         }
     }, function(error, response, body) {
         if (error) {
