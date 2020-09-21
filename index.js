@@ -85,7 +85,7 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
-        createBtn(sender, btnData, 0, 1, createBtn);
+        //createBtn(sender, btnData, 0, 1, createBtn);
     } else {
         console.log('Not an URI');
     }
