@@ -56,6 +56,7 @@ app.get('/webhook/', (req, res) => {
 
 function checkURL(sender, text)
 {
+    let bubbleCount = 3;
     let btnData = [{
         "type": "template",
         "payload": {
@@ -68,18 +69,20 @@ function checkURL(sender, text)
             ]
         }
     }];
-    btnData.push({
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "---------------------------",
-            "buttons": [
-                {"type": "postback", "title": "test 4", "payload": "4"},
-                {"type": "postback", "title": "test 5", "payload": "5"},
-                {"type": "postback", "title": "test 6", "payload": "6"}
-            ]
-        }
-    });
+    for (let i = 3; i < bubbleCount; i++) {
+        btnData.push({
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "---------------------------",
+                "buttons": [
+                    {"type": "postback", "title": "test " + i, "payload": i},
+                    {"type": "postback", "title": "test " + ++i, "payload": i},
+                    {"type": "postback", "title": "test " + ++i, "payload": i}
+                ]
+            }
+        });
+    }
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         let index = 0;
