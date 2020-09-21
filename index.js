@@ -38,6 +38,9 @@ app.post('/webhook/', function (req, res) {
                 console.log("finish !");
                 console.log("categories :" + categories);
             }
+            else if (categories.length == 0) {
+                categories.push(payload);
+            }
             else {
                 for (let i = 0; i < categories.length; i++) {
                     if (categories[i] == payload) {
