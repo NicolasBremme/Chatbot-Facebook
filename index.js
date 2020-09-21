@@ -31,7 +31,7 @@ app.post('/webhook/', function (req, res) {
         }
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
-            console.log("payload: ", payload);
+            console.log("test");
             //sendTextMessage(sender, payload);
         }
     }
