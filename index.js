@@ -56,40 +56,29 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
-        createBtn(sender);
+        sendTextMessage(sender, "Choisissez la catégorie :");
+        createBtn(sender, "Type 1:", "Acquisition", "acquisition");
+        createBtn(sender, "Type 2:", "Retention", "retention");
+        createBtn(sender, "Type 3:", "Uncategorized", "uncategorized");
+        createBtn(sender, "Type 4:", "Viralité", "viralité");
     } else {
         console.log('Not a URI');
     }
 }
 
-function createBtn(sender)
+function createBtn(sender, text, title, payload)
 {
     let btnData = {
         "type": "template",
         "payload": {
             "template_type": "button",
-            "text": "What do you want to do next?",
+            "text": text,
             "buttons": [
-              {
+                {
                 "type": "postback",
-                "title": "Acquisition",
-                "payload": "Vous avez appuyé sur le boutton 1."
-              },
-              {
-                "type": "postback",
-                "title": "Retention",
-                "payload": "Vous avez appuyé sur le boutton 2."
-              },
-              {
-                "type": "postback",
-                "title": "Uncategorized",
-                "payload": "Vous avez appuyé sur le boutton 3."
-              },
-              {
-                "type": "postback",
-                "title": "Viralité",
-                "payload": "Vous avez appuyé sur le boutton 4."
-              }
+                "title": title,
+                "payload": payload
+                }
             ]
         }
     };
