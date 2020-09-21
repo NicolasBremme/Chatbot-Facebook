@@ -80,7 +80,7 @@ function doPostback(event) {
     }
 }
 
-function checkURL(sender, text, urlEntered)
+function checkURL(sender, text)
 {
     let btnData = [{
         "type": "template",
