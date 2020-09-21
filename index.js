@@ -7,7 +7,8 @@ const
   express = require('express'),
   bodyParser = require('body-parser'),
   validUrl = require('valid-url'),
-  crypto = require('crypto');
+  crypto = require('crypto'),
+  appUrl = "hhtps://test--chatbot.herokuapp.com";
 
 let app = express();
 app.use(bodyParser.json());
