@@ -72,13 +72,23 @@ function createBtn(sender)
             "buttons": [
               {
                 "type": "postback",
-                "title": "1",
-                "payload": "Rep1"
+                "title": "Acquisition",
+                "payload": "Vous avez appuyé sur le boutton 1."
               },
               {
                 "type": "postback",
-                "title": "2",
-                "payload": "Rep2"
+                "title": "Retention",
+                "payload": "Vous avez appuyé sur le boutton 2."
+              },
+              {
+                "type": "postback",
+                "title": "Uncategorized",
+                "payload": "Vous avez appuyé sur le boutton 3."
+              },
+              {
+                "type": "postback",
+                "title": "Viralité",
+                "payload": "Vous avez appuyé sur le boutton 4."
               }
             ]
         }
