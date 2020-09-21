@@ -36,7 +36,7 @@ app.post('/webhook/', function (req, res) {
         }
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
-            console.log(payload);
+            urlEntered = 1;
             if (payload == "send" && categoriesSelected == 0) {
                 console.log("finish !");
                 console.log("categories :" + categories);
@@ -101,7 +101,7 @@ function checkURL(sender, text, urlEntered)
         }
     });
     console.log("message: " + text);
-    if (validUrl.isUri(text)){
+    if (urlEntered == 0 && validUrl.isUri(text)){
         let index = 0;
         let indexLimit = 1;
         console.log('Looks like an URI');
