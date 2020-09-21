@@ -6,9 +6,9 @@ const
   request = require('request'),
   express = require('express'),
   bodyParser = require('body-parser'),
-  validUrl = require('valid-url');
+  validUrl = require('valid-url'),
+  crypto = require('crypto');
 
-let response_count = 0;
 let app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended": false}));
@@ -21,16 +21,14 @@ app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
     let messaging_events = req.body.entry[0].messaging;
     for (let i = 0; i < messaging_events.length; i++) {
-        let event = messaging_events[i]
-        let sender = event.sender.id
+        let event = messaging_events[i];
+        let sender = event.sender.id;
         if (event.message && event.message.text) {
             console.log("Received.");
             checkURL(sender, event.message.text);
         }
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
-            console.log("bonjour");
-            console.log(event.postback);
             sendTextMessage(sender, payload);
         }
     }
@@ -59,10 +57,59 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
-        createBtn(sender);
+        createBtnNew(sender);
     } else {
         console.log('Not an URI');
     }
+}
+
+function createBtnNew(sender)
+{
+    let btnData = {
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "Choisissez les catégories :",
+            "buttons": [
+                {
+                    "type": "web_url",
+                    "title": "test 1",
+                    "url": appUrl
+                },
+                {
+                    "type": "web_url",
+                    "title": "test 2",
+                    "url": appUrl
+                },
+                {
+                    "type": "web_url",
+                    "title": "test 3",
+                    "url": appUrl
+                },
+                {
+                    "type": "web_url",
+                    "title": "test 3",
+                    "url": appUrl
+                },
+            ]
+        }
+    };
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:VERIFY_TOKEN},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            "message": {attachment:btnData}
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error creating button: ', error);
+        }
+        else if (response.body.error) {
+            console.log('Error: ', response.body.error);
+        }
+    });
 }
 
 function createBtn(sender)
