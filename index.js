@@ -8,8 +8,6 @@ const
   bodyParser = require('body-parser'),
   validUrl = require('valid-url');
 
-var session = ping.createSession ();
-
 let app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended": false}));
