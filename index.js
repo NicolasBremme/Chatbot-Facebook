@@ -55,9 +55,9 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
+        createBtn(sender);
     } else {
         console.log('Not a URI');
-        createBtn(sender);
     }
 }
 
@@ -70,11 +70,9 @@ function createBtn(sender)
             "text":"What do you want to do next?",
             "buttons":[
               {
-                "type":"postback",
-                "title":"1",
-                "payload":{
-                    "text":"You pressed 1."
-                }
+                "type":"web_url",
+                "url":"google.com",
+                "title":"1"
               }
             ]
         }
