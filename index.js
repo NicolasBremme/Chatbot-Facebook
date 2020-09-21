@@ -68,7 +68,7 @@ function checkURL(sender, text)
             ]
         }
     }];
-    btnData += {
+    btnData.push({
         "type": "template",
         "payload": {
             "template_type": "button",
@@ -79,7 +79,7 @@ function checkURL(sender, text)
                 {"type": "postback", "title": "test 6", "payload": "6"}
             ]
         }
-    };
+    });
     console.log(btnData[0]);
     console.log(btnData[1]);
     console.log("message: " + text);
