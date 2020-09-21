@@ -80,12 +80,12 @@ function checkURL(sender, text)
             ]
         }
     });
-    console.log(btnData[0]);
-    console.log(btnData[1]);
     console.log("message: " + text);
     if (validUrl.isUri(text)){
+        let index = 0;
+        let index_limit = 1;
         console.log('Looks like an URI');
-        //createBtn(sender, btnData, 0, 1, createBtn);
+        createBtn(sender, btnData, index, indexLimit, createBtn);
     } else {
         console.log('Not an URI');
     }
