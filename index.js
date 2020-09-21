@@ -136,7 +136,6 @@ function checkURL(sender, text)
         let indexLimit = 1;
         console.log('Looks like an URI');
         urlEntered = 1;
-        createBtn(sender, btnData);
         createBtn(sender, btnData, index, indexLimit, createBtn);
     } else {
         console.log('Not an URI');
@@ -152,7 +151,7 @@ function createBtn(sender, btnData, index, indexLimit, callback)
         method: 'POST',
         json: {
             recipient: {id:sender},
-            "message": {attachment:(index != 0) ? btnData[index] : btnData}
+            "message": {attachment:(index != undefined) ? btnData[index] : btnData}
         }
     }, function(error, response, body) {
         if (error) {
