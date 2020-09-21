@@ -56,63 +56,29 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
-        createRep(sender);
+        createBtn(sender);
     } else {
         console.log('Not a URI');
     }
-}
-function createRep(sender)
-{
-    let repData = {
-        "text": "Choose an option",
-        "quick_replies": [
-            {
-                "content_type": "text",
-                "title":"1",
-                "payload": "Rep1"
-            },
-            {
-                "content_type": "text",
-                "title":"2",
-                "payload": "Rep1"
-            }
-        ]
-    };
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:VERIFY_TOKEN},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            "messaging_type": "RESPONSE",
-            "message": {attachment:repData}
-        }
-    }, function(error, response, body) {
-          if (error) {
-              console.log('Error creating button: ', error);
-          } else if (response.body.error) {
-              console.log('Error: ', response.body.error);
-          }
-    });
 }
 
 function createBtn(sender)
 {
     let btnData = {
-        "type":"template",
-        "payload":{
-            "template_type":"button",
-            "text":"What do you want to do next?",
-            "buttons":[
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "What do you want to do next?",
+            "buttons": [
               {
-                "type":"web_url",
-                "url":"google.com",
-                "title":"1"
+                "type": "postback",
+                "title": "1",
+                "payload": "Rep1"
               },
               {
-                "type":"web_url",
-                "url":"google.com",
-                "title":"2"
+                "type": "postback",
+                "title": "2",
+                "payload": "Rep2"
               }
             ]
         }
