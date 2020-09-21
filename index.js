@@ -79,6 +79,11 @@ function createBtn(sender)
                 "type": "postback",
                 "title": "Retention",
                 "payload": "Vous avez appuyé sur le boutton 2."
+              },
+              {
+                "type": "postback",
+                "title": "Uncategorized",
+                "payload": "Vous avez appuyé sur le boutton 3."
               }
             ]
         }
