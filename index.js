@@ -22,6 +22,7 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 
 let categories = [];
 let categoriesSelected = 0;
+let urlEntered = 0;
 
 app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
@@ -30,8 +31,8 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i];
         let sender = event.sender.id;
         if (event.message && event.message.text) {
-            if (categoriesSelected == 0)
-                checkURL(sender, event.message.text);
+            if (urlEntered == 0)
+                checkURL(sender, event.message.text, urlEntered);
         }
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
@@ -75,7 +76,7 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
-function checkURL(sender, text)
+function checkURL(sender, text, urlEntered)
 {
     let btnData = [{
         "type": "template",
@@ -104,6 +105,7 @@ function checkURL(sender, text)
         let index = 0;
         let indexLimit = 1;
         console.log('Looks like an URI');
+        urlEntered = 1;
         createBtn(sender, btnData, index, indexLimit, createBtn);
     } else {
         console.log('Not an URI');
