@@ -126,6 +126,7 @@ function createBtn2(sender)
         "type": "template",
         "payload": {
             "template_type": "button",
+            "text": "",
             "buttons": [
                 {
                 "type": "postback",
