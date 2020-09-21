@@ -30,7 +30,8 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i];
         let sender = event.sender.id;
         if (event.message && event.message.text) {
-            checkURL(sender, event.message.text);
+            if (categoriesSelected == 0)
+                checkURL(sender, event.message.text);
         }
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
