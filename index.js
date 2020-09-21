@@ -24,6 +24,7 @@ app.post('/webhook/', function (req, res) {
         let sender = event.sender.id
         if (event.message && event.message.text) {
             console.log("Received.");
+            checkURL(sender, event.message.text);
             //sendTextMessage(sender, "Response");
             //createBtn(sender);
         }
@@ -33,6 +34,7 @@ app.post('/webhook/', function (req, res) {
 
 function checkURL(sender, text)
 {
+    console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
     } else {
