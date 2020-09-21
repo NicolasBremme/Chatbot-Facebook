@@ -103,7 +103,7 @@ function askTweet(sender)
             ]
         }
     }];
-    createBtn(sender, btnData, 0, 0, undefined);
+    createBtn(sender, btnData);
 }
 
 function checkURL(sender, text)
