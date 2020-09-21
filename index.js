@@ -29,6 +29,7 @@ app.post('/webhook/', function (req, res) {
         }
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
+            console.log("bonjour");
             console.log(event.postback);
             sendTextMessage(sender, payload);
         }
