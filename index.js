@@ -69,16 +69,16 @@ function checkURL(sender, text)
             ]
         }
     }];
-    for (let i = 3; i < bubbleCount; i++) {
+    for (let i = 3; i < bubbleCount; i += 3) {
         btnData.push({
             "type": "template",
             "payload": {
                 "template_type": "button",
                 "text": "---------------------------",
                 "buttons": [
-                    {"type": "postback", "title": "test " + i, "payload": i},
-                    {"type": "postback", "title": "test " + ++i, "payload": i},
-                    {"type": "postback", "title": "test " + ++i, "payload": i}
+                    {"type": "postback", "title": "test " + i, "payload": (i).toString},
+                    {"type": "postback", "title": "test " + (i + 1).toString, "payload": (i + 1).toString},
+                    {"type": "postback", "title": "test " + (i + 2).toString, "payload": (i + 2).toString}
                 ]
             }
         });
