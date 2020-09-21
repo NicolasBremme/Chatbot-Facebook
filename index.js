@@ -25,8 +25,10 @@ app.post('/webhook/', function (req, res) {
         if (event.message && event.message.text) {
             console.log("Received.");
             checkURL(sender, event.message.text);
-            //sendTextMessage(sender, "Response");
-            //createBtn(sender);
+        }
+        else if (event.postback && event.postback.payload) {
+            let payload = event.postback.payload;
+            sendTextMessage(sender, payload);
         }
     }
     res.sendStatus(200)
@@ -67,10 +69,12 @@ function createRep(sender)
             {
                 "content_type": "text",
                 "title":"1",
+                "payload": "Rep1"
             },
             {
                 "content_type": "text",
                 "title":"2",
+                "payload": "Rep1"
             }
         ]
     };
