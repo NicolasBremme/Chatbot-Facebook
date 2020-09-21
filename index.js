@@ -56,11 +56,11 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
-        sendTextMessage(sender, "Choisissez la catégorie :").then(
-        createBtn(sender, "Type 1:", "Acquisition", "acquisition")).then(
-        createBtn(sender, "Type 2:", "Retention", "retention")).then(
-        createBtn(sender, "Type 3:", "Uncategorized", "uncategorized")).then(
-        createBtn(sender, "Type 4:", "Viralité", "viralité"));
+        sendTextMessage(sender, "Choisissez la catégorie :");
+        createBtn(sender, "Type 1:", "Acquisition", "acquisition");
+        createBtn(sender, "Type 2:", "Retention", "retention");
+        createBtn(sender, "Type 3:", "Uncategorized", "uncategorized");
+        createBtn(sender, "Type 4:", "Viralité", "viralité");
     } else {
         console.log('Not a URI');
     }
