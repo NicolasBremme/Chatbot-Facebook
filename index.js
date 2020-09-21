@@ -57,10 +57,10 @@ function checkURL(sender, text)
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
         sendTextMessage(sender, "Choisissez la catégorie :");
-        createBtn(sender, "Type 1:", "Acquisition", "acquisition");
-        createBtn(sender, "Type 2:", "Retention", "retention");
-        createBtn(sender, "Type 3:", "Uncategorized", "uncategorized");
-        createBtn(sender, "Type 4:", "Viralité", "viralité");
+        setTimeout(createBtn(sender, "Type 1:", "Acquisition", "acquisition"), 3000);
+        setTimeout(createBtn(sender, "Type 2:", "Retention", "retention"), 3000);
+        setTimeout(createBtn(sender, "Type 3:", "Uncategorized", "uncategorized"), 3000);
+        setTimeout(createBtn(sender, "Type 4:", "Viralité", "viralité"), 3000);
     } else {
         console.log('Not a URI');
     }
