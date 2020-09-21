@@ -20,9 +20,9 @@ let port = (process.env.PORT || 5000);
 app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
-let categories = [];
-let categoriesSelected = 0;
-let urlEntered = 0;
+categories = [];
+categoriesSelected = 0;
+urlEntered = 0;
 
 app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
@@ -31,29 +31,12 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i];
         let sender = event.sender.id;
         if (event.message && event.message.text) {
-            if (urlEntered == 0)
+            if (urlEntered == 0) {
                 checkURL(sender, event.message.text, urlEntered);
+            }
         }
         else if (event.postback && event.postback.payload) {
-            let payload = event.postback.payload;
-            urlEntered = 1;
-            if (payload == "send" && categoriesSelected == 0) {
-                console.log("finish !");
-                console.log("categories :" + categories);
-                categoriesSelected = 1;
-            }
-            else if (categoriesSelected == 0) {
-                let newCategorie = 1;
-                for (let i = 0; i < categories.length; i++) {
-                    if (categories[i] == payload) {
-                        newCategorie = 0;
-                        break;
-                    }
-                }
-                if (newCategorie == 1) {
-                    categories.push(payload);
-                }
-            }
+            doPostback(event);
         }
     }
     res.sendStatus(200)
@@ -75,6 +58,27 @@ app.get('/webhook/', (req, res) => {
         }
     }
 });
+
+function doPostback(event) {
+    let payload = event.postback.payload;
+    if (payload == "send" && categoriesSelected == 0) {
+        console.log("finish !");
+        console.log("categories :" + categories);
+        categoriesSelected = 1;
+    }
+    else if (categoriesSelected == 0) {
+        let newCategorie = 1;
+        for (let i = 0; i < categories.length; i++) {
+            if (categories[i] == payload) {
+                newCategorie = 0;
+                break;
+            }
+        }
+        if (newCategorie == 1) {
+            categories.push(payload);
+        }
+    }
+}
 
 function checkURL(sender, text, urlEntered)
 {
