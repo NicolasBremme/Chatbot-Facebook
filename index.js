@@ -56,17 +56,19 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
+        //------------------------------------------------------------// Test 1 bouttons
         sendTextMessage(sender, "Choisissez la catégorie :");
-        createBtn(sender, "Type 1:", "Acquisition", "acquisition");
-        createBtn(sender, "Type 2:", "Retention", "retention");
-        createBtn(sender, "Type 3:", "Uncategorized", "uncategorized");
-        createBtn(sender, "Type 4:", "Viralité", "viralité");
+        createBtn1(sender, "Type 1:", "Acquisition", "acquisition");
+        createBtn1(sender, "Type 2:", "Retention", "retention");
+        createBtn1(sender, "Type 3:", "Uncategorized", "uncategorized");
+        createBtn1(sender, "Type 4:", "Viralité", "viralité");
+        //------------------------------------------------------------// Test 2 bouttons
     } else {
         console.log('Not a URI');
     }
 }
 
-function createBtn(sender, text, title, payload)
+function createBtn1(sender, text, title, payload)
 {
     let btnData = {
         "type": "template",
@@ -78,6 +80,55 @@ function createBtn(sender, text, title, payload)
                 "type": "postback",
                 "title": title,
                 "payload": payload
+                }
+            ]
+        }
+    };
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:VERIFY_TOKEN},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            "message": {attachment:btnData}
+        }
+    }, function(error, response, body) {
+          if (error) {
+              console.log('Error creating button: ', error);
+          } else if (response.body.error) {
+              console.log('Error: ', response.body.error);
+          }
+    });
+}
+function createBtn2(sender)
+{
+    let btnData = {
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "Choisissez la catégorie:",
+            "buttons": [
+                {
+                "type": "postback",
+                "title": "Acquisition",
+                "payload": "acquisition"
+                },
+                {
+                "type": "postback",
+                "title": "Retention",
+                "payload": "retention"
+                }
+            ],
+            "buttons": [
+                {
+                "type": "postback",
+                "title": "Uncategorized",
+                "payload": "uncategorized"
+                },
+                {
+                "type": "postback",
+                "title": "Viralité",
+                "payload": "viralité"
                 }
             ]
         }
