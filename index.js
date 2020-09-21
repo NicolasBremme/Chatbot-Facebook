@@ -57,12 +57,13 @@ function checkURL(sender, text)
     if (validUrl.isUri(text)){
         console.log('Looks like an URI');
         //------------------------------------------------------------// Test 1 bouttons
-        sendTextMessage(sender, "Choisissez la catégorie :");
-        createBtn1(sender, "Type 1:", "Acquisition", "acquisition");
-        createBtn1(sender, "Type 2:", "Retention", "retention");
-        createBtn1(sender, "Type 3:", "Uncategorized", "uncategorized");
-        createBtn1(sender, "Type 4:", "Viralité", "viralité");
+        //sendTextMessage(sender, "Choisissez la catégorie :");
+        //createBtn1(sender, "Type 1:", "Acquisition", "acquisition");
+        //createBtn1(sender, "Type 2:", "Retention", "retention");
+        //createBtn1(sender, "Type 3:", "Uncategorized", "uncategorized");
+        //createBtn1(sender, "Type 4:", "Viralité", "viralité");
         //------------------------------------------------------------// Test 2 bouttons
+        createBtn2(sender);
     } else {
         console.log('Not a URI');
     }
