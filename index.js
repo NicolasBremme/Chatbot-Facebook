@@ -62,7 +62,7 @@ app.get('/webhook/', (req, res) => {
 
 function doPostback(sender, event) {
     let payload = event.postback.payload;
-    if ((payload == "send" && categoriesSelected == 0) || categories.length == 3) {
+    if (payload == "send" && categoriesSelected == 0) {
         console.log("finish !");
         console.log("categories :" + categories);
         categoriesSelected = 1;
@@ -159,7 +159,7 @@ function createBtn(sender, btnData, index, indexLimit, callback)
         else if (response.body.error) {
             console.log('Error: ', response.body.error);
         }
-        if (index < indexLimit) {
+        if (callback != undefined && index < indexLimit) {
             callback(sender, btnData, index + 1, indexLimit, callback);
         }
     });
