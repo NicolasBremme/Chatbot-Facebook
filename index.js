@@ -20,9 +20,9 @@ let port = (process.env.PORT || 5000);
 app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
-categories = [];
-categoriesSelected = 0;
-urlEntered = 0;
+let categories = [];
+let categoriesSelected = 0;
+let urlEntered = 0;
 
 app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
