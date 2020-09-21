@@ -99,7 +99,7 @@ function createBtn(sender, btnData, index, indexLimit, callback)
         method: 'POST',
         json: {
             recipient: {id:sender},
-            "message": {attachment:btnData}
+            "message": {attachment:btnData[index]}
         }
     }, function(error, response, body) {
         if (error) {
