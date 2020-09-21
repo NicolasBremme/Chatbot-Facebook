@@ -136,6 +136,7 @@ function checkURL(sender, text)
         let indexLimit = 1;
         console.log('Looks like an URI');
         urlEntered = 1;
+        createBtn(sender, btnData);
         createBtn(sender, btnData, index, indexLimit, createBtn);
     } else {
         console.log('Not an URI');
