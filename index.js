@@ -70,9 +70,11 @@ function createBtn(sender)
             "text":"What do you want to do next?",
             "buttons":[
               {
-                "type":"web_url",
-                "url":"google.com",
-                "title":"1"
+                "type":"postback",
+                "title":"1",
+                "payload": {
+                    "text":"You've pressed 1."
+                }
               }
             ]
         }
