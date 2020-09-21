@@ -20,6 +20,8 @@ let port = (process.env.PORT || 5000);
 app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
+let categories = [];
+
 app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
     let messaging_events = req.body.entry[0].messaging;
@@ -32,7 +34,20 @@ app.post('/webhook/', function (req, res) {
         else if (event.postback && event.postback.payload) {
             let payload = event.postback.payload;
             console.log(payload);
-            //sendTextMessage(sender, payload);
+            if (payload == "send") {
+                console.log("finish !");
+                console.log("categories :" + categories);
+            }
+            else {
+                for (let i = 0; i < categories.length; i++) {
+                    if (categories[i] == payload) {
+                        break;
+                    }
+                    else if (categories != payload && i == categories.lenght - 1) {
+                        categories.push(payload);
+                    }
+                }
+            }
         }
     }
     res.sendStatus(200)
@@ -73,11 +88,9 @@ function checkURL(sender, text)
         "type": "template",
         "payload": {
             "template_type": "button",
-            "text": "---------------------------",
+            "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
             "buttons": [
-                {"type": "postback", "title": "test 4", "payload": "4"},
-                {"type": "postback", "title": "test 5", "payload": "5"},
-                {"type": "postback", "title": "test 6", "payload": "6"}
+                {"type": "postback", "title": "Send", "payload": "send"},
             ]
         }
     });
