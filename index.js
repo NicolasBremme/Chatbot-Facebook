@@ -51,6 +51,14 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+        currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+}
+
 function checkURL(sender, text)
 {
     console.log("message: " + text);
@@ -157,7 +165,7 @@ function createBtn2(sender)
                   console.log('Error: ', response.body.error);
               }
         });
-        setTimeout(app.post, 3000);
+        sleep(1000);
     }
 }
 
