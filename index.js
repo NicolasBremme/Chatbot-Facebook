@@ -25,7 +25,7 @@ let categoriesSelected = 0;
 let urlEntered = 0;
 let keepMsg = -1;
 let description = "";
-let timeSelected = 0;
+let time = null;
 
 function resetValues()
 {
@@ -34,7 +34,7 @@ function resetValues()
     urlEntered = 0;
     keepMsg = -1;
     description = "";
-    timeSelected = 0;
+    time = null;
     console.log("Reset done.");
 }
 
@@ -45,6 +45,8 @@ app.post('/webhook/', function (req, res)
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
         let sender = event.sender.id;
+        console.log(event.sender)
+        /*
         if (event.message && event.message.text) {
             // need to establish connection with kurator
             if (urlEntered == 0) {
@@ -54,7 +56,7 @@ app.post('/webhook/', function (req, res)
         }
         else if (event.postback && event.postback.payload) {
             doPostback(sender, event);
-        }
+        }*/
     }
     res.sendStatus(200)
 });
@@ -84,7 +86,7 @@ function doPostback(sender, event)
         console.log("finish !");
         console.log("categories :" + categories);
         categoriesSelected = 1;
-        askTweet(sender);
+        askLong(sender);
     }
     else if (categoriesSelected == 0) {
         let newCategorie = 1;
@@ -98,79 +100,34 @@ function doPostback(sender, event)
             categories.push(payload);
         }
     }
-    if (categoriesSelected == 1 && keepMsg == -1) {
-        let btnDescription = {
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": "Quand vous avez entré votre description, appuyez sur le bouton \"send\":",
-                "buttons": [
-                    {"type": "postback", "title": "Send", "payload": "send"},
-                ]
-            }
-        };
+    if (categoriesSelected == 1) {
 
-        if (payload == "no") {
-            keepMsg = 0;
-            createBtn(sender, btnDescription, 0);
-        }
-        if (payload == "yes") {
-            keepMsg = 1;
-            createBtn(sender, btnDescription, 0);
-        }
-    }
-    if (keepMsg != -1 && description.length == 0) {
-        let btnTime = {
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": "Super description ! Quand voulez-vous publier l'article ?",
-                "buttons": [
-                    {"type": "postback", "title": "Immédiatement", "payload": "now"},
-                    {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
-                    {"type": "postback", "title": "Personnalisé", "payload": "custom"}
-                ]
-            }
-        }
-        if (payload == "send") {
-            description = payload;
-            console.log(description);
-            createBtn(sender, btnTime, 0);
-        }
-    }
-    if (description.length > 0 && timeSelected == 0) {
-        let endText = "Excellent ! Votre post va être publié à l'heure souhaitée, à bientôt !";
-
-        if (payload == 'now') {
-            let time = Date.now();
-
-            console.log(time);
-            sendTextMessage(sender, endText);
-            resetValues();
-        }
     }
 }
 
-function askTweet(sender)
+function askLong(sender)
 {
-    let btnData = [{
+    const btnAskLong = {
         "type": "template",
         "payload": {
             "template_type": "button",
-            "text": "Vous avez choisis vos catégories. Voulez vous envoyer le tweet tel quel ?",
+            "text": "Entrez votre description et appuyez sur le bouton \"Send\" lorsque vous avez fini:",
             "buttons": [
-                {"type": "postback", "title": "Oui", "payload": "yes"},
-                {"type": "postback", "title": "Non", "payload": "no"}
+                {"type": "postback", "title": "Send", "payload": "send"},
             ]
         }
-    }];
-    createBtn(sender, btnData, 0);
+    };
+    createBtn(sender, btnAskLong);
+}
+
+function keepLong(sender, mode)
+{
 }
 
 function checkURL(sender, text)
 {
     // need to recover categories, send has many buttons as needed
-    let btnData =
+    const btnData =
     [{
         "type": "template",
         "payload": {
