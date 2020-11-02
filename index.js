@@ -120,7 +120,9 @@ function askLong(sender)
             ]
         }
     };
-    createBtn(sender, btnAskLong);
+    skip = 1;
+    sendTextMessage(sender, "Entrez votre description et appuyez sur le bouton \"Send\" lorsque vous avez fini:");
+    //createBtn(sender, btnAskLong);
 }
 
 function checkURL(sender, text)
