@@ -23,18 +23,16 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 let categories = [];
 let categoriesSelected = 0;
 let urlEntered = 0;
-let keepMsg = -1;
-let description = "";
-let time = null;
+let skip = 0;
+let descLong = "";
 
 function resetValues()
 {
     categories = [];
     categoriesSelected = 0;
     urlEntered = 0;
-    keepMsg = -1;
-    description = "";
-    time = null;
+    skip = 0;
+    descLong = "";
     console.log("Reset done.");
 }
 
@@ -45,18 +43,21 @@ app.post('/webhook/', function (req, res)
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
         let sender = event.sender.id;
-        console.log(req);
-        /*
-        if (event.message && event.message.text) {
-            // need to establish connection with kurator
-            if (urlEntered == 0) {
-                checkURL(sender, event.message.text, urlEntered);
-            }
-            // if the connection can't be established, send error message
+        if (skip == 1) {
+            skip = 0;
         }
-        else if (event.postback && event.postback.payload) {
-            doPostback(sender, event);
-        }*/
+        else {
+            if (event.message && event.message.text) {
+                // need to establish connection with kurator
+                if (urlEntered == 0) {
+                    checkURL(sender, event.message.text, urlEntered);
+                }
+                // if the connection can't be established, send error message
+            }
+            else if (event.postback && event.postback.payload) {
+                doPostback(sender, event);
+            }
+        }
     }
     res.sendStatus(200)
 });
@@ -100,8 +101,9 @@ function doPostback(sender, event)
             categories.push(payload);
         }
     }
-    if (categoriesSelected == 1) {
-
+    if (categoriesSelected == 1 && descLong.length == 0) {
+        descLong = payload;
+        console.log("DescLong: " + descLong);
     }
 }
 
@@ -118,10 +120,6 @@ function askLong(sender)
         }
     };
     createBtn(sender, btnAskLong);
-}
-
-function keepLong(sender, mode)
-{
 }
 
 function checkURL(sender, text)
