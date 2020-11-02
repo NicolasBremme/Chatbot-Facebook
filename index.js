@@ -88,6 +88,7 @@ function doPostback(sender, event)
         console.log("categories :" + categories);
         categoriesSelected = 1;
         askLong(sender);
+        return;
     }
     else if (categoriesSelected == 0) {
         let newCategorie = 1;
@@ -105,6 +106,7 @@ function doPostback(sender, event)
         descLong = payload;
         console.log("DescLong: " + descLong);
         resetValues();
+        return;
     }
 }
 
