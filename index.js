@@ -39,7 +39,6 @@ function resetValues()
 app.post('/webhook/', function (req, res)
 {
     console.log("WEBHOOK_EVENT_RECEIVED");
-    console.log(descLong.length);
     let messaging_events = req.body.entry[0].messaging;
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
@@ -85,26 +84,29 @@ function doPostback(sender, event)
 {
     let payload = event.postback.payload;
 
-    if (payload == "send" && categoriesSelected == 0) {
-        console.log("finish !");
-        console.log("categories :" + categories);
-        categoriesSelected = 1;
-        askLong(sender);
-        return;
-    }
-    else if (categoriesSelected == 0) {
-        let newCategorie = 1;
-        for (let i = 0; i < categories.length; i++) {
-            if (categories[i] == payload) {
-                newCategorie = 0;
-                break;
+    if (categoriesSelected == 0) {
+        if (payload == "send") {
+            console.log("finish !");
+            console.log("categories :" + categories);
+            categoriesSelected = 1;
+            askLong(sender);
+            return;
+        }
+        else {
+            let newCategorie = 1;
+
+            for (let i = 0; i < categories.length; i++) {
+                if (categories[i] == payload) {
+                    newCategorie = 0;
+                    break;
+                }
+            }
+            if (newCategorie == 1) {
+                categories.push(payload);
             }
         }
-        if (newCategorie == 1) {
-            categories.push(payload);
-        }
     }
-    if (categoriesSelected == 1 && descLong.length == 0) {
+    if (categoriesSelected == 1) {// && descLong.length == 0) {
         descLong = payload;
         console.log("DescLong: " + descLong);
         resetValues();
