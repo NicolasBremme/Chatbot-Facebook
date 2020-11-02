@@ -123,7 +123,7 @@ function askLong(sender)
             ]
         }
     };
-    skip = 2;
+    skip = 3;
     sendTextMessage(sender, "Entrez votre description.");
     //createBtn(sender, btnAskLong);
 }
