@@ -146,7 +146,7 @@ function checkURL(sender, text)
     console.log("message: " + text);
     if (urlEntered == 0 && validUrl.isUri(text)){
         let index = 0;
-        let indexLimit = count(btnData) - 1;
+        let indexLimit = btnData.length - 1;
         console.log('Looks like an URI');
         urlEntered = 1;
         createBtn(sender, btnData, index, indexLimit, createBtn);
