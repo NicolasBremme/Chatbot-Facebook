@@ -149,6 +149,7 @@ function askAuthor(sender)
         "type": "template",
         "payload": {
             "template_type": "button",
+            "text": "Suite :",
             "buttons": [
                 {"type": "postback", "title": "author 4", "payload": "4"},
                 {"type": "postback", "title": "author 5", "payload": "5"},
@@ -190,6 +191,7 @@ function askCategories(sender)
         "type": "template",
         "payload": {
             "template_type": "button",
+            "text": "Suite :",
             "buttons": [
                 {"type": "postback", "title": "test 4", "payload": "4"},
                 {"type": "postback", "title": "test 5", "payload": "5"},
