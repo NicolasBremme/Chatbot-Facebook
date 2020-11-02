@@ -45,6 +45,7 @@ app.post('/webhook/', function (req, res)
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
         let sender = event.sender.id;
+        console.log("Sender : " + sender);
         if (event.message && event.message.text) {
             // need to establish connection with kurator
             if (urlEntered == 0) {
@@ -127,15 +128,15 @@ function doPostback(sender, event)
         createBtn(sender, btnTime, 0);
     }
     if (description.length > 0 && timeSelected == 0) {
-        let endText = "Excellent ! Votre post va être publié à l'heure souhaité, à bientôt !";
+        let endText = "Excellent ! Votre post va être publié à l'heure souhaitée, à bientôt !";
 
         if (payload == 'now') {
             let time = Date.now();
 
             console.log(time);
+            sendTextMessage(sender, endText);
+            resetValues();
         }
-        sendTextMessage(sender, endText);
-        resetValues();
     }
 }
 
