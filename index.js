@@ -50,9 +50,7 @@ app.post('/webhook/', function (req, res)
         else {
             if (event.message && event.message.text) {
                 // need to establish connection with kurator
-                if (urlEntered == 0) {
-                    checkURL(sender, event.message.text, urlEntered);
-                }
+                doMessage(sender, event);
                 // if the connection can't be established, send error message
             }
             else if (event.postback && event.postback.payload) {
@@ -80,6 +78,22 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
+function doMessage(sender, event)
+{
+    let message = event.message.text;
+
+    if (urlEntered == 0) {
+        checkURL(sender, message, urlEntered);
+        return;
+    }
+    if (categoriesSelected == 1 && descLong.length == 0) {
+        descLong = message;
+        console.log("DescLong: " + descLong);
+        resetValues();
+        return;
+    }
+}
+
 function doPostback(sender, event)
 {
     let payload = event.postback.payload;
@@ -104,13 +118,8 @@ function doPostback(sender, event)
             if (newCategorie == 1) {
                 categories.push(payload);
             }
+            return;
         }
-    }
-    if (categoriesSelected == 1) {// && descLong.length == 0) {
-        descLong = payload;
-        console.log("DescLong: " + descLong);
-        resetValues();
-        return;
     }
 }
 
