@@ -2,6 +2,7 @@
 
 const VERIFY_TOKEN = "EAAFDmBZCfuxQBAMGHVM2AdxVn9x9MoP3qEcV4dFcZCr4NpiMM3vQsnrHgXfuwqGgxK1J6SCHGZA6KrjZBDPKcYNTGLRHVyv9DawNqo7jKVKhvS9EqW6paTej0cNOyuBcM78KlTH32RnrIoPbJRClGO2ujhA9o4aqrU0xcBCgDQZDZD",
     appUrl = "hhtps://test--chatbot.herokuapp.com";
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const { fstat } = require('fs');
 const { parse } = require('path');
 // Imports dependencies and set up http server
@@ -25,6 +26,8 @@ let categoriesSelected = 0;
 let urlEntered = 0;
 let skip = 0;
 let descLong = "";
+let author = "";
+let authorsCount = 0;
 
 function resetValues()
 {
@@ -33,6 +36,8 @@ function resetValues()
     urlEntered = 0;
     skip = 0;
     descLong = "";
+    author = "";
+    authorsCount = 0;
     console.log("Reset done.");
 }
 
@@ -49,9 +54,7 @@ app.post('/webhook/', function (req, res)
         }
         else {
             if (event.message && event.message.text) {
-                // need to establish connection with kurator
                 doMessage(sender, event);
-                // if the connection can't be established, send error message
             }
             else if (event.postback && event.postback.payload) {
                 doPostback(sender, event);
@@ -83,13 +86,13 @@ function doMessage(sender, event)
     let message = event.message.text;
 
     if (urlEntered == 0) {
-        checkURL(sender, message, urlEntered);
+        checkURL(sender, message);
         return;
     }
     if (categoriesSelected == 1 && descLong.length == 0) {
         descLong = message;
         console.log("DescLong: " + descLong);
-        resetValues();
+        askAuthor(sender);
         return;
     }
 }
@@ -99,9 +102,9 @@ function doPostback(sender, event)
     let payload = event.postback.payload;
 
     if (categoriesSelected == 0) {
-        if (payload == "send") {
-            console.log("finish !");
-            console.log("categories :" + categories);
+        if (payload == "send" && categories.length != 0) {
+            console.log("Finish !");
+            console.log("Categories :" + categories);
             categoriesSelected = 1;
             askLong(sender);
             return;
@@ -121,30 +124,57 @@ function doPostback(sender, event)
             return;
         }
     }
+    if (author.length == 0) {
+        author = payload;
+        return;
+    }
+}
+
+function askAuthor(sender)
+{
+    // need to recover authors, send has many authors as needed
+    let btnData = [{
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "Choisissez l'auteur :",
+            "buttons": [
+                {"type": "postback", "title": "author 1", "payload": "1"},
+                {"type": "postback", "title": "author 2", "payload": "2"},
+                {"type": "postback", "title": "author 3", "payload": "3"}
+            ]
+        }
+    }];
+    btnData.push({
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "buttons": [
+                {"type": "postback", "title": "author 4", "payload": "4"},
+                {"type": "postback", "title": "author 5", "payload": "5"},
+                {"type": "postback", "title": "author 6", "payload": "6"}
+            ]
+        }
+    });
+    let index = 0;
+    let indexLimit = btnData.length - 1;
+
+    authorsCount = btnData.length;
+    createBtn(sender, btnData, index, indexLimit, createBtn);
 }
 
 function askLong(sender)
 {
-    const btnAskLong = {
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Entrez votre description et appuyez sur le bouton \"Send\" lorsque vous avez fini:",
-            "buttons": [
-                {"type": "postback", "title": "Send", "payload": "send"},
-            ]
-        }
-    };
+    const textDescLong = "Entrez votre description.";
+
     skip = 2;
-    sendTextMessage(sender, "Entrez votre description.");
-    //createBtn(sender, btnAskLong);
+    sendTextMessage(sender, textDescLong);
 }
 
-function checkURL(sender, text)
+function askCategories(sender)
 {
     // need to recover categories, send has many buttons as needed
-    const btnData =
-    [{
+    let btnData = [{
         "type": "template",
         "payload": {
             "template_type": "button",
@@ -153,21 +183,20 @@ function checkURL(sender, text)
                 {"type": "postback", "title": "test 1", "payload": "1"},
                 {"type": "postback", "title": "test 2", "payload": "2"},
                 {"type": "postback", "title": "test 3", "payload": "3"}
-            ]}
-        },
-        {
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": "Choisissez les catégories :",
-                "buttons": [
-                    {"type": "postback", "title": "test 4", "payload": "4"},
-                    {"type": "postback", "title": "test 5", "payload": "5"},
-                    {"type": "postback", "title": "test 6", "payload": "6"}
-                ]
-            }
+            ]
         }
-    ];
+    },
+    {
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "buttons": [
+                {"type": "postback", "title": "test 4", "payload": "4"},
+                {"type": "postback", "title": "test 5", "payload": "5"},
+                {"type": "postback", "title": "test 6", "payload": "6"}
+            ]
+        }
+    }];
     btnData.push({
         "type": "template",
         "payload": {
@@ -178,13 +207,21 @@ function checkURL(sender, text)
             ]
         }
     });
-    console.log("message: " + text);
+    let index = 0;
+    let indexLimit = btnData.length - 1;
+
+    createBtn(sender, btnData, index, indexLimit, createBtn);
+}
+
+function checkURL(sender, text)
+{
+    console.log("Message: " + text);
     if (urlEntered == 0 && validUrl.isUri(text)){
-        let index = 0;
-        let indexLimit = btnData.length - 1;
         console.log('Looks like an URI');
         urlEntered = 1;
-        createBtn(sender, btnData, index, indexLimit, createBtn);
+        // need to establish connection with kurator
+        // if the connection can't be established, send error message
+        askCategories(sender);
     } else {
         console.log('Not an URI');
     }
