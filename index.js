@@ -39,6 +39,7 @@ function resetValues()
 app.post('/webhook/', function (req, res)
 {
     console.log("WEBHOOK_EVENT_RECEIVED");
+    console.log(descLong.length);
     let messaging_events = req.body.entry[0].messaging;
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
@@ -123,7 +124,7 @@ function askLong(sender)
             ]
         }
     };
-    skip = 3;
+    skip = 2;
     sendTextMessage(sender, "Entrez votre description.");
     //createBtn(sender, btnAskLong);
 }
