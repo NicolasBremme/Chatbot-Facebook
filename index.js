@@ -45,6 +45,7 @@ app.post('/webhook/', function (req, res)
         let sender = event.sender.id;
         if (skip > 0) {
             skip--;
+            console.log("Skip count: " + skip);
         }
         else {
             if (event.message && event.message.text) {
