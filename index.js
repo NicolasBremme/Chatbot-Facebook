@@ -45,7 +45,6 @@ app.post('/webhook/', function (req, res)
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
         let sender = event.sender.id;
-        console.log("Sender : " + sender);
         if (event.message && event.message.text) {
             // need to establish connection with kurator
             if (urlEntered == 0) {
@@ -80,6 +79,7 @@ app.get('/webhook/', (req, res) => {
 function doPostback(sender, event)
 {
     let payload = event.postback.payload;
+
     if (payload == "send" && categoriesSelected == 0) {
         console.log("finish !");
         console.log("categories :" + categories);
@@ -99,15 +99,24 @@ function doPostback(sender, event)
         }
     }
     if (categoriesSelected == 1 && keepMsg == -1) {
-        let askDescrpition = "Parfait ! Veuillez entrer votre description de l'article."
+        let btnDescription = {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "Quand vous avez entré votre description, appuyez sur le bouton \"send\":",
+                "buttons": [
+                    {"type": "postback", "title": "Send", "payload": "send"},
+                ]
+            }
+        };
 
         if (payload == "no") {
             keepMsg = 0;
-            sendTextMessage(sender, askDescrpition);
+            createBtn(sender, btnDescription, 0);
         }
         if (payload == "yes") {
             keepMsg = 1;
-            sendTextMessage(sender, askDescrpition);
+            createBtn(sender, btnDescription, 0);
         }
     }
     if (keepMsg != -1 && description.length == 0) {
@@ -123,9 +132,11 @@ function doPostback(sender, event)
                 ]
             }
         }
-        description = payload;
-        console.log(description);
-        createBtn(sender, btnTime, 0);
+        if (payload == "send") {
+            description = payload;
+            console.log(description);
+            createBtn(sender, btnTime, 0);
+        }
     }
     if (description.length > 0 && timeSelected == 0) {
         let endText = "Excellent ! Votre post va être publié à l'heure souhaitée, à bientôt !";
