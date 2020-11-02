@@ -108,7 +108,8 @@ function askTweet(sender)
 
 function checkURL(sender, text)
 {
-    let btnData = [{
+    let btnData = [
+    {
         "type": "template",
         "payload": {
             "template_type": "button",
@@ -117,9 +118,21 @@ function checkURL(sender, text)
                 {"type": "postback", "title": "test 1", "payload": "1"},
                 {"type": "postback", "title": "test 2", "payload": "2"},
                 {"type": "postback", "title": "test 3", "payload": "3"}
-            ]
+            ]}
+        },
+        {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "Choisissez les catégories :",
+                "buttons": [
+                    {"type": "postback", "title": "test 4", "payload": "4"},
+                    {"type": "postback", "title": "test 5", "payload": "5"},
+                    {"type": "postback", "title": "test 6", "payload": "6"}
+                ]
+            }
         }
-    }];
+    ];
     btnData.push({
         "type": "template",
         "payload": {
