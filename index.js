@@ -33,6 +33,7 @@ function resetValues()
     urlEntered = 0;
     keepMsg = -1;
     description = "";
+    console.log("Reset done.");
 }
 
 app.post('/webhook/', function (req, res)
@@ -98,11 +99,11 @@ function doPostback(sender, event)
         let askDescrpition = "Parfait ! Veuillez entrer votre description de l'article."
         if (payload == "no") {
             keepMsg = 0;
-            sendTextMessage(send, askDescrpition);
+            sendTextMessage(sender, askDescrpition);
         }
         if (payload == "yes") {
             keepMsg = 1;
-            sendTextMessage(send, askDescrpition);
+            sendTextMessage(sender, askDescrpition);
         }
     }
     if (keepMsg != -1) {
