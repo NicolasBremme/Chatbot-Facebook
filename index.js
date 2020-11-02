@@ -43,9 +43,9 @@ app.post('/webhook/', function (req, res)
 {
     console.log("WEBHOOK_EVENT_RECEIVED");
     let messaging_events = req.body.entry[0].messaging;
-    console.log(messaging_events[0].attachments);
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
+        console.log(event.attachment);
         let sender = event.sender.id;
         if (skip > 0) {
             skip--;
