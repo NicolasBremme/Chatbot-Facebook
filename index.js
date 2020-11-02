@@ -25,6 +25,7 @@ let categoriesSelected = 0;
 let urlEntered = 0;
 let keepMsg = -1;
 let description = "";
+let timeSelected = 0;
 
 function resetValues()
 {
@@ -33,6 +34,7 @@ function resetValues()
     urlEntered = 0;
     keepMsg = -1;
     description = "";
+    timeSelected = 0;
     console.log("Reset done.");
 }
 
@@ -97,6 +99,7 @@ function doPostback(sender, event)
     }
     if (categoriesSelected == 1 && keepMsg == -1) {
         let askDescrpition = "Parfait ! Veuillez entrer votre description de l'article."
+
         if (payload == "no") {
             keepMsg = 0;
             sendTextMessage(sender, askDescrpition);
@@ -106,9 +109,32 @@ function doPostback(sender, event)
             sendTextMessage(sender, askDescrpition);
         }
     }
-    if (keepMsg != -1) {
+    if (keepMsg != -1 && description.length == 0) {
+        let btnTime = {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "Super description ! Quand voulez-vous publier l'article ?",
+                "buttons": [
+                    {"type": "postback", "title": "Immédiatement", "payload": "now"},
+                    {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
+                    {"type": "postback", "title": "Personnalisé", "payload": "custom"}
+                ]
+            }
+        }
         description = payload;
         console.log(description);
+        createBtn(sender, btnTime, 0);
+    }
+    if (description.length > 0 && timeSelected == 0) {
+        let endText = "Excellent ! Votre post va être publié à l'heure souhaité, à bientôt !";
+
+        if (payload == 'now') {
+            let time = Date.now();
+
+            console.log(time);
+        }
+        sendTextMessage(sender, endText);
         resetValues();
     }
 }
