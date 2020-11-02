@@ -27,7 +27,6 @@ let urlEntered = 0;
 let skip = 0;
 let descLong = "";
 let author = "";
-let authorsCount = 0;
 
 function resetValues()
 {
@@ -37,7 +36,6 @@ function resetValues()
     skip = 0;
     descLong = "";
     author = "";
-    authorsCount = 0;
     console.log("Reset done.");
 }
 
@@ -45,6 +43,7 @@ app.post('/webhook/', function (req, res)
 {
     console.log("WEBHOOK_EVENT_RECEIVED");
     let messaging_events = req.body.entry[0].messaging;
+    console.log(req.body);
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
         let sender = event.sender.id;
@@ -72,11 +71,12 @@ app.get('/webhook/', (req, res) => {
 
     if (mode && token) {
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-          console.log('WEBHOOK_VERIFIED');
-          res.status(200).send(challenge);
-        } else {
-          console.log('WEBHOOK_ERROR');
-          res.sendStatus(403);
+            console.log('WEBHOOK_VERIFIED');
+            res.status(200).send(challenge);
+        }
+        else {
+            console.log('WEBHOOK_ERROR');
+            res.sendStatus(403);
         }
     }
 });
@@ -126,6 +126,7 @@ function doPostback(sender, event)
     }
     if (author.length == 0) {
         author = payload;
+        console.log("Author : " + author);
         return;
     }
 }
