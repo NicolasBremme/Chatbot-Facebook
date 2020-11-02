@@ -23,18 +23,31 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 let categories = [];
 let categoriesSelected = 0;
 let urlEntered = 0;
-let keepTweet = -1;
+let keepMsg = -1;
+let description = "";
 
-app.post('/webhook/', function (req, res) {
+function resetValues()
+{
+    categories = [];
+    categoriesSelected = 0;
+    urlEntered = 0;
+    keepMsg = -1;
+    description = "";
+}
+
+app.post('/webhook/', function (req, res)
+{
     console.log("WEBHOOK_EVENT_RECEIVED");
     let messaging_events = req.body.entry[0].messaging;
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
         let sender = event.sender.id;
         if (event.message && event.message.text) {
+            // need to establish connection with kurator
             if (urlEntered == 0) {
                 checkURL(sender, event.message.text, urlEntered);
             }
+            // if the connection can't be established, send error message
         }
         else if (event.postback && event.postback.payload) {
             doPostback(sender, event);
@@ -60,7 +73,8 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
-function doPostback(sender, event) {
+function doPostback(sender, event)
+{
     let payload = event.postback.payload;
     if (payload == "send" && categoriesSelected == 0) {
         console.log("finish !");
@@ -80,13 +94,21 @@ function doPostback(sender, event) {
             categories.push(payload);
         }
     }
-    if (categoriesSelected == 1 && keepTweet == -1) {
+    if (categoriesSelected == 1 && keepMsg == -1) {
+        let askDescrpition = "Parfait ! Veuillez entrer votre description de l'article."
         if (payload == "no") {
-            keepTweet = 0;
+            keepMsg = 0;
+            sendTextMessage(send, askDescrpition);
         }
         if (payload == "yes") {
-            keepTweet = 1;
+            keepMsg = 1;
+            sendTextMessage(send, askDescrpition);
         }
+    }
+    if (keepMsg != -1) {
+        description = payload;
+        console.log(description);
+        resetValues();
     }
 }
 
@@ -108,6 +130,7 @@ function askTweet(sender)
 
 function checkURL(sender, text)
 {
+    // need to recover categories, send has many buttons as needed
     let btnData =
     [{
         "type": "template",
