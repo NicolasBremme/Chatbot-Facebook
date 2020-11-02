@@ -104,6 +104,7 @@ function doPostback(sender, event)
     if (categoriesSelected == 1 && descLong.length == 0) {
         descLong = payload;
         console.log("DescLong: " + descLong);
+        resetValues();
     }
 }
 
