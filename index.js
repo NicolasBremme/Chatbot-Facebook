@@ -43,8 +43,8 @@ app.post('/webhook/', function (req, res)
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
         let sender = event.sender.id;
-        if (skip == 1) {
-            skip = 0;
+        if (skip > 0) {
+            skip--;
         }
         else {
             if (event.message && event.message.text) {
@@ -120,8 +120,8 @@ function askLong(sender)
             ]
         }
     };
-    skip = 1;
-    sendTextMessage(sender, "Entrez votre description et appuyez sur le bouton \"Send\" lorsque vous avez fini:");
+    skip = 2;
+    sendTextMessage(sender, "Entrez votre description.");
     //createBtn(sender, btnAskLong);
 }
 
