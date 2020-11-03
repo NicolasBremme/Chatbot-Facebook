@@ -226,7 +226,7 @@ function checkURL(sender, text)
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
-        request.post(kuratorUrl + "/contents/getArticleInfo", {url : text}, function(err, resp, body) {
+        request.post(kuratorUrl + "/contents/getArticleInfo", text, function(err, resp, body) {
             console.log(body);
         });
         // need to establish connection with kurator
