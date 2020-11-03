@@ -242,7 +242,7 @@ function checkURL(sender, text)
         console.log('Looks like an URI');
         urlEntered = 1;
         httpPostRequest("/contents/getArticleInfo", {url: text}, function(err, res, body) {
-            console.log(body);
+            console.log(body.image);
         });
         // need to establish connection with kurator
         // if the connection can't be established, send error message
