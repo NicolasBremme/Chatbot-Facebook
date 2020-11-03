@@ -220,7 +220,7 @@ function askCategories(sender)
     createBtn(sender, btnData, index, indexLimit, createBtn);
 }
 
-function httpPostRequest(uri, param, callback)
+function kuratorRequest(uri, param, callback)
 {
     let headers = {
         'User-Agent': 'Chatbot',
@@ -237,15 +237,15 @@ function httpPostRequest(uri, param, callback)
 
 function checkURL(sender, text)
 {
+    let reqParam = {url: text};
+
     console.log("Message: " + text);
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
-        let jsonObject = {url: text};
         console.log("Request Param:");
-        console.log(jsonObject);
-        httpPostRequest("/contents/getArticleInfo", jsonObject, function(err, res, body) {
-            //console.log(body);
+        kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
+            console.log(body);
         });
         // need to establish connection with kurator
         // if the connection can't be established, send error message
