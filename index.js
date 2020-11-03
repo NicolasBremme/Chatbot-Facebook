@@ -241,7 +241,10 @@ function checkURL(sender, text)
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
-        httpPostRequest("/contents/getArticleInfo", {url: text}, function(err, res, body) {
+        let jsonObject = {url: text};
+        console.log("Request Param:");
+        console.log(jsonObject);
+        httpPostRequest("/contents/getArticleInfo", jsonObject, function(err, res, body) {
             console.log(body);
         });
         // need to establish connection with kurator
