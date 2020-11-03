@@ -230,8 +230,8 @@ function checkURL(sender, text)
             url: kuratorUrl + "/contents/getArticleInfo",
             method: "POST",
             json: true,
-            body: {test: "testB"},
-            data: {test: "testD"}
+            body: {data: "testB"},
+            data: {data: "testD"}
         }, function(err, resp, body) {
             console.log(body);
         });
