@@ -245,7 +245,7 @@ function checkURL(sender, text)
         console.log("Request Param:");
         console.log(jsonObject);
         httpPostRequest("/contents/getArticleInfo", jsonObject, function(err, res, body) {
-            console.log(body);
+            //console.log(body);
         });
         // need to establish connection with kurator
         // if the connection can't be established, send error message
