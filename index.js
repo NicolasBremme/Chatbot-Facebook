@@ -228,6 +228,7 @@ function checkURL(sender, text)
         urlEntered = 1;
         request.post(kuratorUrl + "/contents/getArticleInfo", text, function(err, resp, body) {
             console.log(body);
+            console.log(resp);
         });
         // need to establish connection with kurator
         // if the connection can't be established, send error message
