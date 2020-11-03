@@ -226,14 +226,14 @@ function checkURL(sender, text)
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
-        let jsonObject = {test: "test"};
+        let jsonObject = {test: "test1"};
         request({
             url: kuratorUrl + "/contents/getArticleInfo",
             method: "POST",
             json: true,
             body: jsonObject
         }, function(err, resp, body) {
-            console.log(resp.test);
+            console.log(body);
         });
         // need to establish connection with kurator
         // if the connection can't be established, send error message
