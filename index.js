@@ -220,19 +220,28 @@ function askCategories(sender)
     createBtn(sender, btnData, index, indexLimit, createBtn);
 }
 
+function httpPostRequest(uri, param, callback)
+{
+    let headers = {
+        'User-Agent': 'Chatbot',
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    let option = {
+        url: kuratorUrl + uri,
+        method: "POST",
+        headers: headers,
+        form: param
+    }
+    request(option, callback);
+}
+
 function checkURL(sender, text)
 {
     console.log("Message: " + text);
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
-        let jsonObject = {test: "test1"};
-        request({
-            url: kuratorUrl + "/contents/getArticleInfo",
-            method: "POST",
-            json: true,
-            data: jsonObject
-        }, function(err, resp, body) {
+        httpPostRequest("/contents/getArticleInfo", text, function(err, res, body) {
             console.log(body);
         });
         // need to establish connection with kurator
