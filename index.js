@@ -233,7 +233,7 @@ function checkURL(sender, text)
             json: true,
             body: jsonObject
         }, function(err, resp, body) {
-            console.log(resp);
+            console.log(resp.test);
         });
         // need to establish connection with kurator
         // if the connection can't be established, send error message
