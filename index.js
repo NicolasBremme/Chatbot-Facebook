@@ -28,6 +28,7 @@ let urlEntered = 0;
 let skip = 0;
 let descLong = "";
 let author = "";
+let image = null;
 
 function resetValues()
 {
@@ -37,6 +38,7 @@ function resetValues()
     skip = 0;
     descLong = "";
     author = "";
+    image = null;
     console.log("Reset done.");
 }
 
@@ -132,8 +134,18 @@ function doPostback(sender, event)
     if (author.length == 0) {
         author = payload;
         console.log("Author : " + author);
+        showPostInfo(sender);
         return;
     }
+}
+
+function showPostInfo(sender)
+{
+    let showInfoText = "Voici les informations de votre post :";
+
+    sendTextMessage(sender, showInfoText);
+    sendTextMessage(sender, "Description : " + descLong);
+    sendTextMessage(sender, "Image : " + image);
 }
 
 function askAuthor(sender)
@@ -246,6 +258,7 @@ function checkURL(sender, text)
         console.log("Request Param:");
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
             console.log(body);
+            image = kuratorUrl + "/img/contents/" + body.image;
         });
         // need to establish connection with kurator
         // if the connection can't be established, send error message
