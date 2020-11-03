@@ -231,7 +231,7 @@ function checkURL(sender, text)
             url: kuratorUrl + "/contents/getArticleInfo",
             method: "POST",
             json: true,
-            body: jsonObject
+            data: jsonObject
         }, function(err, resp, body) {
             console.log(body);
         });
