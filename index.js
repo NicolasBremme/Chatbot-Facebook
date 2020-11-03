@@ -86,6 +86,10 @@ function doMessage(sender, event)
 {
     let message = event.message.text;
 
+    if (message == 'reset') {
+        resetValues();
+        return;
+    }
     if (urlEntered == 0) {
         checkURL(sender, message);
         return;
