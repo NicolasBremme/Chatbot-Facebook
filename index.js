@@ -45,7 +45,6 @@ app.post('/webhook/', function (req, res)
     let messaging_events = req.body.entry[0].messaging;
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
-        console.log(event.attachment);
         let sender = event.sender.id;
         if (skip > 0) {
             skip--;
@@ -161,7 +160,6 @@ function askAuthor(sender)
     let index = 0;
     let indexLimit = btnData.length - 1;
 
-    authorsCount = btnData.length;
     createBtn(sender, btnData, index, indexLimit, createBtn);
 }
 
