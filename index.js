@@ -268,8 +268,8 @@ function checkURL(sender, text)
         console.log('Looks like an URI');
         urlEntered = 1;
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
-            console.log(body);
-            if (body.hasError == false) {
+            console.log(body.hasError && body.parseError);
+            if (body.hasError == false && body.parseError == false) {
                 image = kuratorUrl + "/img/contents/" + body.image;
                 image = body.title;
             }
