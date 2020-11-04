@@ -275,6 +275,7 @@ function checkURL(sender, text)
                 image = body.title;
             }
             else {
+                console.log(body.error);
                 sendTextMessage(sender, body.error);
                 resetValues();
             }
@@ -293,7 +294,7 @@ function createBtn(sender, btnData, index, indexLimit, callback)
         method: 'POST',
         json: {
             recipient: {id:sender},
-            "message": {attachment:(index != undefined) ? btnData[index] : btnData}
+            message: {attachment:(index != undefined) ? btnData[index] : btnData}
         }
     }, function(error, response, body) {
         if (error) {
