@@ -267,7 +267,6 @@ function checkURL(sender, text)
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
-        console.log("Request Param:");
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
             console.log(body);
             if (body.hasError == false) {
@@ -311,7 +310,6 @@ function createBtn(sender, btnData, index, indexLimit, callback)
 
 function sendTextMessage(sender, textData, index, indexLimit, callback)
 {
-    console.log(textData);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:VERIFY_TOKEN},
