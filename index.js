@@ -28,7 +28,9 @@ let urlEntered = 0;
 let skip = 0;
 let descLong = "";
 let author = "";
-let image = null;
+let title = "";
+let image = "";
+let time = "";
 
 function resetValues()
 {
@@ -38,7 +40,9 @@ function resetValues()
     skip = 0;
     descLong = "";
     author = "";
-    image = null;
+    title = "";
+    image = "";
+    time = "";
     console.log("Reset done.");
 }
 
@@ -141,11 +145,16 @@ function doPostback(sender, event)
 
 function showPostInfo(sender)
 {
-    let showInfoText = "Voici les informations de votre post :";
+    let showInfoText = [
+        "Voici les informations de votre post :",
+        "Description : " + descLong,
+        "Titre : " + title,
+        "Image : " + image
+    ];
+    let index = 0;
+    let indexLimit = btnData.length - 1;
 
-    sendTextMessage(sender, showInfoText);
-    sendTextMessage(sender, "Description : " + descLong);
-    sendTextMessage(sender, "Image : " + image);
+    sendTextMessage(sender, showInfoText, index, indexLimit, sendTextMessage);
 }
 
 function askAuthor(sender)
@@ -192,6 +201,9 @@ function askLong(sender)
 function askCategories(sender)
 {
     // need to recover categories, send has many buttons as needed
+    // kuratorRequest(method get categories, a way to find the user, function(err, resp, body) {
+    //      put categories in btnData
+    // });
     let btnData = [{
         "type": "template",
         "payload": {
@@ -258,10 +270,14 @@ function checkURL(sender, text)
         console.log("Request Param:");
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
             console.log(body);
-            image = kuratorUrl + "/img/contents/" + body.image;
+            if (body.code == "success") {
+                image = kuratorUrl + "/img/contents/" + body.image;
+                image = body.title;
+            }
+            else {
+                sendTextMessage(sender, body.error);
+            }
         });
-        // need to establish connection with kurator
-        // if the connection can't be established, send error message
         askCategories(sender);
     } else {
         console.log('Not an URI');
@@ -291,18 +307,15 @@ function createBtn(sender, btnData, index, indexLimit, callback)
     });
 }
 
-function sendTextMessage(sender, text)
+function sendTextMessage(sender, textData, index, indexLimit, callback)
 {
-    let messageData = {
-      text:text
-    };
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:VERIFY_TOKEN},
         method: 'POST',
         json: {
-            recipient: {id:sender},
-            message: messageData
+            recipient: {id: sender},
+            message: {text: (index != undefined) ? textData[index] : btnData}
         }
     }, function(error, response, body) {
         if (error) {
@@ -310,6 +323,9 @@ function sendTextMessage(sender, text)
         }
         else if (response.body.error) {
             console.log('Error: ', response.body.error);
+        }
+        if (callback != undefined && index < indexLimit) {
+            callback(sender, btnData, index + 1, indexLimit, callback);
         }
     });
 }
