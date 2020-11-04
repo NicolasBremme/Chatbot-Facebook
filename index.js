@@ -275,7 +275,7 @@ function checkURL(sender, text)
             }
             else {
                 console.log(body.error);
-                if (body.error === undefined) {
+                if (body.error !== undefined) {
                     sendTextMessage(sender, body.error);
                 }
                 else {
