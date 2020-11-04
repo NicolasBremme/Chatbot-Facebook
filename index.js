@@ -15,7 +15,6 @@ const
     crypto = require('crypto');
 
 let app = express();
-request.use(bodyParser.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended": false}));
 
@@ -270,6 +269,7 @@ function checkURL(sender, text)
         urlEntered = 1;
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
             console.log(body.hasError + body.parseError);
+            body = JSON.parse(body);
             if (body.hasError == false && body.parseError == false) {
                 image = kuratorUrl + "/img/contents/" + body.image;
                 image = body.title;
