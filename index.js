@@ -315,7 +315,7 @@ function sendTextMessage(sender, textData, index, indexLimit, callback)
         method: 'POST',
         json: {
             recipient: {id: sender},
-            message: {text: (index != undefined) ? textData[index] : btnData}
+            message: {text: (index != undefined) ? textData[index] : textData}
         }
     }, function(error, response, body) {
         if (error) {
