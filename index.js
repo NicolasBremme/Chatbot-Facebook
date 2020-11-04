@@ -270,7 +270,7 @@ function checkURL(sender, text)
         console.log("Request Param:");
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
             console.log(body);
-            if (body.code == "success") {
+            if (body.hasError == false) {
                 image = kuratorUrl + "/img/contents/" + body.image;
                 image = body.title;
             }
