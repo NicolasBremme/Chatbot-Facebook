@@ -275,8 +275,14 @@ function checkURL(sender, text)
             }
             else {
                 console.log(body.error);
-                sendTextMessage(sender, body.error);
+                if (body.error === undefined) {
+                    sendTextMessage(sender, body.error);
+                }
+                else {
+                    sendTextMessage(sender, "Une erreur s'est produite.");
+                }
                 resetValues();
+                return;
             }
         });
         askCategories(sender);
