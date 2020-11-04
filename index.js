@@ -276,6 +276,7 @@ function checkURL(sender, text)
             }
             else {
                 sendTextMessage(sender, body.error);
+                resetValues();
             }
         });
         askCategories(sender);
@@ -309,6 +310,7 @@ function createBtn(sender, btnData, index, indexLimit, callback)
 
 function sendTextMessage(sender, textData, index, indexLimit, callback)
 {
+    console.log(textData);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:VERIFY_TOKEN},
