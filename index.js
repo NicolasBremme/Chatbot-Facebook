@@ -15,6 +15,7 @@ const
     crypto = require('crypto');
 
 let app = express();
+request.use(bodyParser.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended": false}));
 
