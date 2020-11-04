@@ -152,7 +152,7 @@ function showPostInfo(sender)
         "Image : " + image
     ];
     let index = 0;
-    let indexLimit = btnData.length - 1;
+    let indexLimit = showInfoText.length - 1;
 
     sendTextMessage(sender, showInfoText, index, indexLimit, sendTextMessage);
 }
@@ -325,7 +325,7 @@ function sendTextMessage(sender, textData, index, indexLimit, callback)
             console.log('Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
-            callback(sender, btnData, index + 1, indexLimit, callback);
+            callback(sender, textData, index + 1, indexLimit, callback);
         }
     });
 }
