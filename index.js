@@ -148,8 +148,8 @@ function showPostInfo(sender)
 {
     let showInfoText = [
         {text: "Voici les informations de votre post :"},
-        {text: "Description : " + descLong},
-        {text: "Titre : " + title},
+        {text: title},
+        {text: descLong},
         {
             attachment: {
                 type: "image",
