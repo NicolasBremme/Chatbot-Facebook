@@ -276,8 +276,8 @@ function askCategories(sender)
             let buttons = btnData[i].payload.buttons;
 
             buttons.push(payloadModel);
-            buttons.payload.title = allCategories[i * 3 + j];
-            buttons.payload.payload = i * 3 + j;
+            buttons[j].payload.title = allCategories[i * 3 + j];
+            buttons[j].payload.payload = i * 3 + j;
         }
         console.log(btnData[i]);
     }
@@ -318,15 +318,12 @@ function checkURL(sender, text)
                     image = kuratorUrl + body.image;
                     title = body.title;
                     askCategories(sender);
-                    console.log("[1]");
                 }
                 else {
-                    console.log("[2]");
                     sendTextMessage(sender, {text: body.error});
                 }
             }
             catch {
-                console.log("[3]");
                 sendTextMessage(sender, {text: "Une erreur s'est produite."});
                 resetValues();
                 return;
