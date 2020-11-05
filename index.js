@@ -370,8 +370,8 @@ function sendTextMessage(sender, msgData, index, indexLimit, callback)
         if (callback != undefined && index < indexLimit) {
             callback(sender, msgData, index + 1, indexLimit, callback);
         }
+        else if (author.length != 0 && time.length == 0 && index >= indexLimit) {
+            askTime(sender);
+        }
     });
-    if (author.length != 0 && time.length == 0 && index == indexLimit) {
-        askTime(sender);
-    }
 }
