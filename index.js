@@ -280,7 +280,7 @@ function checkURL(sender, text)
             try {
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
-                    image = kuratorUrl + "/img/contents/" + body.image;
+                    image = kuratorUrl + body.image;
                     title = body.title;
                     askCategories(sender);
                 }
