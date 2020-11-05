@@ -318,12 +318,15 @@ function checkURL(sender, text)
                     image = kuratorUrl + body.image;
                     title = body.title;
                     askCategories(sender);
+                    console.log("[1]");
                 }
                 else {
+                    console.log("[2]");
                     sendTextMessage(sender, {text: body.error});
                 }
             }
             catch {
+                console.log("[3]");
                 sendTextMessage(sender, {text: "Une erreur s'est produite."});
                 resetValues();
                 return;
