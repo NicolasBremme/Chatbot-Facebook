@@ -280,6 +280,7 @@ function askCategories(sender)
             buttons[j].title = allCategories[(i * 3) + j];
             buttons[j].payload = (i * 3) + j;
         } console.log(btnData[i].payload.buttons)
+        console.log("then :");
     }
     console.log("-----------------");
     let index = 0;
