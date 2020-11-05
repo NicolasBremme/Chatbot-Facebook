@@ -147,10 +147,18 @@ function doPostback(sender, event)
 function showPostInfo(sender)
 {
     let showInfoText = [
-        "Voici les informations de votre post :",
-        "Description : " + descLong,
-        "Titre : " + title,
-        "Image : " + image
+        {text: "Voici les informations de votre post :"},
+        {text: "Description : " + descLong},
+        {text: "Titre : " + title},
+        {
+            text: "Image : ",
+            attachments: [{
+                type: "image",
+                payload: {
+                    url: image
+                }
+            }]
+        }
     ];
     let index = 0;
     let indexLimit = showInfoText.length - 1;
@@ -193,7 +201,7 @@ function askAuthor(sender)
 
 function askLong(sender)
 {
-    const textDescLong = "Entrez votre description.";
+    const textDescLong = {text: "Entrez votre description."};
 
     skip = 2;
     sendTextMessage(sender, textDescLong);
@@ -278,11 +286,11 @@ function checkURL(sender, text)
                     askCategories(sender);
                 }
                 else {
-                    sendTextMessage(sender, body.error);
+                    sendTextMessage(sender, {text: body.error});
                 }
             }
             catch {
-                sendTextMessage(sender, "Une erreur s'est produite.");
+                sendTextMessage(sender, {text: "Une erreur s'est produite."});
                 resetValues();
                 return;
             }
@@ -315,7 +323,7 @@ function createBtn(sender, btnData, index, indexLimit, callback)
     });
 }
 
-function sendTextMessage(sender, textData, index, indexLimit, callback)
+function sendTextMessage(sender, msgData, index, indexLimit, callback)
 {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -323,7 +331,7 @@ function sendTextMessage(sender, textData, index, indexLimit, callback)
         method: 'POST',
         json: {
             recipient: {id: sender},
-            message: {text: (index != undefined) ? textData[index] : textData}
+            message: (index != undefined) ? msgData[index] : msgData
         }
     }, function(error, response, body) {
         if (error) {
