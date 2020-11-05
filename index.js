@@ -269,23 +269,21 @@ function checkURL(sender, text)
         urlEntered = 1;
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body, sender) {
             console.log(body);
-            console.log(JSON.parse(body));
-            resetValues();
-            return;
-            if (body.hasError == false && body.parseError == false) {
-                image = kuratorUrl + "/img/contents/" + body.image;
-                title = body.title;
-                askCategories(sender);
-            }
-            else {
-                console.log(body.error);
-                if (body.error !== undefined) {
-                    sendTextMessage(sender, body.error);
+            try {
+                body = JSON.parse(body);
+                if (body.hasError == false && body.parseError == false) {
+                    image = kuratorUrl + "/img/contents/" + body.image;
+                    title = body.title;
+                    askCategories(sender);
                 }
                 else {
-                    sendTextMessage(sender, "Une erreur s'est produite.");
+                    sendTextMessage(sender, body.error);
                 }
+            }
+            catch {
+                sendTextMessage(sender, "Une erreur s'est produite.");
                 resetValues();
+                return;
             }
         });
     } else {
