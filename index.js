@@ -35,6 +35,7 @@ let time = "";
 
 function resetValues()
 {
+    sender = null;
     categories = [];
     categoriesSelected = 0;
     urlEntered = 0;
@@ -61,10 +62,10 @@ app.post('/webhook/', function (req, res)
         }
         else {
             if (event.message && event.message.text) {
-                doMessage(sender, event);
+                doMessage(event);
             }
             else if (event.postback && event.postback.payload) {
-                doPostback(sender, event);
+                doPostback(event);
             }
         }
     }
@@ -144,6 +145,23 @@ function doPostback(sender, event)
     }
 }
 
+function askTime(sender)
+{
+    const btnData = {
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "Choisissez le moment de publication :",
+            "buttons": [
+                {"type": "postback", "title": "Immédiatement", "payload": "1"},
+                {"type": "postback", "title": "Dans le tunnel de publication", "payload": "2"},
+                {"type": "postback", "title": "Annulation", "payload": "3"}
+            ]
+        }
+    };
+    createBtn(sender, btnData);
+}
+
 function showPostInfo(sender)
 {
     let showInfoText = [
@@ -212,6 +230,16 @@ function askCategories(sender)
     // kuratorRequest(method get categories, a way to find the user, function(err, resp, body) {
     //      put categories in btnData
     // });
+    const sendData = {
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
+            "buttons": [
+                {"type": "postback", "title": "Send", "payload": "send"},
+            ]
+        }
+    };
     let btnData = [{
         "type": "template",
         "payload": {
@@ -236,19 +264,10 @@ function askCategories(sender)
             ]
         }
     }];
-    btnData.push({
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
-            "buttons": [
-                {"type": "postback", "title": "Send", "payload": "send"},
-            ]
-        }
-    });
     let index = 0;
-    let indexLimit = btnData.length - 1;
+    let indexLimit = btnData.length;
 
+    btnData.push(sendData);
     createBtn(sender, btnData, index, indexLimit, createBtn);
 }
 
@@ -276,7 +295,7 @@ function checkURL(sender, text)
         console.log('Looks like an URI');
         urlEntered = 1;
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
-            console.log(body);
+            console.log(sender);
             try {
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
