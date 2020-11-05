@@ -143,10 +143,8 @@ function doPostback(sender, event)
     if (author.length == 0) {
         author = payload;
         console.log("Author : " + author);
-        const promise = new Promise((resolve, reject) => {
-            showPostInfo(sender)
-        });
-        promise.then(askTime(sender));
+        if (showPostInfo(sender));
+            askTime(sender);
         return;
     }
     if (time.length == 0) {
@@ -198,7 +196,7 @@ function showPostInfo(sender)
     let index = 0;
     let indexLimit = showInfoText.length - 1;
 
-    sendTextMessage(sender, showInfoText, index, indexLimit, sendTextMessage);
+    return (sendTextMessage(sender, showInfoText, index, indexLimit, sendTextMessage));
 }
 
 function askAuthor(sender)
@@ -372,6 +370,8 @@ function sendTextMessage(sender, msgData, index, indexLimit, callback)
         }
         if (callback != undefined && index < indexLimit) {
             callback(sender, msgData, index + 1, indexLimit, callback);
+        } else {
+            return true;
         }
     });
 }
