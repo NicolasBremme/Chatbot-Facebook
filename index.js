@@ -268,6 +268,7 @@ function askCategories(sender)
     let btnData = [];
     for (let i = 0; i < btnCount; i++) {
         btnData.push(btnModel);
+        console.log(btnData);
         for (j = 0; j < 2 && (i * 3 + j) < allCategories.length; j++) {
             btnData[i].payload.buttons.push(payloadModel);
         } console.log(btnData[i].payload.buttons);
