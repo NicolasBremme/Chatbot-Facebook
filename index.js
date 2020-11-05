@@ -22,6 +22,7 @@ let port = (process.env.PORT || 5000);
 app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
+let sender = null;
 let categories = [];
 let categoriesSelected = 0;
 let urlEntered = 0;
@@ -52,7 +53,7 @@ app.post('/webhook/', function (req, res)
     let messaging_events = req.body.entry[0].messaging;
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
-        let sender = event.sender.id;
+        sender = event.sender.id;
 
         if (skip > 0) {
             skip--;
@@ -267,7 +268,7 @@ function checkURL(sender, text)
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
-        kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body, sender) {
+        kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
             console.log(body);
             try {
                 body = JSON.parse(body);
