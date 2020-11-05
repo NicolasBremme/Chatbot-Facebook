@@ -125,7 +125,7 @@ function doPostback(event)
             askLong();
             return;
         }
-        else {
+        else if (payload != "send") {
             let newCategorie = 1;
 
             for (let i = 0; i < categories.length; i++) {
