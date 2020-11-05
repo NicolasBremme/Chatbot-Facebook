@@ -62,10 +62,10 @@ app.post('/webhook/', function (req, res)
         }
         else {
             if (event.message && event.message.text) {
-                doMessage(event);
+                doMessage(sender, event);
             }
             else if (event.postback && event.postback.payload) {
-                doPostback(event);
+                doPostback(sender, event);
             }
         }
     }
