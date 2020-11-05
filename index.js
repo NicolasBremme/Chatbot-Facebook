@@ -273,12 +273,9 @@ function askCategories(sender)
         btnData[i].payload.text = "Suite :";
         console.log("buttons :")
         for (j = 0; j < 3 && (i * 3 + j) < allCategories.length; j++) {
-            let buttons = btnData[i].payload.buttons;
-
-            buttons.push(payloadModel);
-            buttons[j].title = allCategories[(i * 3) + j];
-            buttons[j].payload = String((i * 3) + j);
-            console.log(btnData[i].payload.buttons);
+            btnData[i].payload.buttons[j].push(payloadModel);
+            btnData[i].payload.buttons[j].title = allCategories[(i * 3) + j];
+            btnData[i].payload.buttons[j].payload = String((i * 3) + j);
         }
     }
     console.log("-----------------");
