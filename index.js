@@ -259,6 +259,11 @@ function kuratorRequest(uri, param, callback)
     request(option, callback);
 }
 
+function parseResult(result)
+{
+    return "salut";
+}
+
 function checkURL(sender, text)
 {
     let reqParam = {url: text};
@@ -267,13 +272,16 @@ function checkURL(sender, text)
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
-        kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
+        kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body, sender) {
             console.log(body.hasError + body.parseError);
-            console.log("BODY :")
             console.log(body);
+            console.log(parseResult(body));
+            resetValues();
+            return;
             if (body.hasError == false && body.parseError == false) {
                 image = kuratorUrl + "/img/contents/" + body.image;
                 title = body.title;
+                askCategories(sender);
             }
             else {
                 console.log(body.error);
@@ -284,10 +292,8 @@ function checkURL(sender, text)
                     sendTextMessage(sender, "Une erreur s'est produite.");
                 }
                 resetValues();
-                return;
             }
         });
-        askCategories(sender);
     } else {
         console.log('Not an URI');
     }
