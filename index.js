@@ -151,7 +151,6 @@ function showPostInfo(sender)
         {text: "Description : " + descLong},
         {text: "Titre : " + title},
         {
-            text: "Image : ",
             attachment: {
                 type: "image",
                 payload: {
