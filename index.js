@@ -24,6 +24,7 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 
 let sender = null,
     allCategories = [],
+    allAuthors = [],
     categories = [],
     categoriesSelected = 0,
     urlEntered = 0,
@@ -36,8 +37,8 @@ let sender = null,
 
 function resetValues()
 {
-    sender = null;
     allCategories = [];
+    allAuthors = [];
     categories = [];
     categoriesSelected = 0;
     urlEntered = 0;
@@ -64,10 +65,10 @@ app.post('/webhook/', function (req, res)
         }
         else {
             if (event.message && event.message.text) {
-                doMessage(sender, event);
+                doMessage(event);
             }
             else if (event.postback && event.postback.payload) {
-                doPostback(sender, event);
+                doPostback(event);
             }
         }
     }
@@ -92,7 +93,7 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
-function doMessage(sender, event)
+function doMessage(event)
 {
     let message = event.message.text;
 
@@ -101,18 +102,18 @@ function doMessage(sender, event)
         return;
     }
     if (urlEntered == 0) {
-        checkURL(sender, message);
+        checkURL(message);
         return;
     }
     if (categoriesSelected == 1 && descLong.length == 0) {
         descLong = message;
         console.log("DescLong: " + descLong);
-        askAuthor(sender);
+        askAuthor();
         return;
     }
 }
 
-function doPostback(sender, event)
+function doPostback(event)
 {
     let payload = event.postback.payload;
 
@@ -121,7 +122,7 @@ function doPostback(sender, event)
             console.log("Finish !");
             console.log("Categories :" + categories);
             categoriesSelected = 1;
-            askLong(sender);
+            askLong();
             return;
         }
         else {
@@ -142,17 +143,17 @@ function doPostback(sender, event)
     if (author.length == 0) {
         author = payload;
         console.log("Author : " + author);
-        showPostInfo(sender);
-        askTime(sender)
+        showPostInfo();
+        askTime()
         return;
     }
     if (time.length == 0) {
         time = payload;
         if (time == "stop") {
-            sendTextMessage(sender, {text: "Ok, la publication est annulée."});
+            sendTextMessage({text: "Ok, la publication est annulée."});
         }
         else {
-            sendTextMessage(sender, {text: "Ok, la publication est programmé !"});
+            sendTextMessage({text: "Ok, la publication est programmé !"});
             // need to program the post on kurator
         }
         resetValues();
@@ -160,7 +161,7 @@ function doPostback(sender, event)
     }
 }
 
-function askTime(sender)
+function askTime()
 {
     const btnData = {
         "type": "template",
@@ -174,10 +175,10 @@ function askTime(sender)
             ]
         }
     };
-    createBtn(sender, btnData);
+    createBtn(btnData);
 }
 
-function showPostInfo(sender)
+function showPostInfo()
 {
     let showInfoText = [
         {text: "Voici les informations de votre post :"},
@@ -195,67 +196,58 @@ function showPostInfo(sender)
     let index = 0;
     let indexLimit = showInfoText.length - 1;
 
-    sendTextMessage(sender, showInfoText, index, indexLimit, sendTextMessage);
+    sendTextMessage(showInfoText, index, indexLimit, sendTextMessage);
 }
 
-function askAuthor(sender)
+function askAuthor()
 {
     // need to recover authors, send has many authors as needed
-    let btnData = [{
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Choisissez l'auteur :",
-            "buttons": [
-                {"type": "postback", "title": "author 1", "payload": "1"},
-                {"type": "postback", "title": "author 2", "payload": "2"},
-                {"type": "postback", "title": "author 3", "payload": "3"}
-            ]
+    // kuratorRequest(method get authors, a way to find the user, function(err, resp, body) {
+    //      put authors in btnData
+    // });
+    allAuthors = ["test 1", "test 2", "test 3", "test 4", "test 5", "test 6"];
+    let btnCount = Math.ceil(allAuthors.length / 3);
+    let btnData = [];
+
+    for (let i = 0, j = 0; i < btnCount; i++) {
+        btnData.push({
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "",
+                "buttons": []
+            }
+        });
+        btnData[i].payload.text = (i == 0) ? "Choisissez un auteur :" : "Suite :";
+        for (j = 0; j < 3 && allAuthors[(i * 3) + j]; j++) {
+            let buttons = btnData[i].payload.buttons;
+
+            buttons.push({"type": "postback", "title": "", "payload": ""});
+            buttons[j].title = allAuthors[(i * 3) + j];
+            buttons[j].payload = (i * 3) + j;
         }
-    }];
-    btnData.push({
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Suite :",
-            "buttons": [
-                {"type": "postback", "title": "author 4", "payload": "4"},
-                {"type": "postback", "title": "author 5", "payload": "5"},
-                {"type": "postback", "title": "author 6", "payload": "6"}
-            ]
-        }
-    });
+    }
     let index = 0;
     let indexLimit = btnData.length - 1;
 
-    createBtn(sender, btnData, index, indexLimit, createBtn);
+    createBtn(btnData, index, indexLimit, createBtn);
 }
 
-function askLong(sender)
+function askLong()
 {
     const textDescLong = {text: "Entrez votre description."};
 
     skip = 2;
-    sendTextMessage(sender, textDescLong);
+    sendTextMessage(textDescLong);
 }
 
-function askCategories(sender)
+function askCategories()
 {
     // need to recover categories, send has many buttons as needed
     // kuratorRequest(method get categories, a way to find the user, function(err, resp, body) {
     //      put categories in btnData
     // });
     allCategories = ["test 1", "test 2", "test 3", "test 4"];
-    const sendData = {
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
-            "buttons": [
-                {"type": "postback", "title": "Send", "payload": "send"},
-            ]
-        }
-    };
     let btnCount = Math.ceil(allCategories.length / 3);
     let btnData = [];
 
@@ -268,7 +260,7 @@ function askCategories(sender)
                 "buttons": []
             }
         });
-        btnData[i].payload.text = "Suite :";
+        btnData[i].payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
         for (j = 0; j < 3 && allCategories[(i * 3) + j]; j++) {
             let buttons = btnData[i].payload.buttons;
 
@@ -280,8 +272,17 @@ function askCategories(sender)
     let index = 0;
     let indexLimit = btnData.length;
 
-    btnData.push(sendData);
-    createBtn(sender, btnData, index, indexLimit, createBtn);
+    btnData.push({
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
+            "buttons": [
+                {"type": "postback", "title": "Send", "payload": "send"},
+            ]
+        }
+    });
+    createBtn(btnData, index, indexLimit, createBtn);
 }
 
 function kuratorRequest(uri, param, callback)
@@ -299,7 +300,7 @@ function kuratorRequest(uri, param, callback)
     request(option, callback);
 }
 
-function checkURL(sender, text)
+function checkURL(text)
 {
     let reqParam = {url: text};
 
@@ -313,14 +314,14 @@ function checkURL(sender, text)
                 if (body.hasError == false && body.parseError == false) {
                     image = kuratorUrl + body.image;
                     title = body.title;
-                    askCategories(sender);
+                    askCategories();
                 }
                 else {
-                    sendTextMessage(sender, {text: body.error});
+                    sendTextMessage({text: body.error});
                 }
             }
             catch {
-                sendTextMessage(sender, {text: "Une erreur s'est produite."});
+                sendTextMessage({text: "Une erreur s'est produite."});
                 resetValues();
                 return;
             }
@@ -330,7 +331,7 @@ function checkURL(sender, text)
     }
 }
 
-function createBtn(sender, btnData, index, indexLimit, callback)
+function createBtn(btnData, index, indexLimit, callback)
 {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -348,12 +349,12 @@ function createBtn(sender, btnData, index, indexLimit, callback)
             console.log('Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
-            callback(sender, btnData, index + 1, indexLimit, callback);
+            callback(btnData, index + 1, indexLimit, callback);
         }
     });
 }
 
-function sendTextMessage(sender, msgData, index, indexLimit, callback)
+function sendTextMessage(msgData, index, indexLimit, callback)
 {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -371,7 +372,7 @@ function sendTextMessage(sender, msgData, index, indexLimit, callback)
             console.log('Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
-            callback(sender, msgData, index + 1, indexLimit, callback);
+            callback(msgData, index + 1, indexLimit, callback);
         }
     });
 }
