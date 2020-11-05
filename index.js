@@ -22,20 +22,32 @@ let port = (process.env.PORT || 5000);
 app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
-let sender = null;
-let categories = [];
-let categoriesSelected = 0;
-let urlEntered = 0;
-let skip = 0;
-let descLong = "";
-let author = "";
-let title = "";
-let image = "";
-let time = "";
+const btnModel = {
+    "type": "template",
+    "payload": {
+        "template_type": "button",
+        "text": "",
+        "buttons": []
+    }
+},
+    payloadModel = {"type": "postback", "title": "", "payload": ""};
+
+let sender = null,
+    allCategories = [],
+    categories = [],
+    categoriesSelected = 0,
+    urlEntered = 0,
+    skip = 0,
+    descLong = "",
+    author = "",
+    title = "",
+    image = "",
+    time = "";
 
 function resetValues()
 {
     sender = null;
+    allCategories = [];
     categories = [];
     categoriesSelected = 0;
     urlEntered = 0;
@@ -141,6 +153,19 @@ function doPostback(sender, event)
         author = payload;
         console.log("Author : " + author);
         showPostInfo(sender);
+        askTime(sender)
+        return;
+    }
+    if (time.length == 0) {
+        time = payload;
+        if (time == "stop") {
+            sendTextMessage(sender, {text: "Ok, la publication est annulée."});
+        }
+        else {
+            sendTextMessage(sender, {text: "Ok, la publication est programmé !"});
+            // need to program the post on kurator
+        }
+        resetValues();
         return;
     }
 }
@@ -153,9 +178,9 @@ function askTime(sender)
             "template_type": "button",
             "text": "Choisissez le moment de publication :",
             "buttons": [
-                {"type": "postback", "title": "Immédiatement", "payload": "1"},
-                {"type": "postback", "title": "Dans le tunnel de publication", "payload": "2"},
-                {"type": "postback", "title": "Annulation", "payload": "3"}
+                {"type": "postback", "title": "Immédiatement", "payload": "now"},
+                {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
+                {"type": "postback", "title": "Annulation", "payload": "stop"}
             ]
         }
     };
@@ -230,6 +255,7 @@ function askCategories(sender)
     // kuratorRequest(method get categories, a way to find the user, function(err, resp, body) {
     //      put categories in btnData
     // });
+    allCategories = ["test 1", "test 2", "test 3", "test 4"];
     const sendData = {
         "type": "template",
         "payload": {
@@ -240,30 +266,20 @@ function askCategories(sender)
             ]
         }
     };
-    let btnData = [{
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Choisissez les catégories :",
-            "buttons": [
-                {"type": "postback", "title": "test 1", "payload": "1"},
-                {"type": "postback", "title": "test 2", "payload": "2"},
-                {"type": "postback", "title": "test 3", "payload": "3"}
-            ]
+    let btnCount = ceil(allCategories.length / 3);
+    let btnData = [];
+
+    for (let i = 0; i < btnCount; i++) {
+        btnData.push(btnModel);
+        btnData.payload.text = "Suite :";
+        for (let j = 0; j < 3 && allCategories[i * 3 + j]; j++) {
+            let buttons = btnData[i].payload.buttons;
+
+            buttons.push(payloadModel);
+            buttons.payload.title = allCategories[i * 3 + j];
+            buttons.payload.payload = i * 3 + j;
         }
-    },
-    {
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Suite :",
-            "buttons": [
-                {"type": "postback", "title": "test 4", "payload": "4"},
-                {"type": "postback", "title": "test 5", "payload": "5"},
-                {"type": "postback", "title": "test 6", "payload": "6"}
-            ]
-        }
-    }];
+    }
     let index = 0;
     let indexLimit = btnData.length;
 
@@ -295,7 +311,6 @@ function checkURL(sender, text)
         console.log('Looks like an URI');
         urlEntered = 1;
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
-            console.log(sender);
             try {
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
