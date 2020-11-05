@@ -256,17 +256,17 @@ function askCategories()
             "type": "template",
             "payload": {
                 "template_type": "button",
-                "text": "",
+                "text": (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :",
                 "buttons": []
             }
         });
-        btnData[i].payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
+        //btnData[i].payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
         for (j = 0; j < 3 && allCategories[(i * 3) + j]; j++) {
             let buttons = btnData[i].payload.buttons;
 
-            buttons.push({"type": "postback", "title": "", "payload": ""});
-            buttons[j].title = allCategories[(i * 3) + j];
-            buttons[j].payload = (i * 3) + j;
+            buttons.push({"type": "postback", "title": allCategories[(i * 3) + j], "payload": (i * 3) + j});
+            //buttons[j].title = allCategories[(i * 3) + j];
+            //buttons[j].payload = (i * 3) + j;
         }
     }
     let index = 0;
