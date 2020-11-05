@@ -254,6 +254,15 @@ function askCategories(sender)
     //      put categories in btnData
     // });
     let allCategories = ["test 1", "test 2", "test 3", "test 4"];
+    const btnModel = {
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "",
+            "buttons": []
+        }
+    };
+    const payloadModel = {"type": "postback", "title": "", "payload": ""};
     const sendData = {
         "type": "template",
         "payload": {
