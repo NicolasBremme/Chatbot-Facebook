@@ -277,22 +277,20 @@ function askCategories(sender)
     let btnData = [];
     for (let i = 0, j = 0; i < btnCount; i++) {
         btnData.push(btnModel);
-        console.log(btnData);
-        console.log("1------");
         for (j = 0; j < 3 && (i * 3 + j) < allCategories.length; j++) {
             btnData[i].payload.buttons.push(payloadModel);
-        } console.log(btnData[i].payload.buttons);
-        console.log("2------");
+        }
+        for (let k = 0; k < btnData[i].payload.buttons.length; k++) {
+            console.log(btnData[i].payload.buttons[k]);
+        }
     }
     for (let i = 0, j = 0; i < btnCount; i++) {
         btnData[i].payload.text = "Suite :";
-        console.log(btnData[i]);
         for (j = 0; j < 2 && (i * 3 + j) < allCategories.length; j++) {
             btnData[i].payload.buttons[j].title = allCategories[(i * 3) + j];
             btnData[i].payload.buttons[j].payload = String((i * 3) + j);
         }
     }
-    console.log("-----------------");
     let index = 0;
     let indexLimit = btnData.length;
 
