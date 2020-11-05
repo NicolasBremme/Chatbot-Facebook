@@ -259,11 +259,6 @@ function kuratorRequest(uri, param, callback)
     request(option, callback);
 }
 
-function parseResult(result)
-{
-    return "salut";
-}
-
 function checkURL(sender, text)
 {
     let reqParam = {url: text};
@@ -273,9 +268,8 @@ function checkURL(sender, text)
         console.log('Looks like an URI');
         urlEntered = 1;
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body, sender) {
-            console.log(body.hasError + body.parseError);
             console.log(body);
-            console.log(parseResult(body));
+            console.log(JSON.parse(body));
             resetValues();
             return;
             if (body.hasError == false && body.parseError == false) {
