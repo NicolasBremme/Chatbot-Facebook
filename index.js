@@ -266,10 +266,10 @@ function askCategories(sender)
     };
     let btnCount = Math.ceil(allCategories.length / 3);
     let btnData = [];
-    for (let i = 0; i < btnCount; i++) {
+    for (let i = 0, j = 0; i < btnCount; i++) {
         btnData.push(btnModel);
         console.log(btnData);
-        for (j = 0; j < 2 && (i * 3 + j) < allCategories.length; j++) {
+        for (j = 0; j < 3 && (i * 3 + j) < allCategories.length; j++) {
             btnData[i].payload.buttons.push(payloadModel);
         } console.log(btnData[i].payload.buttons);
     }
