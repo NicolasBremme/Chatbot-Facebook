@@ -22,17 +22,8 @@ let port = (process.env.PORT || 5000);
 app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
-const btnModel = {
-    "type": "template",
-    "payload": {
-        "template_type": "button",
-        "text": "",
-        "buttons": []
-    }
-},
-    payloadModel = {"type": "postback", "title": "", "payload": ""};
-
 let sender = null,
+    allCategories = [],
     categories = [],
     categoriesSelected = 0,
     urlEntered = 0,
@@ -46,6 +37,7 @@ let sender = null,
 function resetValues()
 {
     sender = null;
+    allCategories = [];
     categories = [];
     categoriesSelected = 0;
     urlEntered = 0;
@@ -253,16 +245,7 @@ function askCategories(sender)
     // kuratorRequest(method get categories, a way to find the user, function(err, resp, body) {
     //      put categories in btnData
     // });
-    let allCategories = ["test 1", "test 2", "test 3", "test 4"];
-    const btnModel = {
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "",
-            "buttons": []
-        }
-    };
-    const payloadModel = {"type": "postback", "title": "", "payload": ""};
+    allCategories = ["test 1", "test 2", "test 3", "test 4"];
     const sendData = {
         "type": "template",
         "payload": {
@@ -275,24 +258,23 @@ function askCategories(sender)
     };
     let btnCount = Math.ceil(allCategories.length / 3);
     let btnData = [];
+
     for (let i = 0, j = 0; i < btnCount; i++) {
-        btnData.push(btnModel);
-        for (j = 0; j < 3 && (i * 3 + j) < allCategories.length; j++) {
-            btnData[i].payload.buttons.push(payloadModel);
-        }
-        for (let k = 0; k < btnData[i].payload.buttons.length; k++) {
-            console.log(btnData[i].payload.buttons[k]);
-            console.log("---------------");
-        }
-        console.log("  ");
-        console.log(btnModel);
-        console.log("  ");
-    }
-    for (let i = 0, j = 0; i < btnCount; i++) {
+        btnData.push({
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "",
+                "buttons": []
+            }
+        });
         btnData[i].payload.text = "Suite :";
-        for (j = 0; j < 2 && (i * 3 + j) < allCategories.length; j++) {
-            btnData[i].payload.buttons[j].title = allCategories[(i * 3) + j];
-            btnData[i].payload.buttons[j].payload = String((i * 3) + j);
+        for (j = 0; j < 3 && allCategories[(i * 3) + j]; j++) {
+            let buttons = btnData[i].payload.buttons;
+
+            buttons.push({"type": "postback", "title": "", "payload": ""});
+            buttons[j].title = allCategories[(i * 3) + j];
+            buttons[j].payload = (i * 3) + j;
         }
     }
     let index = 0;
