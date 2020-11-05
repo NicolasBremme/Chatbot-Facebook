@@ -266,7 +266,9 @@ function askCategories(sender)
             ]
         }
     };
+    console.log("1");
     let btnCount = Math.ceil(allCategories.length / 3);
+    console.log("2");
     let btnData = [];
 
     for (let i = 0; i < btnCount; i++) {
