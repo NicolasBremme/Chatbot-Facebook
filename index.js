@@ -284,6 +284,7 @@ function askCategories(sender)
     let indexLimit = btnData.length;
 
     btnData.push(sendData);
+    console.log(btnData);
     createBtn(sender, btnData, index, indexLimit, createBtn);
 }
 
