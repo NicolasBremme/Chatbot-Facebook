@@ -33,7 +33,6 @@ const btnModel = {
     payloadModel = {"type": "postback", "title": "", "payload": ""};
 
 let sender = null,
-    allCategories = [],
     categories = [],
     categoriesSelected = 0,
     urlEntered = 0,
@@ -47,7 +46,6 @@ let sender = null,
 function resetValues()
 {
     sender = null;
-    allCategories = [];
     categories = [];
     categoriesSelected = 0;
     urlEntered = 0;
@@ -255,7 +253,7 @@ function askCategories(sender)
     // kuratorRequest(method get categories, a way to find the user, function(err, resp, body) {
     //      put categories in btnData
     // });
-    allCategories = ["test 1", "test 2", "test 3", "test 4"];
+    let allCategories = ["test 1", "test 2", "test 3", "test 4"];
     const sendData = {
         "type": "template",
         "payload": {
