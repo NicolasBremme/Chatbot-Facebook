@@ -152,12 +152,12 @@ function showPostInfo(sender)
         {text: "Titre : " + title},
         {
             text: "Image : ",
-            attachments: [{
+            attachment: {
                 type: "image",
                 payload: {
                     url: image
                 }
-            }]
+            }
         }
     ];
     let index = 0;
