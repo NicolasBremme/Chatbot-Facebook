@@ -268,12 +268,14 @@ function askCategories(sender)
     let btnData = [];
     for (let i = 0; i < btnCount; i++) {
         btnData.push(btnModel);
+        for (j = 0; j < 2 && (i * 3 + j) < allCategories.length; j++) {
+            btnData[i].payload.buttons[j].push(payloadModel);
+        } console.log(btnData[i].payload.buttons);
     }
     for (let i = 0, j = 0; i < btnCount; i++) {
         btnData[i].payload.text = "Suite :";
         console.log(btnData[i]);
         for (j = 0; j < 2 && (i * 3 + j) < allCategories.length; j++) {
-            btnData[i].payload.buttons[j].push(payloadModel);
             btnData[i].payload.buttons[j].title = allCategories[(i * 3) + j];
             btnData[i].payload.buttons[j].payload = String((i * 3) + j);
         }
