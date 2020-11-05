@@ -341,7 +341,7 @@ function sendTextMessage(sender, msgData, index, indexLimit, callback)
             console.log('Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
-            callback(sender, textData, index + 1, indexLimit, callback);
+            callback(sender, msgData, index + 1, indexLimit, callback);
         }
     });
 }
