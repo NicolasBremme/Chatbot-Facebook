@@ -270,10 +270,14 @@ function askCategories(sender)
     let btnData = [];
 
     for (let i = 0; i < btnCount; i++) {
+        console.log("|");
         btnData.push(btnModel);
+        console.log("|");
         btnData[i].payload.text = "Suite :";
         for (let j = 0; j < 3 && allCategories[i * 3 + j]; j++) {
+            console.log("|");
             let buttons = btnData[i].payload.buttons;
+            console.log("|");
 
             buttons.push(payloadModel);
             buttons[j].payload.title = allCategories[i * 3 + j];
