@@ -276,11 +276,9 @@ function askCategories(sender)
             let buttons = btnData[i].payload.buttons;
 
         buttons.push(payloadModel);
-        console.log(buttons[j]);
-        buttons[j].payload.title = allCategories[i * 3 + j]; // <-- here
-        buttons[j].payload.payload = i * 3 + j;
+        buttons[j].title = allCategories[i * 3 + j]; // <-- here
+        buttons[j].payload = i * 3 + j;
         }
-        console.log(btnData[i]);
     }
     let index = 0;
     let indexLimit = btnData.length;
