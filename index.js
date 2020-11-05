@@ -269,9 +269,11 @@ function askCategories(sender)
     for (let i = 0, j = 0; i < btnCount; i++) {
         btnData.push(btnModel);
         console.log(btnData);
+        console.log("1------");
         for (j = 0; j < 3 && (i * 3 + j) < allCategories.length; j++) {
             btnData[i].payload.buttons.push(payloadModel);
         } console.log(btnData[i].payload.buttons);
+        console.log("2------");
     }
     for (let i = 0, j = 0; i < btnCount; i++) {
         btnData[i].payload.text = "Suite :";
