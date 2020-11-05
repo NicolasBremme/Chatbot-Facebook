@@ -143,7 +143,10 @@ function doPostback(sender, event)
     if (author.length == 0) {
         author = payload;
         console.log("Author : " + author);
-        showPostInfo(sender, askTime);
+        const promise = new Promise((resolve, reject) => {
+            showPostInfo(sender)
+        });
+        promise.then(askTime(sender));
         return;
     }
     if (time.length == 0) {
@@ -177,7 +180,7 @@ function askTime(sender)
     createBtn(sender, btnData);
 }
 
-function showPostInfo(sender, callback)
+function showPostInfo(sender)
 {
     let showInfoText = [
         {text: "Voici les informations de votre post :"},
@@ -196,7 +199,6 @@ function showPostInfo(sender, callback)
     let indexLimit = showInfoText.length - 1;
 
     sendTextMessage(sender, showInfoText, index, indexLimit, sendTextMessage);
-    callback(sender);
 }
 
 function askAuthor(sender)
