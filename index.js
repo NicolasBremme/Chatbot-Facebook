@@ -282,6 +282,7 @@ function askCategories(sender)
         }
         for (let k = 0; k < btnData[i].payload.buttons.length; k++) {
             console.log(btnData[i].payload.buttons[k]);
+            console.log("---------------");
         }
     }
     for (let i = 0, j = 0; i < btnCount; i++) {
