@@ -270,7 +270,7 @@ function askCategories(sender)
     };
     console.log("3");
     let btnCount = Math.ceil(allCategories.length / 3);
-    console.log("4");
+    console.log(btnCount);
     let btnData = [];
 
     for (let i = 0; i < btnCount; i++) {
