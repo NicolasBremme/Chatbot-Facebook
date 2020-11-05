@@ -255,7 +255,8 @@ function askCategories(sender)
     // kuratorRequest(method get categories, a way to find the user, function(err, resp, body) {
     //      put categories in btnData
     // });
-    allCategories = ["test 1", "test 2", "test 3", "test 4"];
+        console.log("|");
+        allCategories = ["test 1", "test 2", "test 3", "test 4"];
     const sendData = {
         "type": "template",
         "payload": {
@@ -266,8 +267,10 @@ function askCategories(sender)
             ]
         }
     };
-    let btnCount = ceil(allCategories.length / 3);
-    let btnData = [];
+        console.log("|");
+        let btnCount = ceil(allCategories.length / 3);
+        console.log("|");
+        let btnData = [];
 
     for (let i = 0; i < btnCount; i++) {
         console.log("|");
