@@ -276,7 +276,7 @@ function askCategories(sender)
 
             buttons.push(payloadModel);
             buttons[j].title = allCategories[(i * 3) + j];
-            buttons[j].payload = (i * 3) + j;
+            buttons[j].payload = String((i * 3) + j);
         } console.log(btnData[i].payload.buttons)
         console.log("then :");
     }
