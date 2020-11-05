@@ -285,6 +285,7 @@ function askCategories(sender)
             console.log("---------------");
         }
         console.log("  ");
+        console.log(payloadModel);
         console.log("  ");
     }
     for (let i = 0, j = 0; i < btnCount; i++) {
