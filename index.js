@@ -269,7 +269,7 @@ function askCategories(sender)
     for (let i = 0; i < btnCount; i++) {
         btnData.push(btnModel);
         for (j = 0; j < 2 && (i * 3 + j) < allCategories.length; j++) {
-            btnData[i].payload.buttons[j].push(payloadModel);
+            btnData[i].payload.buttons.push(payloadModel);
         } console.log(btnData[i].payload.buttons);
     }
     for (let i = 0, j = 0; i < btnCount; i++) {
