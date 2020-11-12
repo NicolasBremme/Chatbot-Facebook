@@ -108,6 +108,10 @@ function doMessage(sender, event)
         resetValues();
         return;
     }
+    if (urlEntered == 0) {
+        checkURL(sender, message);
+        return;
+    }
     if (isConnected == 0 && (username.length == 0 || password.length == 0)) {
         if (username.lenght == 0) {
             username = message;
@@ -124,10 +128,6 @@ function doMessage(sender, event)
                 resetValues();
             }
         }
-        return;
-    }
-    if (urlEntered == 0) {
-        checkURL(sender, message);
         return;
     }
     if (categoriesSelected == 1 && descLong.length == 0) {
