@@ -110,6 +110,7 @@ function doMessage(sender, event)
     }
     if (urlEntered == 0) {
         checkURL(sender, message);
+        skip = 1;
         return;
     }
     if (isConnected == 0 && (username.length == 0 || password.length == 0)) {
@@ -119,7 +120,7 @@ function doMessage(sender, event)
         }
         else {
             password = message;
-            if (checkConnection()) {
+            if (checkConnection(sender)) {
                 isConnected = 1;
                 askCategories(sender);
             }
