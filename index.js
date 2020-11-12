@@ -113,7 +113,7 @@ function doMessage(sender, event)
         return;
     }
     if (isConnected == 0 && (username.length == 0 || password.length == 0)) {
-        if (username.lenght == 0) {
+        if (username.length == 0) {
             username = message;
             console.log('Username : ' + username);
         }
