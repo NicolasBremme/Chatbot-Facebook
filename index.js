@@ -358,6 +358,7 @@ function checkURL(sender, text)
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
                     image = imageUrl + body.image;
+                    console.log("Image url : " + image);
                     title = body.title;
                     sendTextMessage(sender, {text: "Bonjour ! Veuillez entrer votre identifiant et votre mot de passe Kurator :"});
                 }
