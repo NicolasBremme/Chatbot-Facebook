@@ -120,6 +120,7 @@ function doMessage(sender, event)
         }
         else {
             password = message;
+            console.log('Password : ' + password);
             if (checkConnection(sender)) {
                 isConnected = 1;
                 askCategories(sender);
@@ -141,8 +142,29 @@ function doMessage(sender, event)
 
 function checkConnection(sender)
 {
-    sendTextMessage(sender, {text: "Successfuly connected !"});
-    return true;
+    let reqParam = {
+        username: username,
+        password: password
+    };
+
+    return kuratorRequest("/api/login", reqParam, function(err, res, body) {
+        try {
+            body = JSON.parse(body);
+            if (body.hasError == false && body.login == true) {
+                sendTextMessage(sender, {text: "Successfuly connected !"});
+                return true;
+            }
+            else {
+                sendTextMessage(sender, {text: body.error});
+                return false;
+            }
+        }
+        catch {
+            sendTextMessage(sender, {text: "Une erreur s'est produite."});
+            resetValues();
+            return false;
+        }
+    });
 }
 
 function doPostback(sender, event)
@@ -335,7 +357,7 @@ function checkURL(sender, text)
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
-        kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
+        kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
@@ -365,8 +387,8 @@ function createBtn(sender, btnData, index, indexLimit, callback)
         qs: {access_token:VERIFY_TOKEN},
         method: 'POST',
         json: {
-            recipient: {id:sender},
-            message: {attachment:(index != undefined) ? btnData[index] : btnData}
+            recipient: {id: sender},
+            message: {attachment: (index != undefined) ? btnData[index] : btnData}
         }
     }, function(error, response, body) {
         if (error) {
