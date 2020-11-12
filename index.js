@@ -2,7 +2,8 @@
 
 const VERIFY_TOKEN = "EAAFDmBZCfuxQBAMGHVM2AdxVn9x9MoP3qEcV4dFcZCr4NpiMM3vQsnrHgXfuwqGgxK1J6SCHGZA6KrjZBDPKcYNTGLRHVyv9DawNqo7jKVKhvS9EqW6paTej0cNOyuBcM78KlTH32RnrIoPbJRClGO2ujhA9o4aqrU0xcBCgDQZDZD",
     appUrl = "hhtps://test--chatbot.herokuapp.com";
-const kuratorUrl = "https://preprod.kurator.fr";
+const kuratorUrl = "https://app.kurator.fr",
+    imageUrl = "http://image-kurator.fr";
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const { fstat } = require('fs');
 const { parse } = require('path');
@@ -23,11 +24,12 @@ app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
 let sender = null,
+    urlEntered = 0,
+    isConnected = 0,
     allCategories = [],
     allAuthors = [],
     categories = [],
     categoriesSelected = 0,
-    urlEntered = 0,
     skip = 0,
     descLong = "",
     author = "",
@@ -37,12 +39,12 @@ let sender = null,
 
 function resetValues()
 {
-    sender = null;
+    urlEntered = 0;
+    isConnected = 0;
     allCategories = [];
     allAuthors = [];
     categories = [];
     categoriesSelected = 0;
-    urlEntered = 0;
     skip = 0;
     descLong = "";
     author = "";
@@ -308,7 +310,7 @@ function checkURL(sender, text)
             try {
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
-                    image = kuratorUrl + body.image;
+                    image = imageUrl + body.image;
                     title = body.title;
                     askCategories(sender);
                 }
@@ -322,6 +324,7 @@ function checkURL(sender, text)
                 return;
             }
         });
+        sendTextMessage(sender, {text: "Bonjour ! Veuillez entrer votre identifiant et votre mot de passe Kurator :"});
     } else {
         console.log('Not an URI');
     }
