@@ -121,7 +121,7 @@ function doMessage(sender, event)
         else {
             password = message;
             console.log('Password : ' + password);
-            if (checkConnection(sender)) {
+            if (checkConnection(sender) == true) {
                 isConnected = 1;
                 askCategories(sender);
             }
