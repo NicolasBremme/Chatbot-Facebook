@@ -122,13 +122,6 @@ function doMessage(sender, event)
             password = message;
             console.log('Password : ' + password);
             checkConnection(sender);
-            if (isConnected == 1) {
-                askCategories(sender);
-            }
-            else {
-                sendTextMessage(sender, {text: "Username or password invalid."});
-                resetValues();
-            }
         }
         return;
     }
@@ -153,6 +146,11 @@ function checkConnection(sender)
             if (body.hasError == false && body.login == true) {
                 sendTextMessage(sender, {text: "Successfuly connected !"});
                 isConnected = 1;
+                askCategories(sender);
+            }
+            else if (body.hasError == false && body.login == false) {
+                sendTextMessage(sender, {text: "Username or password invalid."});
+                resetValues();
             }
             else {
                 sendTextMessage(sender, {text: body.error});
