@@ -121,8 +121,8 @@ function doMessage(sender, event)
         else {
             password = message;
             console.log('Password : ' + password);
-            if (checkConnection(sender) == true) {
-                isConnected = 1;
+            checkConnection(sender);
+            if (isConnected == 1) {
                 askCategories(sender);
             }
             else {
@@ -147,22 +147,20 @@ function checkConnection(sender)
         password: password
     };
 
-    return kuratorRequest("/api/login", reqParam, function(err, res, body) {
+    kuratorRequest("/api/login", reqParam, function(err, res, body) {
         try {
             body = JSON.parse(body);
             if (body.hasError == false && body.login == true) {
                 sendTextMessage(sender, {text: "Successfuly connected !"});
-                return true;
+                isConnected = 1;
             }
             else {
                 sendTextMessage(sender, {text: body.error});
-                return false;
             }
         }
         catch {
             sendTextMessage(sender, {text: "Une erreur s'est produite."});
             resetValues();
-            return false;
         }
     });
 }
