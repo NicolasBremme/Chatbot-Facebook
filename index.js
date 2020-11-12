@@ -336,6 +336,7 @@ function checkURL(sender, text)
         urlEntered = 1;
         kuratorRequest("/contents/getArticleInfo", reqParam, function(err, res, body) {
             try {
+                console.log(body);
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
                     image = imageUrl + body.image;
