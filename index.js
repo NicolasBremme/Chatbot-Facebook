@@ -25,6 +25,8 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 
 let sender = null,
     urlEntered = 0,
+    username = "",
+    password = "",
     isConnected = 0,
     allCategories = [],
     allAuthors = [],
@@ -40,6 +42,8 @@ let sender = null,
 function resetValues()
 {
     urlEntered = 0;
+    username = "";
+    password = "";
     isConnected = 0;
     allCategories = [];
     allAuthors = [];
@@ -108,12 +112,36 @@ function doMessage(sender, event)
         checkURL(sender, message);
         return;
     }
+    if (isConnected == 0 && (username.length == 0 || password.length == 0)) {
+        if (username.lenght == 0) {
+            username = message;
+            console.log('Username : ' + username);
+        }
+        else {
+            password = message;
+            if (checkConnection()) {
+                isConnected = 1;
+                askCategories(sender);
+            }
+            else {
+                sendTextMessage(sender, {text: "Username or password invalid."});
+                resetValues();
+            }
+        }
+        return;
+    }
     if (categoriesSelected == 1 && descLong.length == 0) {
         descLong = message;
         console.log("DescLong: " + descLong);
         askAuthor(sender);
         return;
     }
+}
+
+function checkConnection(sender)
+{
+    sendTextMessage(sender, {text: "Successfuly connected !"});
+    return true;
 }
 
 function doPostback(sender, event)
@@ -312,7 +340,7 @@ function checkURL(sender, text)
                 if (body.hasError == false && body.parseError == false) {
                     image = imageUrl + body.image;
                     title = body.title;
-                    askCategories(sender);
+                    sendTextMessage(sender, {text: "Bonjour ! Veuillez entrer votre identifiant et votre mot de passe Kurator :"});
                 }
                 else {
                     sendTextMessage(sender, {text: body.error});
@@ -324,7 +352,6 @@ function checkURL(sender, text)
                 return;
             }
         });
-        sendTextMessage(sender, {text: "Bonjour ! Veuillez entrer votre identifiant et votre mot de passe Kurator :"});
     } else {
         console.log('Not an URI');
     }
