@@ -76,6 +76,7 @@ app.post('/webhook/', function (req, res)
                 doPostback(sender, event);
             }
             else if (event.account_linking) {
+                console.log(event.account_linking);
                 doLinking(sender, event);
             }
         }
