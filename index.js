@@ -25,9 +25,8 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 
 let sender = null,
     urlEntered = 0,
-    username = "",
-    password = "",
     isConnected = 0,
+    userId = 0,
     allCategories = [],
     allAuthors = [],
     categories = [],
@@ -42,9 +41,8 @@ let sender = null,
 function resetValues()
 {
     urlEntered = 0;
-    username = "";
-    password = "";
     isConnected = 0;
+    userId = 0;
     allCategories = [];
     allAuthors = [];
     categories = [];
@@ -113,17 +111,11 @@ function doMessage(sender, event)
         skip = 1;
         return;
     }
-    if (isConnected == 0 && (username.length == 0 || password.length == 0)) {
-        if (username.length == 0) {
-            username = message;
-            console.log('Username : ' + username);
+    if (isConnected == 0) {
+        if (message == 'connect') {
+            isConnected = 1;
+            userId = 1;
         }
-        else {
-            password = message;
-            console.log('Password : ' + password);
-            checkConnection(sender);
-        }
-        return;
     }
     if (categoriesSelected == 1 && descLong.length == 0) {
         descLong = message;
@@ -131,37 +123,6 @@ function doMessage(sender, event)
         askAuthor(sender);
         return;
     }
-}
-
-function checkConnection(sender, reconnect = 0)
-{
-    let reqParam = {
-        username: username,
-        password: password,
-        sender: sender
-    };
-
-    kuratorRequest("/api/login", reqParam, function(err, res, body) {
-        try {
-            body = JSON.parse(body);
-            if (body.hasError == false && body.login == true) {
-                sendTextMessage(sender, {text: "Successfuly connected !"});
-                isConnected = 1;
-                askCategories(sender);
-            }
-            else if (body.hasError == false && body.login == false) {
-                sendTextMessage(sender, {text: "Username or password invalid."});
-                resetValues();
-            }
-            else {
-                sendTextMessage(sender, {text: body.error});
-            }
-        }
-        catch {
-            sendTextMessage(sender, {text: "Une erreur s'est produite."});
-            resetValues();
-        }
-    });
 }
 
 function doPostback(sender, event)
@@ -251,9 +212,6 @@ function showPostInfo(sender)
 function askAuthor(sender)
 {
     // need to recover authors, send has many authors as needed
-    // kuratorRequest(method get authors, a way to find the user, function(err, resp, body) {
-    //      put authors in btnData
-    // });
     allAuthors = ["test 1", "test 2", "test 3", "test 4", "test 5", "test 6"];
     let btnCount = Math.ceil(allAuthors.length / 3);
     let btnData = [];
@@ -290,9 +248,6 @@ function askLong(sender)
 function askCategories(sender)
 {
     // need to recover categories, send has many buttons as needed
-    // kuratorRequest(method get categories, a way to find the user, function(err, resp, body) {
-    //      put categories in btnData
-    // });
     allCategories = ["test 1", "test 2", "test 3", "test 4"];
     let btnCount = Math.ceil(allCategories.length / 3);
     let btnData = [];
@@ -365,13 +320,12 @@ function checkURL(sender, text)
                         "type": "template",
                         "payload": {
                             "template_type": "button",
-                            "text": "test login button",
+                            "text": "Veuillez vous connecter à Kurator :",
                             "buttons": [
                                 {"type": "account_link", "url": kuratorUrl + "/api/login"},
                             ]
                         }
                     });
-                    sendTextMessage(sender, {text: "Bonjour ! Veuillez entrer votre identifiant et votre mot de passe Kurator :"});
                 }
                 else {
                     sendTextMessage(sender, {text: body.error});
