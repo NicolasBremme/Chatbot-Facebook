@@ -322,7 +322,7 @@ function checkURL(sender, text)
                             "template_type": "button",
                             "text": "Veuillez vous connecter à Kurator :",
                             "buttons": [
-                                {"type": "account_link", "url": kuratorUrl + "/api/login"},
+                                {"type": "account_link", "url": kuratorUrl},
                             ]
                         }
                     });
