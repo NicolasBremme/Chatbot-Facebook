@@ -133,11 +133,12 @@ function doMessage(sender, event)
     }
 }
 
-function checkConnection(sender)
+function checkConnection(sender, reconnect = 0)
 {
     let reqParam = {
         username: username,
-        password: password
+        password: password,
+        sender: sender
     };
 
     kuratorRequest("/api/login", reqParam, function(err, res, body) {
@@ -360,6 +361,25 @@ function checkURL(sender, text)
                     image = imageUrl + body.image;
                     console.log("Image url : " + image);
                     title = body.title;
+                    kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
+                        try {
+                            body = JSON.parse(body);
+                            if (body.hasError == false && body.parseError == false) {
+                                image = imageUrl + body.image;
+                                console.log("Image url : " + image);
+                                title = body.title;
+                                sendTextMessage(sender, {text: "Bonjour ! Veuillez entrer votre identifiant et votre mot de passe Kurator :"});
+                            }
+                            else {
+                                sendTextMessage(sender, {text: body.error});
+                            }
+                        }
+                        catch {
+                            sendTextMessage(sender, {text: "Une erreur s'est produite."});
+                            resetValues();
+                            return;
+                        }
+                    });
                     sendTextMessage(sender, {text: "Bonjour ! Veuillez entrer votre identifiant et votre mot de passe Kurator :"});
                 }
                 else {
