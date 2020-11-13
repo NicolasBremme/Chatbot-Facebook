@@ -76,7 +76,6 @@ app.post('/webhook/', function (req, res)
                 doPostback(sender, event);
             }
             else if (event.account_linking) {
-                console.log(event.account_linking);
                 doLinking(sender, event);
             }
         }
@@ -337,7 +336,7 @@ function checkURL(sender, text)
                             "template_type": "button",
                             "text": "Veuillez vous connecter à Kurator :",
                             "buttons": [
-                                {"type": "account_link", "url": kuratorUrl + '/api/login'},
+                                {"type": "account_link", "url": kuratorUrl},
                             ]
                         }
                     });
