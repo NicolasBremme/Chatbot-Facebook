@@ -75,6 +75,9 @@ app.post('/webhook/', function (req, res)
             else if (event.postback && event.postback.payload) {
                 doPostback(sender, event);
             }
+            else if (event.account_linking) {
+                doLinking(sender, event);
+            }
         }
     }
     res.sendStatus(200)
@@ -110,13 +113,6 @@ function doMessage(sender, event)
         checkURL(sender, message);
         skip = 1;
         return;
-    }
-    if (isConnected == 0) {
-        if (message == 'connect') {
-            isConnected = 1;
-            userId = 1;
-            askCategories(sender);
-        }
     }
     if (categoriesSelected == 1 && descLong.length == 0) {
         descLong = message;
@@ -169,6 +165,23 @@ function doPostback(sender, event)
         }
         resetValues();
         return;
+    }
+}
+
+function doLinking(sender, event)
+{
+    let linking = event.account_linking;
+
+    if (isConnected == 0) {
+        if (linking.status == 'linked') {
+            isConnected = 1;
+            userId = 1;
+            console.log('Auth code : ' + linking.authorization_code);
+            askCategories(sender);
+        } else {
+            sendTextMessage(sender, {text: 'Impossible de vous connecter à Kurator.'});
+            resetValues();
+        }
     }
 }
 
