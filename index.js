@@ -3,7 +3,7 @@
 const VERIFY_TOKEN = "EAAFDmBZCfuxQBAMGHVM2AdxVn9x9MoP3qEcV4dFcZCr4NpiMM3vQsnrHgXfuwqGgxK1J6SCHGZA6KrjZBDPKcYNTGLRHVyv9DawNqo7jKVKhvS9EqW6paTej0cNOyuBcM78KlTH32RnrIoPbJRClGO2ujhA9o4aqrU0xcBCgDQZDZD",
     appUrl = "https://test--chatbot.herokuapp.com";
 const kuratorUrl = "https://app.kurator.fr",
-    imageUrl = "http://image-kurator.fr";
+    imageUrl = "http://image-kurator.fr/app/";
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const { fstat } = require('fs');
 const { parse } = require('path');
