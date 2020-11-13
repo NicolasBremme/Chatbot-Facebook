@@ -115,6 +115,7 @@ function doMessage(sender, event)
         if (message == 'connect') {
             isConnected = 1;
             userId = 1;
+            askCategories(sender);
         }
     }
     if (categoriesSelected == 1 && descLong.length == 0) {
