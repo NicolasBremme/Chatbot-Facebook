@@ -26,7 +26,6 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 let sender = null,
     urlEntered = 0,
     isConnected = 0,
-    userId = 0,
     allCategories = [],
     allAuthors = [],
     categories = [],
@@ -40,9 +39,9 @@ let sender = null,
 
 function resetValues()
 {
+    sender = null;
     urlEntered = 0;
     isConnected = 0;
-    userId = 0;
     allCategories = [];
     allAuthors = [];
     categories = [];
@@ -62,7 +61,9 @@ app.post('/webhook/', function (req, res)
     let messaging_events = req.body.entry[0].messaging;
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
-        sender = event.sender.id;
+        if (sender == null) {
+            sender = event.sender.id;
+        }
 
         if (skip > 0) {
             skip--;
@@ -180,8 +181,8 @@ function doLinking(sender, event)
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id : sender}, function(err, res, body) {
                 body = JSON.parse(body);
                 console.log(body);
+                askCategories(sender);
             });
-            askCategories(sender);
         } else {
             sendTextMessage(sender, {text: 'Impossible de vous connecter à Kurator.'});
             resetValues();
