@@ -64,6 +64,7 @@ app.post('/webhook/', function (req, res)
         if (sender == null) {
             sender = event.sender.id;
         }
+        console.log(sender);
 
         if (skip > 0) {
             skip--;
