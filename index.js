@@ -178,11 +178,10 @@ function doLinking(sender, event)
             console.log('Sender id when linking account : ' + sender);
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id : sender}, function(err, res, body) {
                 body = JSON.parse(body);
-                body.categories.forEach(element, index => {
+                body.categories.forEach((element, index) => {
                     allCategories.push(index);
                 });
                 console.log(allCategories);
-                console.log(body);
                 askCategories(sender);
             });
         } else {
