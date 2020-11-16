@@ -175,14 +175,24 @@ function doLinking(sender, event)
         if (linking.status == 'linked') {
             isConnected = 1;
             console.log('Auth code : ' + linking.authorization_code);
-            console.log('Sender id when linking account : ' + sender);
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id : sender}, function(err, res, body) {
-                body = JSON.parse(body);
-                for (const property in body.categories) {
-                    allCategories.push(property);
+                try {
+                    body = JSON.parse(body);
+                    for (const property in body.categories) {
+                        allCategories.push(property);
+                    }
+                    if (body.platform == 'wordpress') {
+                        for (const property in body.authors) {
+                            allAuthors.push(property);
+                        }
+                    }
+                    askCategories(sender);
                 }
-                console.log(allCategories);
-                askCategories(sender);
+                catch {
+                    sendTextMessage(sender, {text: "Une erreur s'est produite."});
+                    resetValues();
+                    return;
+                }
             });
         } else {
             sendTextMessage(sender, {text: 'Impossible de vous connecter à Kurator.'});
@@ -231,8 +241,7 @@ function showPostInfo(sender)
 
 function askAuthor(sender)
 {
-    // need to recover authors, send has many authors as needed
-    allAuthors = ["test 1", "test 2", "test 3", "test 4", "test 5", "test 6"];
+    //allAuthors = ["test 1", "test 2", "test 3", "test 4", "test 5", "test 6"];
     let btnCount = Math.ceil(allAuthors.length / 3);
     let btnData = [];
 
