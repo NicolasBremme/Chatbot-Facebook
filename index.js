@@ -23,7 +23,7 @@ let port = (process.env.PORT || 5000);
 app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
-const getRandom = (min, max) => (Math.random() * ((max - min) + min));
+const getRandom = (min, max) => (Math.floor(Math.random() * ((max - min) + min)));
 
 //Quand le tweet est bon
 var rewardsUrlOk = [
