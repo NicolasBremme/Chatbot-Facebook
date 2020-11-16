@@ -50,7 +50,7 @@ var rewardsCategoriesOk = [
 	"Bon boulot \u{1F601}",
 	"Bonne déduction \u{1F638}",
 	"Excellent choix de catégorie \u{1F609}",
-	"Catégorie acceptée \u{1F61C}",
+	"Catégorie(s) acceptée(s) \u{1F61C}",
 	"Good \u{1F61C}",
 	"Très bien \u{1F609}",
 	"Perfect \u{1F60F}",
@@ -297,7 +297,7 @@ function askTime(sender)
 function showPostInfo(sender)
 {
     let showInfoText = [
-        {text: "Voici les informations de votre post :"},
+        {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + "Voici les informations de votre post :"},
         {text: title},
         {text: descLong},
         {
@@ -343,7 +343,7 @@ function askAuthor(sender)
 
 function askLong(sender)
 {
-    const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + "Entrez votre description :"};
+    const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
 
     skip = 2;
     sendTextMessage(sender, textDescLong);
@@ -422,7 +422,7 @@ function checkURL(sender, text)
                         "type": "template",
                         "payload": {
                             "template_type": "button",
-                            "text": "Veuillez vous connecter à Kurator :",
+                            "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + "Veuillez vous connecter à Kurator :",
                             "buttons": [
                                 {"type": "account_link", "url": kuratorUrl + '?extern_id=' + sender},
                             ]
