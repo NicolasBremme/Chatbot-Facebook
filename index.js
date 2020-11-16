@@ -62,7 +62,6 @@ app.post('/webhook/', function (req, res)
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
         sender = event.sender.id;
-        console.log(sender);
 
         if (skip > 0) {
             skip--;
@@ -176,6 +175,7 @@ function doLinking(sender, event)
         if (linking.status == 'linked') {
             isConnected = 1;
             console.log('Auth code : ' + linking.authorization_code);
+            console.log('Sender id when linking : ' + sender);
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id : sender}, function(err, res, body) {
                 body = JSON.parse(body);
                 console.log(body);
@@ -333,6 +333,7 @@ function checkURL(sender, text)
                     image = imageUrl + body.image;
                     console.log("Image url : " + image);
                     title = body.title;
+                    console.log('Sender id when login : ' + sender);
                     createBtn(sender, {
                         "type": "template",
                         "payload": {
