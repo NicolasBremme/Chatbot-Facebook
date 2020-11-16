@@ -26,6 +26,7 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 let sender = null,
     urlEntered = 0,
     isConnected = 0,
+    platform = "",
     allCategories = [],
     allAuthors = [],
     categories = [],
@@ -42,6 +43,7 @@ function resetValues()
     sender = null;
     urlEntered = 0;
     isConnected = 0;
+    platform = "";
     allCategories = [];
     allAuthors = [];
     categories = [];
@@ -116,7 +118,11 @@ function doMessage(sender, event)
     if (categoriesSelected == 1 && descLong.length == 0) {
         descLong = message;
         console.log("DescLong: " + descLong);
-        askAuthor(sender);
+        if (platform == 'wordpress') {
+            askAuthor(sender);
+        } else {
+            askTime(sender);
+        }
         return;
     }
 }
@@ -178,10 +184,11 @@ function doLinking(sender, event)
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id : sender}, function(err, res, body) {
                 try {
                     body = JSON.parse(body);
+                    platform = body.platform;
                     for (const property in body.categories) {
                         allCategories.push(property);
                     }
-                    if (body.platform == 'wordpress') {
+                    if (platform == 'wordpress') {
                         for (const property in body.authors) {
                             allAuthors.push(property);
                         }
@@ -413,7 +420,7 @@ function sendTextMessage(sender, msgData, index, indexLimit, callback)
         if (callback != undefined && index < indexLimit) {
             callback(sender, msgData, index + 1, indexLimit, callback);
         }
-        else if (author.length != 0 && time.length == 0 && index >= indexLimit) {
+        else if ((author.length != 0 || platform == 'wall') && time.length == 0 && index >= indexLimit) {
             askTime(sender);
         }
     });
