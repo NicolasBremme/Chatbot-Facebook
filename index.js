@@ -179,6 +179,7 @@ function doLinking(sender, event)
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id : sender}, function(err, res, body) {
                 body = JSON.parse(body);
                 body.categories.forEach((element, index) => {
+                    console.log(index);
                     allCategories.push(index);
                 });
                 console.log(allCategories);
