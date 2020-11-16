@@ -190,8 +190,8 @@ function doLinking(sender, event)
                     }
                     if (platform == 'wordpress') {
                         for (const property in body.authors) {
-                            console.log(property);
-                            allAuthors.push(property);
+                            console.log(body.authors[property]);
+                            allAuthors.push(body.authors[property].username);
                         } console.log(allAuthors);
                     }
                     askCategories(sender);
