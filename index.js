@@ -175,7 +175,7 @@ function doLinking(sender, event)
         if (linking.status == 'linked') {
             isConnected = 1;
             console.log('Auth code : ' + linking.authorization_code);
-            console.log('Sender id when linking : ' + sender);
+            console.log('Sender id when linking account : ' + sender);
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id : sender}, function(err, res, body) {
                 body = JSON.parse(body);
                 console.log(body);
