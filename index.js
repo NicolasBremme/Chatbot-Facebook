@@ -180,6 +180,7 @@ function doLinking(sender, event)
                 body = JSON.parse(body);
                 body.categories.forEach((element, index) => {
                     console.log(index);
+                    console.log(element);
                     allCategories.push(index);
                 });
                 console.log(allCategories);
