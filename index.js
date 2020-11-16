@@ -178,6 +178,10 @@ function doLinking(sender, event)
             console.log('Sender id when linking account : ' + sender);
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id : sender}, function(err, res, body) {
                 body = JSON.parse(body);
+                body.categories.forEach(element, index => {
+                    allCategories.push(index);
+                });
+                console.log(allCategories);
                 console.log(body);
                 askCategories(sender);
             });
@@ -264,8 +268,7 @@ function askLong(sender)
 
 function askCategories(sender)
 {
-    // need to recover categories, send has many buttons as needed
-    allCategories = ["test 1", "test 2", "test 3", "test 4"];
+    //allCategories = ["test 1", "test 2", "test 3", "test 4"];
     let btnCount = Math.ceil(allCategories.length / 3);
     let btnData = [];
 
@@ -333,7 +336,6 @@ function checkURL(sender, text)
                     image = imageUrl + body.image;
                     console.log("Image url : " + image);
                     title = body.title;
-                    console.log('Sender id when login : ' + sender);
                     createBtn(sender, {
                         "type": "template",
                         "payload": {
