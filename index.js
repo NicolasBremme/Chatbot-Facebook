@@ -23,6 +23,75 @@ let port = (process.env.PORT || 5000);
 app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
+const getRandom = (min, max) => (Math.random() * ((max - min) + min));
+
+//Quand le tweet est bon
+var rewardsUrlOk = [
+    "Génial ce tweet ! \u{1F609}",
+    "Super tweet ! \u{1F929}",
+    "Beau travail !  \u{1F642}",
+	"Well done ! \u{1F917}",
+	"Very well \u{1F618}",
+	"Very good \u{1F44D}",
+	"Bravo \u{1F44F}",
+	"Tweet validé \u{1F642}",
+	"Good work \u{1F44A}",
+	"Tweet ok \u{1F3FE}",
+	"Ton tweet est excellent \u{1F60E}",
+	"Géniiiiial !!!!! \u{1F60D}",
+	"Bon boulot !!! \u{1F601}"
+];
+
+//Quand catégories ok
+var rewardsCategoriesOk = [
+    "Super ! \u{1F60F}",
+    "Catégorie validée ! \u{1F603}",
+    "Great job \u{1F609}",
+	"Bon boulot \u{1F601}",
+	"Bonne déduction \u{1F638}",
+	"Excellent choix de catégorie \u{1F609}",
+	"Catégorie acceptée \u{1F61C}",
+	"Good \u{1F61C}",
+	"Très bien \u{1F609}",
+	"Perfect \u{1F60F}",
+	"Epatant \u{1F60A}",
+	"Vous faites un travail admirable \u{1F603}"
+];
+
+//Quand insight ok
+var rewardsInsightOk = [
+    "Super commentaire \u{1F604}",
+    "Génial ! \u{1F603}",
+    "Commentaire validé \u{1F60F}",
+	"Commentaire intéressant ! \u{1F60F}",
+	"Great ! \u{1F63A}",
+	"Great work ! \u{1F60F}",
+	"Excellent \u{1F440}",
+	"Très bien \u{1F609}",
+	"Geniiiial \u{1F604}",
+	"Good commentary \u{1F60A}",
+	"Très intéressant ! \u{1F642}",
+	"Very interesting! \u{1F44A}",
+	"Beau travail ! \u{1F607}"
+];
+
+//Quand publication OK
+var rewardsPublishOk = [
+    "Bravooo \u{1F60F}",
+    "Goooaaaal \u{1F603}",
+    "Good game ! \u{1F604}",
+	"Au top \u{1F917}",
+	"Bien joué ! \u{1F60A}",
+	"Congratulatiiion \u{1F389}",
+	"Votre article vient d’être publié \u{1F60C}",
+	"Félicitation \u{1F44C}",
+	"Vous avez réussi votre publication ! \u{1F604}",
+	"Article published \u{1F642}",
+	"Excellent travail \u{2705}",
+	"Parfait \u{1F63B}",
+	"Bravo !!!!!! \u{1F340}"
+];
+
 let sender = null,
     urlEntered = 0,
     isConnected = 0,
@@ -165,7 +234,7 @@ function doPostback(sender, event)
             sendTextMessage(sender, {text: "Ok, la publication est annulée."});
         }
         else {
-            sendTextMessage(sender, {text: "Ok, la publication est programmé !"});
+            sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
             // need to program the post on kurator
         }
         resetValues();
@@ -190,9 +259,8 @@ function doLinking(sender, event)
                     }
                     if (platform == 'wordpress') {
                         for (const property in body.authors) {
-                            console.log(body.authors[property]);
                             allAuthors.push(body.authors[property].username);
-                        } console.log(allAuthors);
+                        }
                     }
                     askCategories(sender);
                 }
@@ -249,7 +317,6 @@ function showPostInfo(sender)
 
 function askAuthor(sender)
 {
-    //allAuthors = ["test 1", "test 2", "test 3", "test 4", "test 5", "test 6"];
     let btnCount = Math.ceil(allAuthors.length / 3);
     let btnData = [];
 
@@ -276,7 +343,7 @@ function askAuthor(sender)
 
 function askLong(sender)
 {
-    const textDescLong = {text: "Entrez votre description."};
+    const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + "Entrez votre description :"};
 
     skip = 2;
     sendTextMessage(sender, textDescLong);
@@ -284,7 +351,6 @@ function askLong(sender)
 
 function askCategories(sender)
 {
-    //allCategories = ["test 1", "test 2", "test 3", "test 4"];
     let btnCount = Math.ceil(allCategories.length / 3);
     let btnData = [];
 
