@@ -95,6 +95,7 @@ var rewardsPublishOk = [
 let sender = null,
     urlEntered = 0,
     isConnected = 0,
+    articleUrl = "",
     platform = "",
     allCategories = [],
     allAuthors = [],
@@ -105,6 +106,7 @@ let sender = null,
     author = "",
     title = "",
     image = "",
+    desc = "",
     time = "";
 
 function resetValues()
@@ -112,6 +114,7 @@ function resetValues()
     sender = null;
     urlEntered = 0;
     isConnected = 0;
+    articleUrl = "";
     platform = "";
     allCategories = [];
     allAuthors = [];
@@ -122,6 +125,7 @@ function resetValues()
     author = "";
     title = "";
     image = "";
+    desc = "";
     time = "";
     console.log("Reset done.");
 }
@@ -217,13 +221,13 @@ function doPostback(sender, event)
                 }
             }
             if (newCategorie == 1) {
-                categories.push(payload);
+                categories.push(allCategories[parseInt(payload)]);
             }
             return;
         }
     }
     if (author.length == 0) {
-        author = payload;
+        author = allAuthors[parseInt(payload)];
         console.log("Author : " + author);
         showPostInfo(sender);
         return;
@@ -234,7 +238,18 @@ function doPostback(sender, event)
             sendTextMessage(sender, {text: "Ok, la publication est annulée."});
         }
         else {
+            let postInfos = {
+                extern_id: sender,
+                title: title,
+                description: desc,
+                image: image,
+                link: articleUrl,
+                categories: categoriesSelected,
+            }
             sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
+            kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
+                console.log('ok');
+            });
             // need to program the post on kurator
         }
         resetValues();
@@ -250,7 +265,7 @@ function doLinking(sender, event)
         if (linking.status == 'linked') {
             isConnected = 1;
             console.log('Auth code : ' + linking.authorization_code);
-            kuratorRequest('/api/getCategoriesAndAuthors', {extern_id : sender}, function(err, res, body) {
+            kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: sender}, function(err, res, body) {
                 try {
                     body = JSON.parse(body);
                     platform = body.platform;
@@ -297,7 +312,7 @@ function askTime(sender)
 function showPostInfo(sender)
 {
     let showInfoText = [
-        {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + "Voici les informations de votre post :"},
+        {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"},
         {text: title},
         {text: descLong},
         {
@@ -411,18 +426,19 @@ function checkURL(sender, text)
     if (urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         urlEntered = 1;
+        articleUrl = text;
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
                     image = imageUrl + body.image;
-                    console.log("Image url : " + image);
                     title = body.title;
+                    desc = body.description;
                     createBtn(sender, {
                         "type": "template",
                         "payload": {
                             "template_type": "button",
-                            "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + "Veuillez vous connecter à Kurator :",
+                            "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + " Veuillez vous connecter à Kurator :",
                             "buttons": [
                                 {"type": "account_link", "url": kuratorUrl + '?extern_id=' + sender},
                             ]
