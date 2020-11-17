@@ -245,7 +245,9 @@ function doPostback(sender, event)
                 image: image,
                 link: articleUrl,
                 categories: categoriesSelected,
-            }
+                author: author,
+                userDesc: descLong,
+            };
             sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 console.log('ok');
