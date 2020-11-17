@@ -250,7 +250,7 @@ function doPostback(sender, event)
             };
             sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
-                console.log('ok');
+                console.log(body);
             });
             // need to program the post on kurator
         }
