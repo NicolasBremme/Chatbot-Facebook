@@ -247,9 +247,11 @@ function doPostback(sender, event)
                 categories: categoriesSelected,
                 author: author,
                 userDesc: descLong,
+                time: time
             };
             sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
+                body = JSON.parse(body);
                 console.log(body);
             });
             // need to program the post on kurator
