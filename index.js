@@ -432,6 +432,7 @@ function checkURL(sender, text)
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
                 body = JSON.parse(body);
+                console.log('itemParsed');
                 console.log(body.itemParsed);
                 if (body.hasError == false && body.parseError == false) {
                     image = imageUrl + body.image;
