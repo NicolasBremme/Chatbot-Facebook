@@ -265,8 +265,6 @@ function doLinking(sender, event)
 {
     let linking = event.account_linking;
   	
-  	console.log(linking);
-
     if (isConnected == 0) {
         if (linking.status == 'linked') {
             isConnected = 1;
@@ -438,6 +436,7 @@ function checkURL(sender, text)
                 body = JSON.parse(body);
                 console.log('itemParsed');
                 console.log(body.itemParsed);
+                console.log(body);
                 if (body.hasError == false && body.parseError == false) {
                     image = imageUrl + body.image;
                     title = body.title;
