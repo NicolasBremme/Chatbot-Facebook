@@ -264,6 +264,8 @@ function doPostback(sender, event)
 function doLinking(sender, event)
 {
     let linking = event.account_linking;
+  	
+  	console.log(linking);
 
     if (isConnected == 0) {
         if (linking.status == 'linked') {
