@@ -274,7 +274,7 @@ function doLinking(sender, event)
                     body = JSON.parse(body);
                     platform = body.platform;
                     console.log('response line 277:');
-                    console.log(body.wpcredentials);
+                    console.log(body);
                     for (const property in body.categories) {
                         allCategories.push(property);
                     }
