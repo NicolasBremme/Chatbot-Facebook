@@ -370,6 +370,7 @@ function askLong(sender)
 
 function askCategories(sender)
 {
+	console.log('this is askCategories function');
     let btnCount = Math.ceil(allCategories.length / 3);
     let btnData = [];
 
