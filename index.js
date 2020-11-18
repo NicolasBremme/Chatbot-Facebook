@@ -273,6 +273,7 @@ function doLinking(sender, event)
                 try {
                     body = JSON.parse(body);
                     platform = body.platform;
+                    console.log(body.categories);
                     for (const property in body.categories) {
                         allCategories.push(property);
                     }
@@ -370,7 +371,7 @@ function askLong(sender)
 
 function askCategories(sender)
 {
-	console.log(allCategories);
+	console.log('allCategories' + allCategories);
     let btnCount = Math.ceil(allCategories.length / 3);
     let btnData = [];
 
