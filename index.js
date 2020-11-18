@@ -273,7 +273,8 @@ function doLinking(sender, event)
                 try {
                     body = JSON.parse(body);
                     platform = body.platform;
-                    console.log(body.categories);
+                    console.log('response line 277:');
+                    console.log(body);
                     for (const property in body.categories) {
                         allCategories.push(property);
                     }
