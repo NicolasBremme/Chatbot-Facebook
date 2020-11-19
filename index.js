@@ -340,7 +340,7 @@ function showPostInfo(sender)
             attachment: {
                 type: "image",
                 payload: {
-                    url: image
+                    url: imageUrl + image
                 }
             }
         }
@@ -452,7 +452,7 @@ function checkURL(sender, text)
             try {
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
-                    image = imageUrl + body.image;
+                    image = body.image;
                     title = body.title;
                     desc = body.description;
                     createBtn(sender, {
