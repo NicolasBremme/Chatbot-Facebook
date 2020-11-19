@@ -98,7 +98,9 @@ let sender = null,
     articleUrl = "",
     platform = "",
     allCategories = [],
+    allCategoriesId = [],
     allAuthors = [],
+    allAuthorsId = [],
     categories = [],
     categoriesSelected = 0,
     skip = 0,
@@ -117,7 +119,9 @@ function resetValues()
     articleUrl = "";
     platform = "";
     allCategories = [];
+    allCategoriesId = [];
     allAuthors = [];
+    allAuthorsId = [];
     categories = [];
     categoriesSelected = 0;
     skip = 0;
@@ -221,13 +225,13 @@ function doPostback(sender, event)
                 }
             }
             if (newCategorie == 1) {
-                categories.push(allCategories[parseInt(payload)]);
+                categories.push(allCategoriesId[parseInt(payload)]);
             }
             return;
         }
     }
     if (author.length == 0) {
-        author = allAuthors[parseInt(payload)];
+        author = allAuthorsId[parseInt(payload)];
         console.log("Author : " + author);
         showPostInfo(sender);
         return;
@@ -249,20 +253,20 @@ function doPostback(sender, event)
                 userDesc: descLong,
                 time: time
             };
-            console.log(postInfos);
-            
-            sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 try{
-                	body = JSON.parse(body);
-                	console.log(body);
-            	}catch{
+                    body = JSON.parse(body);
+                    if (body.hasError == false) {
+                        sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
+                    } else {
+            		    sendTextMessage(sender, {text: "Une erreur s'est produite lors de l'enregistrement de l'article"});
+                    }
+            	} catch {
             		sendTextMessage(sender, {text: "Une erreur s'est produite lors de l'enregistrement de l'article"});
                     resetValues();
                     return;
             	}
             });
-            // need to program the post on kurator
         }
         resetValues();
         return;
@@ -272,7 +276,7 @@ function doPostback(sender, event)
 function doLinking(sender, event)
 {
     let linking = event.account_linking;
-  	
+
     if (isConnected == 0) {
         if (linking.status == 'linked') {
             isConnected = 1;
@@ -281,10 +285,9 @@ function doLinking(sender, event)
                 try {
                     body = JSON.parse(body);
                     platform = body.platform;
-                    console.log('response line 277:');
-                    console.log(body);
                     for (const property in body.categories) {
                         allCategories.push(property);
+                        allCategoriesId.push(body.categories[property]);
                     }
                     if (platform == 'wordpress') {
                         for (const property in body.authors) {
@@ -380,7 +383,6 @@ function askLong(sender)
 
 function askCategories(sender)
 {
-	console.log('allCategories' + allCategories);
     let btnCount = Math.ceil(allCategories.length / 3);
     let btnData = [];
 
@@ -445,9 +447,6 @@ function checkURL(sender, text)
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
                 body = JSON.parse(body);
-                console.log('itemParsed');
-                console.log(body.itemParsed);
-                console.log(body);
                 if (body.hasError == false && body.parseError == false) {
                     image = imageUrl + body.image;
                     title = body.title;
