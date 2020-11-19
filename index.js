@@ -7,7 +7,7 @@ const kuratorUrl = "https://preprod.kurator.fr",
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const { fstat } = require('fs');
 const { parse } = require('path');
-// Imports dependencies and set up http server
+//  Imports dependencies and set up http server
 const
     request = require('request'),
     express = require('express'),
