@@ -252,7 +252,7 @@ function doPostback(sender, event)
                 author: author,
                 userDesc: descLong,
                 time: time
-            };
+            }; console.log(postInfos);
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 try{
                     body = JSON.parse(body);
