@@ -292,6 +292,7 @@ function doLinking(sender, event)
                     if (platform == 'wordpress') {
                         for (const property in body.authors) {
                             allAuthors.push(body.authors[property].username);
+                            allAuthorsId.push(property);
                         }
                     }
                     askCategories(sender);
