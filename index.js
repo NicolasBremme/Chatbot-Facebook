@@ -251,8 +251,14 @@ function doPostback(sender, event)
             };
             sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
-                body = JSON.parse(body);
-                console.log(body);
+                try{
+                	body = JSON.parse(body);
+                	console.log(body);
+            	}catch{
+            		sendTextMessage(sender, {text: "Une erreur s'est produite lors de l'enregistrement de l'article"});
+                    resetValues();
+                    return;
+            	}
             });
             // need to program the post on kurator
         }
