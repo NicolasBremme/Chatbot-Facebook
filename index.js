@@ -249,6 +249,8 @@ function doPostback(sender, event)
                 userDesc: descLong,
                 time: time
             };
+            console.log(postInfos);
+            
             sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 try{
