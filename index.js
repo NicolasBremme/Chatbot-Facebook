@@ -521,9 +521,6 @@ function sendTextMessage(sender, msgData, index, indexLimit, callback)
         else if (response.body.error) {
             console.log('Error: ', response.body.error);
         }
-        if (platform == 'wall') {
-            resetValues();
-        }
         if (callback != undefined && index < indexLimit) {
             callback(sender, msgData, index + 1, indexLimit, callback);
         }
