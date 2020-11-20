@@ -230,7 +230,7 @@ function doPostback(sender, event)
             return;
         }
     }
-    if (author.length == 0) {
+    if (author.length == 0 || platform == 'wall') {
         author = allAuthorsId[parseInt(payload)];
         console.log("Author : " + author);
         showPostInfo(sender);
