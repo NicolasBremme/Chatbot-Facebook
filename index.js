@@ -256,6 +256,7 @@ function doPostback(sender, event)
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 try{
                     body = JSON.parse(body);
+                    console.log(body);
                     if (body.hasError == false) {
                         sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                     } else {
