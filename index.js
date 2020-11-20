@@ -525,6 +525,9 @@ function sendTextMessage(sender, msgData, index, indexLimit, callback)
         }
         else if ((platform == 'wall' || author.length != 0) && time.length == 0 && index >= indexLimit) {
             askTime(sender);
+            if (platform == 'wall') {
+                resetValues();
+            }
         }
     });
 }
