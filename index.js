@@ -467,7 +467,11 @@ function checkURL(sender, text)
                     });
                 }
                 else {
-                    sendTextMessage(sender, {text: body.error});
+                    if(body.error == 'Cannot parse the article.'){
+                        sendTextMessage(sender, {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614}. Nous manquons d\'informations'});
+                    }else{
+                        sendTextMessage(sender, {text: body.error});
+                    } 
                 }
             }
             catch {
