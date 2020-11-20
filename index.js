@@ -198,7 +198,7 @@ function doMessage(sender, event)
         if (platform == 'wordpress') {
             askAuthor(sender);
         } else {
-            askTime(sender);
+            showPostInfo(sender);
         }
         return;
     }
@@ -255,9 +255,7 @@ function doPostback(sender, event)
             }; console.log(postInfos);
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 try{
-
                     body = JSON.parse(body);
-                   
                     if (body.hasError == false) {
                         sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                     } else {
@@ -265,7 +263,6 @@ function doPostback(sender, event)
                         resetValues();
                         return;
                     }
-            	
                 } catch {
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
                     resetValues();
