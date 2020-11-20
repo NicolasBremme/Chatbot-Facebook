@@ -230,7 +230,7 @@ function doPostback(sender, event)
             return;
         }
     }
-    if (author.length == 0 || platform == 'wall') {
+    if (platform == 'wordpress' && author.length == 0) {
         author = allAuthorsId[parseInt(payload)];
         console.log("Author : " + author);
         showPostInfo(sender);
@@ -270,7 +270,6 @@ function doPostback(sender, event)
             	}
             });
         }
-        resetValues();
         return;
     }
 }
