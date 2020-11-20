@@ -255,21 +255,19 @@ function doPostback(sender, event)
             }; console.log(postInfos);
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 try{
-                    console.log('body before parse');
-                    console.log(body);
+
                     body = JSON.parse(body);
-                    console.log('body after parse');
-                    console.log(body);
                    
                     if (body.hasError == false) {
                         sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                     } else {
             		    sendTextMessage(sender, {text: body.error});
+                        resetValues();
+                        return;
                     }
             	
                 } catch {
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-            		//sendTextMessage(sender, {text: "Une erreur s'est produite lors de l'enregistrement de l'article"});
                     resetValues();
                     return;
             	}
@@ -305,7 +303,7 @@ function doLinking(sender, event)
                     askCategories(sender);
                 }
                 catch {
-                    sendTextMessage(sender, {text: "Une erreur s'est produite."});
+                    sendTextMessage(sender, {text: "Une erreur s'est produite. 2"});
                     resetValues();
                     return;
                 }
@@ -475,7 +473,7 @@ function checkURL(sender, text)
                 }
             }
             catch {
-                sendTextMessage(sender, {text: "Une erreur s'est produite."});
+                sendTextMessage(sender, {text: "Une erreur s'est produite. 2 1"});
                 resetValues();
                 return;
             }
