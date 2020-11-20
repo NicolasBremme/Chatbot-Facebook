@@ -255,15 +255,19 @@ function doPostback(sender, event)
             }; console.log(postInfos);
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 try{
-                    console.log(bpdy);
-                    body = JSON.parse(body);
+                    console.log('body before parse');
                     console.log(body);
+                    body = JSON.parse(body);
+                    console.log('body after parse');
+                    console.log(body);
+                   
                     if (body.hasError == false) {
                         sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                     } else {
-            		    sendTextMessage(sender, {text: "Une erreur s'est produite lors de l'enregistrement de l'article"});
+            		    sendTextMessage(sender, {text: body.error});
                     }
-            	} catch {
+            	
+                } catch {
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
             		//sendTextMessage(sender, {text: "Une erreur s'est produite lors de l'enregistrement de l'article"});
                     resetValues();
