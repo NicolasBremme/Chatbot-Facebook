@@ -1,6 +1,6 @@
 'use strict';
 
-const VERIFY_TOKEN = "EAAFDmBZCfuxQBAMGHVM2AdxVn9x9MoP3qEcV4dFcZCr4NpiMM3vQsnrHgXfuwqGgxK1J6SCHGZA6KrjZBDPKcYNTGLRHVyv9DawNqo7jKVKhvS9EqW6paTej0cNOyuBcM78KlTH32RnrIoPbJRClGO2ujhA9o4aqrU0xcBCgDQZDZD",
+const VERIFY_TOKEN = "EAAGCK9WZBPQoBACYP1fni5PrXRyc9Y8Vds5zEJ9iEmkhD5ce46duKxz3ZBdhegXbcVZAsYMZC6A264NEULaDyB8Bly2znNNSty63f2vH9QofjFlfzilZBCawZA3bnew2sku7kdaOKg5DKMBGphs6MrU1dX8ZCjtCIYxtvq6dPk9TgZDZD",
     appUrl = "https://test--chatbot.herokuapp.com";
 const kuratorUrl = "https://app.kurator.fr",
     imageUrl = "http://image-kurator.fr/app";
