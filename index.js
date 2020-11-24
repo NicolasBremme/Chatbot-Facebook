@@ -427,6 +427,7 @@ function askCategories(sender)
 function kuratorRequest(uri, param, callback)
 {
     let url = (uri.match(/http/g)) ? uri : kuratorUrl + uri;
+    console.log('URL: ' + url);
     let headers = {
         'User-Agent': 'Chatbot',
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -474,7 +475,7 @@ function checkURL(sender, text)
 
                     }else{
                         sendTextMessage(sender, {text: body.error});
-                    } 
+                    }
                     resetValues();
                 }
             }
