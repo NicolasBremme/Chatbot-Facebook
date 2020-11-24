@@ -260,6 +260,7 @@ function doPostback(sender, event)
                     console.log(body);
                     if (body.hasError == false) {
                         sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
+                        resetValues();
                     } else {
             		    sendTextMessage(sender, {text: body.error});
                         resetValues();
