@@ -284,7 +284,7 @@ function doLinking(sender, event)
         if (linking.status == 'linked') {
             isConnected = 1;
             console.log('Auth code : ' + linking.authorization_code);
-            kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: sender}, function(err, res, body) {
+            kuratorRequest('https://app.kurator.fr/api/getCategoriesAndAuthors', {extern_id: sender}, function(err, res, body) {
                 try {
                     body = JSON.parse(body);
                     platform = body.platform;
@@ -301,7 +301,7 @@ function doLinking(sender, event)
                     askCategories(sender);
                 }
                 catch {
-                    sendTextMessage(sender, {text: "Une erreur s'est produite. 2"});
+                    sendTextMessage(sender, {text: "Une erreur s'est produite. [2]"});
                     resetValues();
                     return;
                 }
@@ -426,16 +426,18 @@ function askCategories(sender)
 
 function kuratorRequest(uri, param, callback)
 {
+    let url = (uri.match(/http/g)) ? uri : kuratorUrl + uri;
     let headers = {
         'User-Agent': 'Chatbot',
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     let option = {
-        url: kuratorUrl + uri,
+        url: url,
         method: "POST",
         headers: headers,
         form: param
     }
+
     request(option, callback);
 }
 
@@ -477,7 +479,7 @@ function checkURL(sender, text)
                 }
             }
             catch {
-                sendTextMessage(sender, {text: "Une erreur s'est produite. 2 1"});
+                sendTextMessage(sender, {text: "Une erreur s'est produite. [1]"});
                 resetValues();
                 return;
             }
