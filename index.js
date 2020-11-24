@@ -452,7 +452,7 @@ function checkURL(sender, text)
         console.log('Looks like an URI');
         urlEntered = 1;
         articleUrl = text;
-        kuratorRequest("https://app.kurator.fr/api/getArticleInfo", reqParam, function(err, res, body) {
+        kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
