@@ -215,7 +215,6 @@ function doPostback(user, event)
     if (user.categoriesSelected == 0) {
         if (payload == "send" && user.categories.length != 0) {
             user.categoriesSelected = 1;
-            user.skip--;
             askLong(user);
             return;
         }
@@ -388,7 +387,7 @@ function askLong(user)
 {
     const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
 
-    user.skip = 2;
+    user.skip = 1;
     sendTextMessage(user, textDescLong);
 }
 
