@@ -259,6 +259,7 @@ function doPostback(user, event)
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 try {
                     body = JSON.parse(body);
+                    let user = allUsers[body.sender];
                     if (body.hasError == false) {
                         sendTextMessage(user, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                     } else {
@@ -287,6 +288,7 @@ function doLinking(user, event)
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
                 try {
                     body = JSON.parse(body);
+                    let user = allUsers[body.sender];
                     user.platform = body.platform;
                     for (const property in body.categories) {
                         user.allCategories.push(property);
@@ -443,7 +445,10 @@ function kuratorRequest(uri, param, callback)
 
 function checkURL(user, text)
 {
-    let reqParam = {url: text};
+    let reqParam = {
+        url: text,
+        sender: sender
+    };
 
     console.log("Message: " + text);
     if (user.urlEntered == 0 && validUrl.isUri(text)){
