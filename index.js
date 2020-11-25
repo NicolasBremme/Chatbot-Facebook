@@ -94,7 +94,7 @@ var rewardsPublishOk = [
 
 let allUsers = {};
 
-let USER = {
+let userTest = {
     sender : 0,
     urlEntered : 0,
     isConnected : 0,
@@ -147,7 +147,7 @@ app.post('/webhook/', function (req, res)
         let sender = event.sender.id;
 
         if (undefined === allUsers[sender]) {
-            let tempUser = Object.create(USER);
+            let tempUser = Object.create(userTest);
             console.log(tempUser);
             allUsers[sender] = tempUser;
             allUsers[sender].sender = sender;
