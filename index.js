@@ -96,26 +96,27 @@ let allUsers = {};
 
 function createUser()
 {
-    let user = {};
+    let user = {
+        sender: 0,
+        urlEntered: 0,
+        isConnected: 0,
+        articleUrl: "",
+        platform: "",
+        allCategories: [],
+        allCategoriesId: [],
+        allAuthors: [],
+        allAuthorsId: [],
+        categories: [],
+        categoriesSelected: 0,
+        skip: 0,
+        descLong: "",
+        author: "",
+        title: "",
+        image: "",
+        desc: "",
+        time: "",
+    };
 
-    user.sender = 0;
-    user.urlEntered = 0;
-    user.isConnected = 0;
-    user.articleUrl = "";
-    user.platform = "";
-    user.allCategories = [];
-    user.allCategoriesId = [];
-    user.allAuthors = [];
-    user.allAuthorsId = [];
-    user.categories = [];
-    user.categoriesSelected = 0;
-    user.skip = 0;
-    user.descLong = "";
-    user.author = "";
-    user.title = "";
-    user.image = "";
-    user.desc = "";
-    user.time = "";
     return user;
 }
 
