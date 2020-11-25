@@ -259,11 +259,12 @@ function doPostback(user, event)
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
                 try {
                     body = JSON.parse(body);
+                    let sender = parseInt(body.sender);
 
                     if (body.hasError == false) {
-                        sendTextMessage(allUsers[body.sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
+                        sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                     } else {
-            		    sendTextMessage(allUsers[body.sender], {text: body.error});
+            		    sendTextMessage(allUsers[sender], {text: body.error});
                         return;
                     }
                 } catch {
@@ -288,23 +289,24 @@ function doLinking(user, event)
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
                 try {
                     body = JSON.parse(body);
+                    let sender = parseInt(body.sender);
 
-                    allUsers[body.sender].platform = body.platform;
+                    allUsers[sender].platform = body.platform;
                     for (const property in body.categories) {
-                        allUsers[body.sender].allCategories.push(property);
-                        allUsers[body.sender].allCategoriesId.push(body.categories[property]);
+                        allUsers[sender].allCategories.push(property);
+                        allUsers[sender].allCategoriesId.push(body.categories[property]);
                     }
-                    if (allUsers[body.sender].platform == 'wordpress') {
+                    if (allUsers[sender].platform == 'wordpress') {
                         for (const property in body.authors) {
-                            allUsers[body.sender].allAuthors.push(body.authors[property].username);
-                            allUsers[body.sender].allAuthorsId.push(property);
+                            allUsers[sender].allAuthors.push(body.authors[property].username);
+                            allUsers[sender].allAuthorsId.push(property);
                         }
                     }
-                    askCategories(allUsers[body.sender]);
+                    askCategories(allUsers[sender]);
                 }
                 catch {
-                    sendTextMessage(allUsers[body.sender], {text: "Une erreur s'est produite. [2]"});
-                    resetValues(allUsers[body.sender]);
+                    sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
+                    resetValues(allUsers[sender]);
                     return;
                 }
             });
@@ -458,33 +460,34 @@ function checkURL(user, text)
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
                 body = JSON.parse(body);
+                let sender = parseInt(body.sender);
 
                 if (body.hasError == false && body.parseError == false) {
-                    allUsers[body.sender].image = body.image;
-                    allUsers[body.sender].title = body.title;
-                    allUsers[body.sender].desc = body.description;
-                    createBtn(allUsers[body.sender].sender, {
+                    allUsers[sender].image = body.image;
+                    allUsers[sender].title = body.title;
+                    allUsers[sender].desc = body.description;
+                    createBtn(allUsers[sender].sender, {
                         "type": "template",
                         "payload": {
                             "template_type": "button",
                             "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + " Veuillez vous connecter à Kurator :",
                             "buttons": [
-                                {"type": "account_link", "url": kuratorUrl + '?extern_id=' + body.sender},
+                                {"type": "account_link", "url": kuratorUrl + '?extern_id=' + sender},
                             ]
                         }
                     });
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
-                        sendTextMessage(allUsers[body.sender], {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations'});
+                        sendTextMessage(allUsers[sender], {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations'});
                     } else {
-                        sendTextMessage(allUsers[body.sender], {text: body.error});
+                        sendTextMessage(allUsers[sender], {text: body.error});
                     }
-                    resetValues(allUsers[body.sender]);
+                    resetValues(allUsers[sender]);
                 }
             } catch {
-                sendTextMessage(allUsers[body.sender], {text: "Une erreur s'est produite. [1]"});
-                resetValues(allUsers[body.sender]);
+                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [1]"});
+                resetValues(allUsers[sender]);
                 return;
             }
         });
