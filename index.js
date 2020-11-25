@@ -95,24 +95,24 @@ var rewardsPublishOk = [
 let allUsers = {};
 
 let USER = {
-    sender = 0,
-    urlEntered = 0,
-    isConnected = 0,
-    articleUrl = "",
-    platform = "",
-    allCategories = [],
-    allCategoriesId = [],
-    allAuthors = [],
-    allAuthorsId = [],
-    categories = [],
-    categoriesSelected = 0,
-    skip = 0,
-    descLong = "",
-    author = "",
-    title = "",
-    image = "",
-    desc = "",
-    time = ""
+    sender : 0,
+    urlEntered : 0,
+    isConnected : 0,
+    articleUrl : "",
+    platform : "",
+    allCategories : [],
+    allCategoriesId : [],
+    allAuthors : [],
+    allAuthorsId : [],
+    categories : [],
+    categoriesSelected : 0,
+    skip : 0,
+    descLong : "",
+    author : "",
+    title : "",
+    image : "",
+    desc : "",
+    time : ""
 };
 
 function resetValues(user)
