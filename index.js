@@ -381,7 +381,7 @@ function askLong(user)
 {
     const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
 
-    skip = 2;
+    user.skip = 2;
     sendTextMessage(user.sender, textDescLong);
 }
 
@@ -445,6 +445,7 @@ function checkURL(user, text)
 {
     let reqParam = {url: text};
 
+    console.log(user);
     console.log("Message: " + text);
     if (user.urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
