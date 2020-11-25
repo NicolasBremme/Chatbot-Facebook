@@ -463,13 +463,12 @@ function checkURL(user, text)
             try {
                 body = JSON.parse(body);
                 let sender = parseInt(body.sender);
-                console.log(allUsers[sender]);
 
                 if (body.hasError == false && body.parseError == false) {
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    createBtn(allUsers[sender].sender, {
+                    createBtn(allUsers[sender], {
                         "type": "template",
                         "payload": {
                             "template_type": "button",
@@ -493,17 +492,16 @@ function checkURL(user, text)
                 resetValues(allUsers[sender]);
                 return;
             }
+            console.log("User:");
+            console.log(user);
         });
     } else {
         console.log('Not an URI');
     }
-    console.log("User:");
-    console.log(user);
 }
 
 function createBtn(user, btnData, index, indexLimit, callback)
 {
-    console.log(user.sender);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:VERIFY_TOKEN},
@@ -527,7 +525,6 @@ function createBtn(user, btnData, index, indexLimit, callback)
 
 function sendTextMessage(user, msgData, index, indexLimit, callback)
 {
-    console.log(user.sender);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:VERIFY_TOKEN},
