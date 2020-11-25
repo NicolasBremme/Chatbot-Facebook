@@ -1,6 +1,6 @@
 'use strict';
 
-const VERIFY_TOKEN = "EAAFLuvjdPSMBAH4if8JQIVJ4wPVoayMTXZBGMaGnNrAmQqtTfhgDaAe5AfYKuHZCVBQJAiNDLUTw4aklaNFFfpEgauK1QYFCpvKCyZAI9xZAIExQRLArPsbWlZCfufqrodGT8ZC3wnZC0HH7qU5mRjd8Uh0qUGZCLCkJA3sePuBoDQZDZD",
+const VERIFY_TOKEN = "EAAGCK9WZBPQoBAHJw8WypcdSU9lsVwtqZBDRmaQEuWiQYL569rZCSwmfZCZA6M37DAlgoYlO209tEHAALywGDfE7SrKCZBo6FaYKK9KpzDws1hLZCGAUlywJAbBL2wWiDqR56sZAodr9RSbPNlNta0PViudfD0jMigFVgVB6UYvZBEwZDZD",
     appUrl = "https://test--chatbot.herokuapp.com";
 const kuratorUrl = "https://app.posteria.fr",
     imageUrl = "http://image-kurator.fr/app";
