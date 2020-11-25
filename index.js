@@ -94,32 +94,6 @@ var rewardsPublishOk = [
 
 let allUsers = {};
 
-function createUser()
-{
-    let user = {
-        sender: 0,
-        urlEntered: 0,
-        isConnected: 0,
-        articleUrl: "",
-        platform: "",
-        allCategories: [],
-        allCategoriesId: [],
-        allAuthors: [],
-        allAuthorsId: [],
-        categories: [],
-        categoriesSelected: 0,
-        skip: 0,
-        descLong: "",
-        author: "",
-        title: "",
-        image: "",
-        desc: "",
-        time: "",
-    };
-
-    return user;
-}
-
 function resetValues(user)
 {
     user.sender = 0;
@@ -152,13 +126,29 @@ app.post('/webhook/', function (req, res)
         let sender = event.sender.id;
 
         if (undefined === allUsers[sender]) {
-            let tempUser = createUser();
-
-            allUsers[sender] = tempUser;
-            allUsers[sender].sender = sender;
+            allUsers[sender] = {
+                sender: sender,
+                urlEntered: 0,
+                isConnected: 0,
+                articleUrl: "",
+                platform: "",
+                allCategories: [],
+                allCategoriesId: [],
+                allAuthors: [],
+                allAuthorsId: [],
+                categories: [],
+                categoriesSelected: 0,
+                skip: 0,
+                descLong: "",
+                author: "",
+                title: "",
+                image: "",
+                desc: "",
+                time: "",
+            };
         }
 
-        console.log(allUsers[sender].urlEntered);
+        console.log(allUsers[sender]);
         if (allUsers[sender].skip > 1) {
             allUsers[sender].skip--;
         }
