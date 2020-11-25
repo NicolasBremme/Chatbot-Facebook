@@ -149,7 +149,7 @@ app.post('/webhook/', function (req, res)
         }
 
         if (allUsers[sender].skip > 1) {
-            allUsers[sender].skip--;
+            allUsers[sender].skip -= 1;
         }
         else {
             if (event.message && event.message.text) {
@@ -197,9 +197,9 @@ function doMessage(user, event)
         user.skip = 1;
         return;
     }
-    if (user.categoriesSelected == 1 && descLong.length == 0) {
+    if (user.categoriesSelected == 1 && user.descLong.length == 0) {
         user.descLong = message;
-        if (platform == 'wordpress') {
+        if (user.platform == 'wordpress') {
             askAuthor(user);
         } else {
             showPostInfo(user);
