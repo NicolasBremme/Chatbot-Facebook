@@ -94,26 +94,30 @@ var rewardsPublishOk = [
 
 let allUsers = {};
 
-let userTest = {
-    sender : 0,
-    urlEntered : 0,
-    isConnected : 0,
-    articleUrl : "",
-    platform : "",
-    allCategories : [],
-    allCategoriesId : [],
-    allAuthors : [],
-    allAuthorsId : [],
-    categories : [],
-    categoriesSelected : 0,
-    skip : 0,
-    descLong : "",
-    author : "",
-    title : "",
-    image : "",
-    desc : "",
-    time : ""
-};
+function createUser()
+{
+    let user = {};
+
+    user.sender = 0;
+    user.urlEntered = 0;
+    user.isConnected = 0;
+    user.articleUrl = "";
+    user.platform = "";
+    user.allCategories = [];
+    user.allCategoriesId = [];
+    user.allAuthors = [];
+    user.allAuthorsId = [];
+    user.categories = [];
+    user.categoriesSelected = 0;
+    user.skip = 0;
+    user.descLong = "";
+    user.author = "";
+    user.title = "";
+    user.image = "";
+    user.desc = "";
+    user.time = "";
+    return user;
+}
 
 function resetValues(user)
 {
@@ -147,10 +151,8 @@ app.post('/webhook/', function (req, res)
         let sender = event.sender.id;
 
         if (undefined === allUsers[sender]) {
-            setTimeout(() => {
-                let tempUser = Object.create(userTest);
-                console.log(tempUser);
-            }, 500);
+            let tempUser = createUser();
+
             allUsers[sender] = tempUser;
             allUsers[sender].sender = sender;
         }
