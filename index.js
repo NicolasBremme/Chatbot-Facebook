@@ -148,7 +148,7 @@ app.post('/webhook/', function (req, res)
             };
         }
 
-        if (allUsers[sender].skip > 0) {
+        if (allUsers[sender].skip > 1) {
             allUsers[sender].skip -= 1;
         }
         else {
