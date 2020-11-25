@@ -479,14 +479,14 @@ function checkURL(user, text)
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
-                        sendTextMessage(user.sender, {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations'});
+                        sendTextMessage(user, {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations'});
                     } else {
-                        sendTextMessage(user.sender, {text: body.error});
+                        sendTextMessage(user, {text: body.error});
                     }
                     resetValues(user);
                 }
             } catch {
-                sendTextMessage(user.sender, {text: "Une erreur s'est produite. [1]"});
+                sendTextMessage(user, {text: "Une erreur s'est produite. [1]"});
                 resetValues(user);
                 return;
             }
