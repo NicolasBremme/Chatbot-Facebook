@@ -197,7 +197,7 @@ function doMessage(user, event)
         user.skip = 1;
         return;
     }
-    if (categoriesSelected == 1 && descLong.length == 0) {
+    if (user.categoriesSelected == 1 && descLong.length == 0) {
         user.descLong = message;
         if (platform == 'wordpress') {
             askAuthor(user);
