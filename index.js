@@ -92,7 +92,10 @@ var rewardsPublishOk = [
 	"Bravo !!!!!! \u{1F340}"
 ];
 
-let sender = null,
+let allUsers = {};
+
+let USER = {
+    sender = 0,
     urlEntered = 0,
     isConnected = 0,
     articleUrl = "",
@@ -109,28 +112,29 @@ let sender = null,
     title = "",
     image = "",
     desc = "",
-    time = "";
+    time = ""
+};
 
-function resetValues()
+function resetValues(user)
 {
-    sender = null;
-    urlEntered = 0;
-    isConnected = 0;
-    articleUrl = "";
-    platform = "";
-    allCategories = [];
-    allCategoriesId = [];
-    allAuthors = [];
-    allAuthorsId = [];
-    categories = [];
-    categoriesSelected = 0;
-    skip = 0;
-    descLong = "";
-    author = "";
-    title = "";
-    image = "";
-    desc = "";
-    time = "";
+    user.sender = 0;
+    user.urlEntered = 0;
+    user.isConnected = 0;
+    user.articleUrl = "";
+    user.platform = "";
+    user.allCategories = [];
+    user.allCategoriesId = [];
+    user.allAuthors = [];
+    user.allAuthorsId = [];
+    user.categories = [];
+    user.categoriesSelected = 0;
+    user.skip = 0;
+    user.descLong = "";
+    user.author = "";
+    user.title = "";
+    user.image = "";
+    user.desc = "";
+    user.time = "";
     console.log("Reset done.");
 }
 
@@ -140,21 +144,26 @@ app.post('/webhook/', function (req, res)
     let messaging_events = req.body.entry[0].messaging;
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i];
-        sender = event.sender.id;
+        let sender = event.sender.id;
 
-        if (skip > 1) {
-            skip--;
-            console.log("Skip count: " + skip);
+        if (undefined === allUsers[sender]) {
+            let tempUser = new USER();
+            allUsers[sender] = tempUser;
+            allUsers[sender].sender = sender;
+        }
+
+        if (allUsers[sender].skip > 1) {
+            allUsers[sender].skip--;
         }
         else {
             if (event.message && event.message.text) {
-                doMessage(sender, event);
+                doMessage(allUsers[sender], event);
             }
             else if (event.postback && event.postback.payload) {
-                doPostback(sender, event);
+                doPostback(allUsers[sender], event);
             }
             else if (event.account_linking) {
-                doLinking(sender, event);
+                doLinking(allUsers[sender], event);
             }
         }
     }
@@ -179,142 +188,136 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
-function doMessage(sender, event)
+function doMessage(user, event)
 {
     let message = event.message.text;
 
     if (message == 'reset') {
-        resetValues();
+        resetValues(user);
         return;
     }
     if (urlEntered == 0) {
-        checkURL(sender, message);
+        checkURL(user.sender, message);
         skip = 1;
         return;
     }
     if (categoriesSelected == 1 && descLong.length == 0) {
-        descLong = message;
-        console.log("DescLong: " + descLong);
+        user.descLong = message;
         if (platform == 'wordpress') {
-            askAuthor(sender);
+            askAuthor(user.sender);
         } else {
-            showPostInfo(sender);
+            showPostInfo(user.sender);
         }
         return;
     }
 }
 
-function doPostback(sender, event)
+function doPostback(user, event)
 {
     let payload = event.postback.payload;
 
     if (categoriesSelected == 0) {
-        if (payload == "send" && categories.length != 0) {
-            console.log("Categories :" + categories);
-            categoriesSelected = 1;
-            askLong(sender);
+        if (payload == "send" && user.categories.length != 0) {
+            user.categoriesSelected = 1;
+            askLong(user.sender);
             return;
         }
         else {
             let newCategorie = 1;
 
-            for (let i = 0; i < categories.length; i++) {
-                if (categories[i] == payload) {
+            for (let i = 0; i < user.categories.length; i++) {
+                if (user.categories[i] == payload) {
                     newCategorie = 0;
                     break;
                 }
             }
             if (newCategorie == 1) {
-                categories.push(allCategoriesId[parseInt(payload)]);
+                user.categories.push(user.allCategoriesId[parseInt(payload)]);
             }
             return;
         }
     }
-    if (platform == 'wordpress' && author.length == 0) {
-        author = allAuthorsId[parseInt(payload)];
-        console.log("Author : " + author);
-        showPostInfo(sender);
+    if (user.platform == 'wordpress' && user.author.length == 0) {
+        user.author = user.allAuthorsId[parseInt(payload)];
+        showPostInfo(user.sender);
         return;
     }
-    if (time.length == 0) {
-        time = payload;
-        if (time == "stop") {
-            sendTextMessage(sender, {text: "Ok, la publication est annulée."});
-            resetValues();
+    if (user.time.length == 0) {
+        user.time = payload;
+        if (user.time == "stop") {
+            sendTextMessage(user.sender, {text: "Ok, la publication est annulée."});
+            resetValues(user);
         }
         else {
             let postInfos = {
-                extern_id: sender,
-                title: title,
-                description: desc,
-                image: image,
-                link: articleUrl,
-                categories: categories,
-                author: author,
-                userDesc: descLong,
-                time: time
-            }; console.log(postInfos);
+                extern_id: user.sender,
+                title: user.title,
+                description: user.desc,
+                image: user.image,
+                link: user.articleUrl,
+                categories: user.categories,
+                author: user.author,
+                userDesc: user.descLong,
+                time: user.time
+            };
             kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
-                try{
+                try {
                     body = JSON.parse(body);
-                    console.log(body);
                     if (body.hasError == false) {
-                        sendTextMessage(sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
-                        resetValues();
+                        sendTextMessage(user.sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                     } else {
-            		    sendTextMessage(sender, {text: body.error});
-                        resetValues();
+            		    sendTextMessage(user.sender, {text: body.error});
                         return;
                     }
                 } catch {
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-                    resetValues();
                     return;
             	}
             });
         }
+        resetValues(user);
         return;
     }
 }
 
-function doLinking(sender, event)
+function doLinking(user, event)
 {
     let linking = event.account_linking;
 
     if (isConnected == 0) {
         if (linking.status == 'linked') {
-            isConnected = 1;
+            user.isConnected = 1;
             console.log('Auth code : ' + linking.authorization_code);
-            kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: sender}, function(err, res, body) {
+            kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
                 try {
                     body = JSON.parse(body);
-                    platform = body.platform;
+                    user.platform = body.platform;
                     for (const property in body.categories) {
-                        allCategories.push(property);
-                        allCategoriesId.push(body.categories[property]);
+                        user.allCategories.push(property);
+                        user.allCategoriesId.push(body.categories[property]);
                     }
-                    if (platform == 'wordpress') {
+                    if (user.platform == 'wordpress') {
                         for (const property in body.authors) {
-                            allAuthors.push(body.authors[property].username);
-                            allAuthorsId.push(property);
+                            user.allAuthors.push(body.authors[property].username);
+                            user.allAuthorsId.push(property);
                         }
                     }
-                    askCategories(sender);
+                    askCategories(user.sender);
                 }
                 catch {
-                    sendTextMessage(sender, {text: "Une erreur s'est produite. [2]"});
+                    sendTextMessage(user.sender, {text: "Une erreur s'est produite. [2]"});
                     resetValues();
                     return;
                 }
             });
         } else {
-            sendTextMessage(sender, {text: 'Impossible de vous connecter à Kurator.'});
-            resetValues();
+            sendTextMessage(user.sender, {text: 'Impossible de vous connecter à Kurator.'});
+            resetValues(user);
         }
     }
 }
 
-function askTime(sender)
+function askTime(user)
 {
     const btnData = {
         "type": "template",
@@ -328,20 +331,20 @@ function askTime(sender)
             ]
         }
     };
-    createBtn(sender, btnData);
+    createBtn(user.sender, btnData);
 }
 
-function showPostInfo(sender)
+function showPostInfo(user)
 {
     let showInfoText = [
         {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"},
-        {text: title},
-        {text: descLong},
+        {text: user.title},
+        {text: user.descLong},
         {
             attachment: {
                 type: "image",
                 payload: {
-                    url: imageUrl + image
+                    url: imageUrl + user.image
                 }
             }
         }
@@ -349,12 +352,12 @@ function showPostInfo(sender)
     let index = 0;
     let indexLimit = showInfoText.length - 1;
 
-    sendTextMessage(sender, showInfoText, index, indexLimit, sendTextMessage);
+    sendTextMessage(user.sender, showInfoText, index, indexLimit, sendTextMessage);
 }
 
-function askAuthor(sender)
+function askAuthor(user)
 {
-    let btnCount = Math.ceil(allAuthors.length / 3);
+    let btnCount = Math.ceil(user.allAuthors.length / 3);
     let btnData = [];
 
     for (let i = 0, j = 0; i < btnCount; i++) {
@@ -366,29 +369,29 @@ function askAuthor(sender)
                 "buttons": []
             }
         });
-        for (j = 0; j < 3 && allAuthors[(i * 3) + j]; j++) {
+        for (j = 0; j < 3 && user.allAuthors[(i * 3) + j]; j++) {
             let buttons = btnData[i].payload.buttons;
 
-            buttons.push({"type": "postback", "title": allAuthors[(i * 3) + j], "payload": (i * 3) + j});
+            buttons.push({"type": "postback", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
         }
     }
     let index = 0;
     let indexLimit = btnData.length - 1;
 
-    createBtn(sender, btnData, index, indexLimit, createBtn);
+    createBtn(user.sender, btnData, index, indexLimit, createBtn);
 }
 
-function askLong(sender)
+function askLong(user)
 {
     const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
 
     skip = 2;
-    sendTextMessage(sender, textDescLong);
+    sendTextMessage(user.sender, textDescLong);
 }
 
-function askCategories(sender)
+function askCategories(user)
 {
-    let btnCount = Math.ceil(allCategories.length / 3);
+    let btnCount = Math.ceil(user.allCategories.length / 3);
     let btnData = [];
 
     for (let i = 0, j = 0; i < btnCount; i++) {
@@ -401,11 +404,11 @@ function askCategories(sender)
             }
         });
         btnData[i].payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
-        for (j = 0; j < 3 && allCategories[(i * 3) + j]; j++) {
+        for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
             let buttons = btnData[i].payload.buttons;
 
             buttons.push({"type": "postback", "title": "", "payload": ""});
-            buttons[j].title = allCategories[(i * 3) + j];
+            buttons[j].title = user.allCategories[(i * 3) + j];
             buttons[j].payload = (i * 3) + j;
         }
     }
@@ -422,7 +425,7 @@ function askCategories(sender)
             ]
         }
     });
-    createBtn(sender, btnData, index, indexLimit, createBtn);
+    createBtn(user.sender, btnData, index, indexLimit, createBtn);
 }
 
 function kuratorRequest(uri, param, callback)
@@ -431,58 +434,57 @@ function kuratorRequest(uri, param, callback)
     let headers = {
         'User-Agent': 'Chatbot',
         'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    };
     let option = {
         url: url,
         method: "POST",
         headers: headers,
         form: param
-    }
+    };
 
     request(option, callback);
 }
 
-function checkURL(sender, text)
+function checkURL(user, text)
 {
     let reqParam = {url: text};
 
     console.log("Message: " + text);
-    if (urlEntered == 0 && validUrl.isUri(text)){
+    if (user.urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
-        urlEntered = 1;
-        articleUrl = text;
-        kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
+        user.urlEntered = 1;
+        user.articleUrl = text;
+        kuratorRequest("/api/getArticleInfo", reqParam, user, function(err, res, body) {
             try {
-                console.log(body);
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
-                    image = body.image;
-                    title = body.title;
-                    desc = body.description;
-                    createBtn(sender, {
+                    user.image = body.image;
+                    user.title = body.title;
+                    user.desc = body.description;
+                    createBtn(user.sender, {
                         "type": "template",
                         "payload": {
                             "template_type": "button",
                             "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + " Veuillez vous connecter à Kurator :",
                             "buttons": [
-                                {"type": "account_link", "url": kuratorUrl + '?extern_id=' + sender},
+                                {"type": "account_link", "url": kuratorUrl + '?extern_id=' + user.sender},
                             ]
                         }
                     });
                 }
                 else {
                     if(body.error == 'Cannot parse the article.'){
-                        sendTextMessage(sender, {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations'});
+                        sendTextMessage(user.sender, {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations'});
 
                     }else{
-                        sendTextMessage(sender, {text: body.error});
+                        sendTextMessage(user.sender, {text: body.error});
                     }
-                    resetValues();
+                    resetValues(user);
                 }
             }
             catch {
-                sendTextMessage(sender, {text: "Une erreur s'est produite. [1]"});
-                resetValues();
+                sendTextMessage(user.sender, {text: "Une erreur s'est produite. [1]"});
+                resetValues(user);
                 return;
             }
         });
@@ -491,14 +493,14 @@ function checkURL(sender, text)
     }
 }
 
-function createBtn(sender, btnData, index, indexLimit, callback)
+function createBtn(user, btnData, index, indexLimit, callback)
 {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:VERIFY_TOKEN},
         method: 'POST',
         json: {
-            recipient: {id: sender},
+            recipient: {id: user.sender},
             message: {attachment: (index != undefined) ? btnData[index] : btnData}
         }
     }, function(error, response, body) {
@@ -509,12 +511,12 @@ function createBtn(sender, btnData, index, indexLimit, callback)
             console.log('Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
-            callback(sender, btnData, index + 1, indexLimit, callback);
+            callback(user.sender, btnData, index + 1, indexLimit, callback);
         }
     });
 }
 
-function sendTextMessage(sender, msgData, index, indexLimit, callback)
+function sendTextMessage(user, msgData, index, indexLimit, callback)
 {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -532,10 +534,10 @@ function sendTextMessage(sender, msgData, index, indexLimit, callback)
             console.log('Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
-            callback(sender, msgData, index + 1, indexLimit, callback);
+            callback(user.sender, msgData, index + 1, indexLimit, callback);
         }
-        else if ((platform == 'wall' || author.length != 0) && time.length == 0 && index >= indexLimit) {
-            askTime(sender);
+        else if ((user.platform == 'wall' || user.author.length != 0) && user.time.length == 0 && index >= indexLimit) {
+            askTime(user.sender);
         }
     });
 }
