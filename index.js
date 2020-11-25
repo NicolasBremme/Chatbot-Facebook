@@ -148,7 +148,7 @@ app.post('/webhook/', function (req, res)
             };
         }
 
-        if (allUsers[sender].skip > 1) {
+        if (allUsers[sender].skip > 0) {
             allUsers[sender].skip -= 1;
         }
         else {
@@ -260,6 +260,8 @@ function doPostback(user, event)
                 try {
                     body = JSON.parse(body);
                     let sender = parseInt(body.sender);
+                    console.log(sender);
+                    console.log(allUsers[sender]);
 
                     if (body.hasError == false) {
                         sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
@@ -452,8 +454,6 @@ function checkURL(user, text)
         sender: user.sender
     };
 
-    console.log("User:");
-    console.log(user);
     console.log("Message: " + text);
     if (user.urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
