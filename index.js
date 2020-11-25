@@ -193,16 +193,16 @@ function doMessage(user, event)
         return;
     }
     if (user.urlEntered == 0) {
-        checkURL(user.sender, message);
+        checkURL(user, message);
         user.skip = 1;
         return;
     }
     if (categoriesSelected == 1 && descLong.length == 0) {
         user.descLong = message;
         if (platform == 'wordpress') {
-            askAuthor(user.sender);
+            askAuthor(user);
         } else {
-            showPostInfo(user.sender);
+            showPostInfo(user);
         }
         return;
     }
@@ -215,7 +215,7 @@ function doPostback(user, event)
     if (categoriesSelected == 0) {
         if (payload == "send" && user.categories.length != 0) {
             user.categoriesSelected = 1;
-            askLong(user.sender);
+            askLong(user);
             return;
         }
         else {
@@ -235,13 +235,13 @@ function doPostback(user, event)
     }
     if (user.platform == 'wordpress' && user.author.length == 0) {
         user.author = user.allAuthorsId[parseInt(payload)];
-        showPostInfo(user.sender);
+        showPostInfo(user);
         return;
     }
     if (user.time.length == 0) {
         user.time = payload;
         if (user.time == "stop") {
-            sendTextMessage(user.sender, {text: "Ok, la publication est annulée."});
+            sendTextMessage(user, {text: "Ok, la publication est annulée."});
             resetValues(user);
         }
         else {
@@ -260,9 +260,9 @@ function doPostback(user, event)
                 try {
                     body = JSON.parse(body);
                     if (body.hasError == false) {
-                        sendTextMessage(user.sender, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
+                        sendTextMessage(user, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                     } else {
-            		    sendTextMessage(user.sender, {text: body.error});
+            		    sendTextMessage(user, {text: body.error});
                         return;
                     }
                 } catch {
@@ -298,16 +298,16 @@ function doLinking(user, event)
                             user.allAuthorsId.push(property);
                         }
                     }
-                    askCategories(user.sender);
+                    askCategories(user);
                 }
                 catch {
-                    sendTextMessage(user.sender, {text: "Une erreur s'est produite. [2]"});
+                    sendTextMessage(user, {text: "Une erreur s'est produite. [2]"});
                     resetValues(user);
                     return;
                 }
             });
         } else {
-            sendTextMessage(user.sender, {text: 'Impossible de vous connecter à Kurator.'});
+            sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
             resetValues(user);
         }
     }
@@ -327,7 +327,7 @@ function askTime(user)
             ]
         }
     };
-    createBtn(user.sender, btnData);
+    createBtn(user, btnData);
 }
 
 function showPostInfo(user)
@@ -348,7 +348,7 @@ function showPostInfo(user)
     let index = 0;
     let indexLimit = showInfoText.length - 1;
 
-    sendTextMessage(user.sender, showInfoText, index, indexLimit, sendTextMessage);
+    sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
 }
 
 function askAuthor(user)
@@ -374,7 +374,7 @@ function askAuthor(user)
     let index = 0;
     let indexLimit = btnData.length - 1;
 
-    createBtn(user.sender, btnData, index, indexLimit, createBtn);
+    createBtn(user, btnData, index, indexLimit, createBtn);
 }
 
 function askLong(user)
@@ -382,7 +382,7 @@ function askLong(user)
     const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
 
     user.skip = 2;
-    sendTextMessage(user.sender, textDescLong);
+    sendTextMessage(user, textDescLong);
 }
 
 function askCategories(user)
@@ -421,7 +421,7 @@ function askCategories(user)
             ]
         }
     });
-    createBtn(user.sender, btnData, index, indexLimit, createBtn);
+    createBtn(user, btnData, index, indexLimit, createBtn);
 }
 
 function kuratorRequest(uri, param, callback)
@@ -508,7 +508,7 @@ function createBtn(user, btnData, index, indexLimit, callback)
             console.log('Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
-            callback(user.sender, btnData, index + 1, indexLimit, callback);
+            callback(user, btnData, index + 1, indexLimit, callback);
         }
     });
 }
@@ -520,7 +520,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback)
         qs: {access_token:VERIFY_TOKEN},
         method: 'POST',
         json: {
-            recipient: {id: sender},
+            recipient: {id: user.sender},
             message: (index != undefined) ? msgData[index] : msgData
         }
     }, function(error, response, body) {
@@ -531,10 +531,10 @@ function sendTextMessage(user, msgData, index, indexLimit, callback)
             console.log('Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
-            callback(user.sender, msgData, index + 1, indexLimit, callback);
+            callback(user, msgData, index + 1, indexLimit, callback);
         }
         else if ((user.platform == 'wall' || user.author.length != 0) && user.time.length == 0 && index >= indexLimit) {
-            askTime(user.sender);
+            askTime(user);
         }
     });
 }
