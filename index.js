@@ -260,6 +260,8 @@ function doPostback(user, event)
                 try {
                     body = JSON.parse(body);
                     let sender = parseInt(body.sender);
+                    console.log(body.pathImg);
+                    console.log(body.pathCopy);
 
                     if (body.hasError == false) {
                         sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
