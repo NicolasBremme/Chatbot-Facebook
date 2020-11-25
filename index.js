@@ -215,6 +215,7 @@ function doPostback(user, event)
     if (user.categoriesSelected == 0) {
         if (payload == "send" && user.categories.length != 0) {
             user.categoriesSelected = 1;
+            user.skip--;
             askLong(user);
             return;
         }
