@@ -260,22 +260,23 @@ function doPostback(user, event)
                 try {
                     body = JSON.parse(body);
                     let sender = parseInt(body.sender);
-                    console.log(sender);
-                    console.log(allUsers[sender]);
 
                     if (body.hasError == false) {
                         sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
+                        resetValues(allUsers[sender]);
+                        return;
                     } else {
             		    sendTextMessage(allUsers[sender], {text: body.error});
+                        resetValues(allUsers[sender]);
                         return;
                     }
                 } catch {
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
+                    resetValues(allUsers[sender]);
                     return;
             	}
             });
         }
-        resetValues(user);
         return;
     }
 }
