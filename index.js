@@ -148,11 +148,11 @@ app.post('/webhook/', function (req, res)
 
         if (undefined === allUsers[sender]) {
             let tempUser = Object.create(USER);
+            console.log(tempUser);
             allUsers[sender] = tempUser;
             allUsers[sender].sender = sender;
         }
 
-        console.log(allUsers[sender]);
         console.log(allUsers[sender].urlEntered);
         if (allUsers[sender].skip > 1) {
             allUsers[sender].skip--;
