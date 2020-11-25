@@ -260,6 +260,7 @@ function doPostback(user, event)
                 try {
                     body = JSON.parse(body);
                     let user = allUsers[body.sender];
+                    console.log(user);
                     if (body.hasError == false) {
                         sendTextMessage(user, {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                     } else {
@@ -289,6 +290,7 @@ function doLinking(user, event)
                 try {
                     body = JSON.parse(body);
                     let user = allUsers[body.sender];
+                    console.log(user);
                     user.platform = body.platform;
                     for (const property in body.categories) {
                         user.allCategories.push(property);
@@ -459,6 +461,7 @@ function checkURL(user, text)
             try {
                 body = JSON.parse(body);
                 let user = allUsers[body.sender];
+                console.log(user);
                 if (body.hasError == false && body.parseError == false) {
                     user.image = body.image;
                     user.title = body.title;
