@@ -147,8 +147,10 @@ app.post('/webhook/', function (req, res)
         let sender = event.sender.id;
 
         if (undefined === allUsers[sender]) {
-            let tempUser = Object.create(userTest);
-            console.log(tempUser);
+            setTimeout(() => {
+                let tempUser = Object.create(userTest);
+                console.log(tempUser);
+            }, 500);
             allUsers[sender] = tempUser;
             allUsers[sender].sender = sender;
         }
