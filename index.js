@@ -447,7 +447,7 @@ function checkURL(user, text)
 {
     let reqParam = {
         url: text,
-        sender: sender
+        sender: user.sender
     };
 
     console.log("Message: " + text);
