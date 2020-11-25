@@ -148,7 +148,6 @@ app.post('/webhook/', function (req, res)
             };
         }
 
-        console.log(allUsers[sender]);
         if (allUsers[sender].skip > 1) {
             allUsers[sender].skip--;
         }
@@ -193,9 +192,9 @@ function doMessage(user, event)
         resetValues(user);
         return;
     }
-    if (urlEntered == 0) {
+    if (user.urlEntered == 0) {
         checkURL(user.sender, message);
-        skip = 1;
+        user.skip = 1;
         return;
     }
     if (categoriesSelected == 1 && descLong.length == 0) {
@@ -281,7 +280,7 @@ function doLinking(user, event)
 {
     let linking = event.account_linking;
 
-    if (isConnected == 0) {
+    if (user.isConnected == 0) {
         if (linking.status == 'linked') {
             user.isConnected = 1;
             console.log('Auth code : ' + linking.authorization_code);
@@ -303,7 +302,7 @@ function doLinking(user, event)
                 }
                 catch {
                     sendTextMessage(user.sender, {text: "Une erreur s'est produite. [2]"});
-                    resetValues();
+                    resetValues(user);
                     return;
                 }
             });
