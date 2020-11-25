@@ -452,6 +452,8 @@ function checkURL(user, text)
         sender: user.sender
     };
 
+    console.log("User:");
+    console.log(user);
     console.log("Message: " + text);
     if (user.urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
@@ -461,6 +463,7 @@ function checkURL(user, text)
             try {
                 body = JSON.parse(body);
                 let sender = parseInt(body.sender);
+                console.log(allUsers[sender]);
 
                 if (body.hasError == false && body.parseError == false) {
                     allUsers[sender].image = body.image;
@@ -491,10 +494,11 @@ function checkURL(user, text)
                 return;
             }
         });
-        console.log(user);
     } else {
         console.log('Not an URI');
     }
+    console.log("User:");
+    console.log(user);
 }
 
 function createBtn(user, btnData, index, indexLimit, callback)
