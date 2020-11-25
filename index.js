@@ -458,6 +458,7 @@ function checkURL(user, text)
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
                 body = JSON.parse(body);
+                let user = allUsers[body.sender];
                 if (body.hasError == false && body.parseError == false) {
                     user.image = body.image;
                     user.title = body.title;
