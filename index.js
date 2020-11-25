@@ -152,6 +152,7 @@ app.post('/webhook/', function (req, res)
             allUsers[sender].sender = sender;
         }
 
+        console.log(allUsers[sender]);
         if (allUsers[sender].skip > 1) {
             allUsers[sender].skip--;
         }
