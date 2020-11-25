@@ -212,7 +212,7 @@ function doPostback(user, event)
 {
     let payload = event.postback.payload;
 
-    if (categoriesSelected == 0) {
+    if (user.categoriesSelected == 0) {
         if (payload == "send" && user.categories.length != 0) {
             user.categoriesSelected = 1;
             askLong(user);
@@ -445,13 +445,12 @@ function checkURL(user, text)
 {
     let reqParam = {url: text};
 
-    console.log(user);
     console.log("Message: " + text);
     if (user.urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
         user.urlEntered = 1;
         user.articleUrl = text;
-        kuratorRequest("/api/getArticleInfo", reqParam, user, function(err, res, body) {
+        kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
                 body = JSON.parse(body);
                 if (body.hasError == false && body.parseError == false) {
@@ -470,16 +469,14 @@ function checkURL(user, text)
                     });
                 }
                 else {
-                    if(body.error == 'Cannot parse the article.'){
+                    if(body.error == 'Cannot parse the article.') {
                         sendTextMessage(user.sender, {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations'});
-
-                    }else{
+                    } else {
                         sendTextMessage(user.sender, {text: body.error});
                     }
                     resetValues(user);
                 }
-            }
-            catch {
+            } catch {
                 sendTextMessage(user.sender, {text: "Une erreur s'est produite. [1]"});
                 resetValues(user);
                 return;
