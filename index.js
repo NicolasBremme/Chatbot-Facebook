@@ -189,7 +189,7 @@ function doMessage(user, event)
     let message = event.message.text;
 
     if (message == 'reset') {
-        resetValues(user);
+        user = undefined;//resetValues(user);
         return;
     }
     if (user.urlEntered == 0) {
@@ -242,7 +242,7 @@ function doPostback(user, event)
         user.time = payload;
         if (user.time == "stop") {
             sendTextMessage(user, {text: "Ok, la publication est annulée."});
-            resetValues(user);
+            user = undefined;//resetValues(user);
         }
         else {
             let postInfos = {
@@ -263,16 +263,16 @@ function doPostback(user, event)
 
                     if (body.hasError == false) {
                         sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
-                        resetValues(allUsers[sender]);
+                        allUsers[sender] = undefined;//resetValues(allUsers[sender]);
                         return;
                     } else {
             		    sendTextMessage(allUsers[sender], {text: body.error});
-                        resetValues(allUsers[sender]);
+                        allUsers[sender] = undefined;//resetValues(allUsers[sender]);
                         return;
                     }
                 } catch {
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-                    resetValues(allUsers[sender]);
+                    allUsers[sender] = undefined; //resetValues(allUsers[sender]);
                     return;
             	}
             });
@@ -309,13 +309,13 @@ function doLinking(user, event)
                 }
                 catch {
                     sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
-                    resetValues(allUsers[sender]);
+                    allUsers[sender] = undefined;//resetValues(allUsers[sender]);
                     return;
                 }
             });
         } else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
-            resetValues(user);
+            allUsers[sender] = undefined;//resetValues(user);
         }
     }
 }
@@ -486,15 +486,13 @@ function checkURL(user, text)
                     } else {
                         sendTextMessage(allUsers[sender], {text: body.error});
                     }
-                    resetValues(allUsers[sender]);
+                    allUsers[sender] = undefined;//resetValues(allUsers[sender]);
                 }
             } catch {
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [1]"});
-                resetValues(allUsers[sender]);
+                allUsers[sender] = undefined;//resetValues(allUsers[sender]);
                 return;
             }
-            console.log("User:");
-            console.log(user);
         });
     } else {
         console.log('Not an URI');
