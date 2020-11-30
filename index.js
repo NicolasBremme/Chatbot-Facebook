@@ -149,16 +149,11 @@ app.post('/webhook/', function (req, res)
             };
         }
 
-        if (allUsers[sender].skip > 1) {
-            allUsers[sender].skip -= 1;
-        }
         else {
             if (event.message && event.message.attachments) {
                 let url = event.message.attachments[0].url;
 
-                url = url.split('u=')[1];
-                url = url.split('&h=')[0];
-                url = decodeURIComponent(url);
+                url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
                 event.message.text = url;
                 doMessage(allUsers[sender], event);
             }
