@@ -160,8 +160,10 @@ app.post('/webhook/', function (req, res)
                 url = url.split('&h=')[0];
                 url = decodeURI(url);
                 console.log(url);
+                event.message.text = url;
+                doMessage(allUsers[sender], event);
             }
-            if (event.message && event.message.text) {
+            else if (event.message && event.message.text) {
                 doMessage(allUsers[sender], event);
             }
             else if (event.postback && event.postback.payload) {
