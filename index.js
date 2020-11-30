@@ -149,6 +149,9 @@ app.post('/webhook/', function (req, res)
             };
         }
 
+        if (allUsers[sender].skip > 1) {
+            allUsers[sender].skip -= 1;
+        }
         else {
             if (event.message && event.message.attachments) {
                 let url = event.message.attachments[0].url;
