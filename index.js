@@ -94,29 +94,6 @@ var rewardsPublishOk = [
 
 let allUsers = {};
 
-function resetValues(user)
-{
-    user.sender = 0;
-    user.urlEntered = 0;
-    user.isConnected = 0;
-    user.articleUrl = "";
-    user.platform = "";
-    user.allCategories = [];
-    user.allCategoriesId = [];
-    user.allAuthors = [];
-    user.allAuthorsId = [];
-    user.categories = [];
-    user.categoriesSelected = 0;
-    user.skip = 0;
-    user.descLong = "";
-    user.author = "";
-    user.title = "";
-    user.image = "";
-    user.desc = "";
-    user.time = "";
-    console.log("Reset done.");
-}
-
 app.post('/webhook/', function (req, res)
 {
     console.log("WEBHOOK_EVENT_RECEIVED");
@@ -138,7 +115,7 @@ app.post('/webhook/', function (req, res)
                 allAuthorsId: [],
                 categories: [],
                 categoriesSelected: 0,
-                skip: 0,
+                //skip: 0,
                 descLong: "",
                 author: "",
                 title: "",
@@ -148,9 +125,9 @@ app.post('/webhook/', function (req, res)
             };
         }
 
-        if (allUsers[sender].skip > 1) {
+        /*if (allUsers[sender].skip > 1) {
             allUsers[sender].skip -= 1;
-        }
+        }*/
         else {
             if (event.message && event.message.text) {
                 doMessage(allUsers[sender], event);
@@ -196,12 +173,12 @@ function doMessage(user, event)
     let message = event.message.text;
 
     if (message == 'reset') {
-        allUsers[user.sender] = undefined;
+        delete allUsers[user.sender];
         return;
     }
     if (user.urlEntered == 0) {
         checkURL(user, message);
-        user.skip = 1;
+        //user.skip = 1;
         return;
     }
     if (user.categoriesSelected == 1 && user.descLong.length == 0) {
@@ -249,7 +226,7 @@ function doPostback(user, event)
         user.time = payload;
         if (user.time == "stop") {
             sendTextMessage(user, {text: "Ok, la publication est annulée."});
-            allUsers[user.sender] = undefined;
+            delete allUsers[user.sender];
         }
         else {
             let postInfos = {
@@ -270,16 +247,16 @@ function doPostback(user, event)
 
                     if (body.hasError == false) {
                         sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
-                        allUsers[sender] = undefined;
+                        delete allUsers[sender];
                         return;
                     } else {
             		    sendTextMessage(allUsers[sender], {text: body.error});
-                        allUsers[sender] = undefined;
+                        delete allUsers[sender];
                         return;
                     }
                 } catch {
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-                    allUsers[sender] = undefined;
+                    delete allUsers[sender];
                     return;
             	}
             });
@@ -295,7 +272,6 @@ function doLinking(user, event)
     if (user.isConnected == 0) {
         if (linking.status == 'linked') {
             user.isConnected = 1;
-            console.log('Auth code : ' + linking.authorization_code);
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
                 try {
                     body = JSON.parse(body);
@@ -316,13 +292,13 @@ function doLinking(user, event)
                 }
                 catch {
                     sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
-                    allUsers[sender] = undefined;
+                    delete allUsers[sender];
                     return;
                 }
             });
         } else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
-            allUsers[sender] = undefined;
+            delete allUsers[sender];
         }
     }
 }
@@ -395,7 +371,7 @@ function askLong(user)
 {
     const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
 
-    user.skip = 1;
+    //user.skip = 1;
     sendTextMessage(user, textDescLong);
 }
 
@@ -493,11 +469,11 @@ function checkURL(user, text)
                     } else {
                         sendTextMessage(allUsers[sender], {text: body.error});
                     }
-                    allUsers[sender] = undefined;
+                    delete allUsers[sender];
                 }
             } catch {
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [1]"});
-                allUsers[sender] = undefined;
+                delete allUsers[sender];
                 return;
             }
         });
