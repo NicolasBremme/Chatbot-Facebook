@@ -154,7 +154,7 @@ app.post('/webhook/', function (req, res)
         }
         else {
             if (event.message && event.message.attachments)
-                console.log(event.message.attachments);
+                console.log(event.message.attachments[0]);
             if (event.message && event.message.text) {
                 doMessage(allUsers[sender], event);
             }
