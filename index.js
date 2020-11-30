@@ -158,6 +158,7 @@ app.post('/webhook/', function (req, res)
 
                 url = url.split('u=')[1];
                 url = url.split('&h=')[0];
+                url = decodeURI(url);
                 console.log(url);
             }
             if (event.message && event.message.text) {
