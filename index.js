@@ -153,6 +153,8 @@ app.post('/webhook/', function (req, res)
             allUsers[sender].skip -= 1;
         }
         else {
+            if (event.message && event.message.attachments)
+                console.log(event.message.attachments);
             if (event.message && event.message.text) {
                 doMessage(allUsers[sender], event);
             }
