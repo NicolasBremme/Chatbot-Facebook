@@ -133,7 +133,9 @@ app.post('/webhook/', function (req, res)
                 doMessage(allUsers[sender], event);
             }
             else if (event.message && event.message.attachments) {
-                    let url = event.message.attachments[0].url;
+                    let url = event.message.attachments[0].url
+                    console.log(event.message.attachments)
+                    console.log(event.message.attachments[0])
                     if(typeof url != 'undefined'){
                         url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
                         event.message.text = url;
