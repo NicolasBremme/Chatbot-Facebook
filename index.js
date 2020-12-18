@@ -128,30 +128,30 @@ app.post('/webhook/', function (req, res)
         /*if (allUsers[sender].skip > 1) {
             allUsers[sender].skip -= 1;
         }*/
-        else {
-            if (event.message && event.message.text) {
-                doMessage(allUsers[sender], event);
-            }
-            else if (event.message && event.message.attachments) {
-                    let url = event.message.attachments[0].url
-                    console.log(event.message.attachments)
-                    console.log(event.message.attachments[0])
-                    if(typeof url != 'undefined'){
-                        url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
-                        event.message.text = url;
-                        doMessage(allUsers[sender], event);
-                    }else{
-
-                        console.log('attachment is not an url');
-                    }
-            }
-            else if (event.postback && event.postback.payload) {
-                doPostback(allUsers[sender], event);
-            }
-            else if (event.account_linking) {
-                doLinking(allUsers[sender], event);
-            }
+    
+        if (event.message && event.message.text) {
+            doMessage(allUsers[sender], event);
         }
+        else if (event.message && event.message.attachments) {
+                let url = event.message.attachments[0].url
+                console.log(event.message.attachments)
+                console.log(event.message.attachments[0])
+                if(typeof url != 'undefined'){
+                    url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
+                    event.message.text = url;
+                    doMessage(allUsers[sender], event);
+                }else{
+
+                    console.log('attachment is not an url');
+                }
+        }
+        else if (event.postback && event.postback.payload) {
+            doPostback(allUsers[sender], event);
+        }
+        else if (event.account_linking) {
+            doLinking(allUsers[sender], event);
+        }
+
     }
     res.sendStatus(200)
 });
