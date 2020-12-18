@@ -133,16 +133,15 @@ app.post('/webhook/', function (req, res)
                 doMessage(allUsers[sender], event);
             }
             else if (event.message && event.message.attachments) {
-                try{
                     let url = event.message.attachments[0].url;
-                    console.log(url);
-                    url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
-                    event.message.text = url;
-                    doMessage(allUsers[sender], event);
-                }catch{
-                    console.log('attachment is not an url');
-                }
-               
+                    if(url){
+                        url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
+                        event.message.text = url;
+                        doMessage(allUsers[sender], event);
+                    }else{
+
+                        console.log('attachment is not an url');
+                    }
             }
             else if (event.postback && event.postback.payload) {
                 doPostback(allUsers[sender], event);
