@@ -115,7 +115,6 @@ app.post('/webhook/', function (req, res)
                 allAuthorsId: [],
                 categories: [],
                 categoriesSelected: 0,
-                //skip: 0,
                 descLong: "",
                 author: "",
                 title: "",
@@ -124,10 +123,6 @@ app.post('/webhook/', function (req, res)
                 time: "",
             };
         }
-
-        /*if (allUsers[sender].skip > 1) {
-            allUsers[sender].skip -= 1;
-        }*/
     
         if (event.message && event.message.text) {
             doMessage(allUsers[sender], event);
