@@ -239,7 +239,7 @@ function doMessage(user, event)
     if (user.categoriesSelected == 1 && user.descLong.length == 0) {
         user.descLong = message;
         if (user.platform == 'wordpress') {
-            askAuthor(user);
+            QR_askAuthor(user);
         } else {
             showPostInfo(user);
         }
@@ -333,7 +333,7 @@ function QR_askTime(user)
             ]
         }]
     };
-    createBtn(user, btnData);
+    sendTextMessage(user, btnData);
 }
 
 function showPostInfo(user)
@@ -376,7 +376,7 @@ function QR_askAuthor(user)
     let index = 0;
     let indexLimit = btnData.length - 1;
 
-    createBtn(user, btnData, index, indexLimit, createBtn);
+    sendTextMessage(user, btnData, index, indexLimit, sendTextMessage);
 }
 
 function askLong(user)
