@@ -128,16 +128,16 @@ app.post('/webhook/', function (req, res)
             doMessage(allUsers[sender], event);
         }
         else if (event.message && event.message.attachments) {
-                let url = event.message.attachments[0].url
+            let url = event.message.attachments[0].url
 
-                if(typeof url != 'undefined'){
-                    url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
-                    event.message.text = url;
-                    doMessage(allUsers[sender], event);
-                }else{
-
-                    console.log('attachment is an image');
-                }
+            if(typeof url != 'undefined'){
+                url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
+                event.message.text = url;
+                doMessage(allUsers[sender], event);
+            }
+            else{
+                console.log('attachment is an image');
+            }
         }
         else if (event.postback && event.postback.payload) {
             doPostback(allUsers[sender], event);
@@ -452,6 +452,7 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
+                    console.log('here1');
                     createBtn(allUsers[sender], {
                         "type": "template",
                         "payload": {
@@ -462,6 +463,7 @@ function checkURL(user, text)
                             ]
                         }
                     });
+                    console.log('here2');
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
