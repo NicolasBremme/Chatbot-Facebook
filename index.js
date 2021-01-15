@@ -322,7 +322,7 @@ function doPostback(user, event)
 function QR_askTime(user)
 {
     const btnData = {
-        "text": "Choisissez un auteur :",
+        "text": "Choisissez un moment du publication :",
         "quick_replies": [
             {"content_type": "text", "title": "Immédiatement", "payload": "now"},
             {"content_type": "text", "title": "Dans le tunnel de publication", "payload": "tunnel"},
