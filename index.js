@@ -205,6 +205,8 @@ app.get('/loginPosteria/', (req, res) => {
                         }
                     }
                     console.log('before QR.');
+                    console.log(allUsers[sender]);
+                    console.log('sender : ' + sender);
                     QR_askCategories(allUsers[sender]);
                     console.log('after QR.');
                 }
