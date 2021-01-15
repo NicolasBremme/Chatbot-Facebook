@@ -454,6 +454,7 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
+                    console.log("here1\n");
                     createBtn(allUsers[sender], {
                         "type": "template",
                         "payload": {
@@ -464,6 +465,7 @@ function checkURL(user, text)
                             ]
                         }
                     });
+                    console.log("here2\n");
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
