@@ -6,6 +6,7 @@ const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOm
 const kuratorUrl = "https://preprod.kurator.fr/",
     imageUrl = "http://image-kurator.fr/app";
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
+const { response } = require('express');
 const { fstat } = require('fs');
 const { parse } = require('path');
 //  Imports dependencies and set up http server
@@ -178,7 +179,6 @@ app.get('/loginPosteria/', (req, res) => {
         sender = parseInt(req.query.sender, 10);
         user = allUsers[sender];
     }
-    res.sendStatus(200);
     if (user != null && user.isConnected == 0) {
         if (code == 1 && sender != null) {
             user.isConnected = 1;
@@ -216,6 +216,7 @@ app.get('/loginPosteria/', (req, res) => {
     } else {
         return;
     }
+    res.sendFile('loginPosteria.html');
 });
 
 function doMessage(user, event)
