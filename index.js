@@ -125,8 +125,11 @@ app.post('/webhook/', function (req, res)
             };
         }
 
-        if (event.message && event.message.text) {
-            console.log('MASSAAZDHAZIDHAOZID');
+        if (event.message && event.message.postback) {
+            console.log('lalalalalalalal');
+
+        }
+        else if (event.message && event.message.text) {
             doMessage(allUsers[sender], event);
         }
         else if (event.message && event.message.attachments) {
@@ -142,11 +145,7 @@ app.post('/webhook/', function (req, res)
             }
         }
         else if (event.postback && event.postback.payload) {
-            console.log('C UN POSTBACK ISISISISII');
             doPostback(allUsers[sender], event);
-        }
-        else {
-            console.log('quepouik');
         }
     }
     res.sendStatus(200)
