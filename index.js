@@ -467,7 +467,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback)
             console.log('Error sending message: ', error);
         }
         else if (response.body.error) {
-            console.log('Error: ', response.body.error);
+            console.log('[4]Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
             callback(user, msgData, index + 1, indexLimit, callback);
