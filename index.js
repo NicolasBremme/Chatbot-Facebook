@@ -125,16 +125,9 @@ app.post('/webhook/', function (req, res)
             };
         }
 
-        if (event.message && event.message.postback) {
-            console.log('lalalalalalalal');
-
+        if (event.message && event.message.quick_reply) {
         }
         else if (event.message && event.message.text) {
-            
-            for (const property in event) {
-                console.log(property);
-                console.log(event[property]);
-            }
             doMessage(allUsers[sender], event);
         }
         else if (event.message && event.message.attachments) {
@@ -252,13 +245,11 @@ function doMessage(user, event)
     }
 }
 
-function doPostback(user, event)
+function doQuickReply(user, event)
 {
-    let payload = event.postback.payload;
+    let payload = event.message.quick_reply.payload;
 
-    console.log('EHLLOOOOOOOOOOOO');
     if (user.categoriesSelected == 0) {
-        console.log('AZJDOIAHZDIOH');
         if (payload == "send" && user.categories.length != 0) {
             user.categoriesSelected = 1;
             askLong(user);
@@ -276,7 +267,34 @@ function doPostback(user, event)
             if (newCategorie == 1) {
                 user.categories.push(user.allCategoriesId[parseInt(payload)]);
             }
-            console.log('ALALALALALALLALALALALAL');
+            QR_askCategories(user);
+            return;
+        }
+    }
+}
+
+function doPostback(user, event)
+{
+    let payload = event.postback.payload;
+
+    if (user.categoriesSelected == 0) {
+        if (payload == "send" && user.categories.length != 0) {
+            user.categoriesSelected = 1;
+            askLong(user);
+            return;
+        }
+        else {
+            let newCategorie = 1;
+
+            for (let i = 0; i < user.categories.length; i++) {
+                if (user.categories[i] == payload) {
+                    newCategorie = 0;
+                    break;
+                }
+            }
+            if (newCategorie == 1) {
+                user.categories.push(user.allCategoriesId[parseInt(payload)]);
+            }
             QR_askCategories(user);
             return;
         }
