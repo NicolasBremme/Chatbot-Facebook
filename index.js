@@ -436,17 +436,7 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    // createBtn(allUsers[sender], {
-                    //     "type": "template",
-                    //     "payload": {
-                    //         "template_type": "button",
-                    //         "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + " Veuillez vous connecter à Kurator :",
-                    //         "buttons": [
-                    //             {"type": "account_link", "url": kuratorUrl + '?extern_id=' + sender},
-                    //         ]
-                    //     }
-                    // });
-                    sendTextMessage(allUsers[sender], {text: kuratorUrl + '?extern_id=' + sender});
+                    sendTextMessage(allUsers[sender], {"messaging_type": "response", text: kuratorUrl + '?extern_id=' + sender});
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
