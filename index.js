@@ -441,6 +441,7 @@ function checkURL(user, text)
     console.log("Message: " + text);
     if (user.urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
+        sendTextMessage(user, {text: "TEST"});
         user.urlEntered = 1;
         user.articleUrl = text;
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
