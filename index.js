@@ -141,10 +141,8 @@ app.post('/webhook/', function (req, res)
             }
         }
         else if (event.postback && event.postback.payload) {
+            console.log('C UN POSTBACK ISISISISII')
             doPostback(allUsers[sender], event);
-        }
-        else {
-            console.log(event);
         }
     }
     res.sendStatus(200)
