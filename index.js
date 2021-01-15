@@ -303,19 +303,18 @@ function doLinking(user, event)
     }
 }
 
-function askTime(user)
+function QR_askTime(user)
 {
     const btnData = {
-        "type": "template",
-        "payload": {
-            "template_type": "button",
+        "text": "Choisissez un auteur :",
+        "quick_replies": [{
             "text": "Choisissez le moment de publication :",
             "buttons": [
-                {"type": "postback", "title": "Immédiatement", "payload": "now"},
-                {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
-                {"type": "postback", "title": "Annulation", "payload": "stop"}
+                {"content_type": "text", "title": "Immédiatement", "payload": "now"},
+                {"content_type": "text", "title": "Dans le tunnel de publication", "payload": "tunnel"},
+                {"content_type": "text", "title": "Annulation", "payload": "stop"}
             ]
-        }
+        }]
     };
     createBtn(user, btnData);
 }
@@ -341,24 +340,20 @@ function showPostInfo(user)
     sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
 }
 
-function askAuthor(user)
+function QR_askAuthor(user)
 {
     let btnCount = Math.ceil(user.allAuthors.length / 3);
     let btnData = [];
 
     for (let i = 0, j = 0; i < btnCount; i++) {
         btnData.push({
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": (i == 0) ? "Choisissez un auteur :" : "Suite :",
-                "buttons": []
-            }
+            "text": "Choisissez un auteur :",
+            "quick_replies": []
         });
         for (j = 0; j < 3 && user.allAuthors[(i * 3) + j]; j++) {
-            let buttons = btnData[i].payload.buttons;
+            let buttons = btnData[i].quick_replies;
 
-            buttons.push({"type": "postback", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
+            buttons.push({"content_type": "text", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
         }
     }
     let index = 0;
@@ -375,41 +370,30 @@ function askLong(user)
     sendTextMessage(user, textDescLong);
 }
 
-function askCategories(user)
+function QR_askCategories(user)
 {
     let btnCount = Math.ceil(user.allCategories.length / 3);
     let btnData = [];
 
     for (let i = 0, j = 0; i < btnCount; i++) {
         btnData.push({
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": "",
-                "buttons": []
-            }
+            "text": "Choisissez une ou plusieurs catégorie(s) :",
+            "quick_replies": []
         });
-        btnData[i].payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
         for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
             let buttons = btnData[i].payload.buttons;
 
-            buttons.push({"type": "postback", "title": "", "payload": ""});
-            buttons[j].title = user.allCategories[(i * 3) + j];
-            buttons[j].payload = (i * 3) + j;
+            buttons.push({"content_type": "text", "title": user.allCategories[(i * 3) + j], "payload": (i * 3) + j});
         }
     }
     let index = 0;
     let indexLimit = btnData.length;
 
     btnData.push({
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
-            "buttons": [
-                {"type": "postback", "title": "Send", "payload": "send"},
-            ]
-        }
+        "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
+        "quick_replies": [
+            {"content_type": "text", "title": Send, "payload": "send"}
+        ]
     });
     createBtn(user, btnData, index, indexLimit, createBtn);
 }
@@ -441,7 +425,6 @@ function checkURL(user, text)
     console.log("Message: " + text);
     if (user.urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
-        sendTextMessage(user, { text: "Pick one", "quick_replies" : [ { "content_type": "text", "title": "one", "payload": "menfou", "image_url": "https://cybersavoir.csdm.qc.ca/bibliotheques/files/2018/11/10_banques_dimages_gratuites_libres_de_droits-300x169.jpg"}, { "content_type": "text", "title": "two", "payload": "menfou", "image_url": "https://cybersavoir.csdm.qc.ca/bibliotheques/files/2018/11/10_banques_dimages_gratuites_libres_de_droits-300x169.jpg"} ] } );
         user.urlEntered = 1;
         user.articleUrl = text;
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
@@ -453,16 +436,17 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    createBtn(allUsers[sender], {
-                        "type": "template",
-                        "payload": {
-                            "template_type": "button",
-                            "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + " Veuillez vous connecter à Kurator :",
-                            "buttons": [
-                                {"type": "account_link", "url": kuratorUrl + '?extern_id=' + sender},
-                            ]
-                        }
-                    });
+                    // createBtn(allUsers[sender], {
+                    //     "type": "template",
+                    //     "payload": {
+                    //         "template_type": "button",
+                    //         "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + " Veuillez vous connecter à Kurator :",
+                    //         "buttons": [
+                    //             {"type": "account_link", "url": kuratorUrl + '?extern_id=' + sender},
+                    //         ]
+                    //     }
+                    // });
+                    sendTextMessage(allUsers[sender], {text: kuratorUrl + '?extern_id=' + sender});
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
