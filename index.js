@@ -326,7 +326,7 @@ function QR_askTime(user)
         "text": "Choisissez un auteur :",
         "quick_replies": [{
             "text": "Choisissez le moment de publication :",
-            "buttons": [
+            "quick_replies": [
                 {"content_type": "text", "title": "Immédiatement", "payload": "now"},
                 {"content_type": "text", "title": "Dans le tunnel de publication", "payload": "tunnel"},
                 {"content_type": "text", "title": "Annulation", "payload": "stop"}
