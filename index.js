@@ -124,7 +124,8 @@ app.post('/webhook/', function (req, res)
                 time: "",
             };
         }
-    
+
+        console.log(event + '\n');
         if (event.message && event.message.text) {
             doMessage(allUsers[sender], event);
         }
