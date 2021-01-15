@@ -204,7 +204,7 @@ app.get('/loginPosteria/', (req, res) => {
                     QR_askCategories(allUsers[sender]);
                 }
                 catch (error) {
-                    console.log('[1]' + error);
+                    console.log('[1] ' + error);
                     sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
                     delete allUsers[sender];
                     return;
@@ -309,7 +309,7 @@ function doPostback(user, event)
                     }
                 }
                 catch (error) {
-                    console.log('[2]' + error);
+                    console.log('[2] ' + error);
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
                     delete allUsers[sender];
                     return;
@@ -360,10 +360,10 @@ function QR_askAuthor(user)
         "text": "Choisissez un auteur :",
         "quick_replies": []
     };
-    let buttons = btnData[i].quick_replies;
+    let buttons = btnData.quick_replies;
 
-    for (j = 0; user.allAuthors[(i * 3) + j]; j++) {
-        buttons.push({"content_type": "text", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
+    for (j = 0; user.allAuthors[j]; j++) {
+        buttons.push({"content_type": "text", "title": user.allAuthors[j], "payload": j});
     }
     sendTextMessage(user, btnData);
 }
@@ -382,10 +382,10 @@ function QR_askCategories(user)
         "text": "Choisissez une ou plusieurs catégorie(s) et appuyez sur Send :",
         "quick_replies": []
     };
-    let buttons = btnData[i].quick_replies;
+    let buttons = btnData.quick_replies;
 
-    for (j = 0; user.allCategories[(i * 3) + j]; j++) {
-        buttons.push({"content_type": "text", "title": user.allCategories[(i * 3) + j], "payload": (i * 3) + j});
+    for (j = 0; user.allCategories[j]; j++) {
+        buttons.push({"content_type": "text", "title": user.allCategories[j], "payload": j});
     }
     buttons.push({"content_type": "text", "title": "Send", "payload": "send"});
     sendTextMessage(user, btnData);
@@ -441,7 +441,7 @@ function checkURL(user, text)
                 }
             }
             catch (error) {
-                console.log('[3]' + error);
+                console.log('[3] ' + error);
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [1]"});
                 delete allUsers[sender];
                 return;
