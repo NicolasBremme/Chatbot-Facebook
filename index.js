@@ -126,6 +126,7 @@ app.post('/webhook/', function (req, res)
         }
 
         if (event.message && event.message.quick_reply) {
+            doPostback(allUsers[sender], event);
         }
         else if (event.message && event.message.text) {
             doMessage(allUsers[sender], event);
@@ -141,9 +142,6 @@ app.post('/webhook/', function (req, res)
             else{
                 console.log('attachment is an image');
             }
-        }
-        else if (event.postback && event.postback.payload) {
-            doPostback(allUsers[sender], event);
         }
     }
     res.sendStatus(200)
@@ -245,37 +243,9 @@ function doMessage(user, event)
     }
 }
 
-function doQuickReply(user, event)
-{
-    let payload = event.message.quick_reply.payload;
-
-    if (user.categoriesSelected == 0) {
-        if (payload == "send" && user.categories.length != 0) {
-            user.categoriesSelected = 1;
-            askLong(user);
-            return;
-        }
-        else {
-            let newCategorie = 1;
-
-            for (let i = 0; i < user.categories.length; i++) {
-                if (user.categories[i] == payload) {
-                    newCategorie = 0;
-                    break;
-                }
-            }
-            if (newCategorie == 1) {
-                user.categories.push(user.allCategoriesId[parseInt(payload)]);
-            }
-            QR_askCategories(user);
-            return;
-        }
-    }
-}
-
 function doPostback(user, event)
 {
-    let payload = event.postback.payload;
+    let payload = event.message.quick_reply.payload;
 
     if (user.categoriesSelected == 0) {
         if (payload == "send" && user.categories.length != 0) {
