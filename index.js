@@ -250,6 +250,7 @@ function doPostback(user, event)
     let payload = event.message.quick_reply.payload;
 
     if (user.categoriesSelected == 0) {
+        console.log(payload);
         if (payload == "send" && user.categories.length != 0) {
             user.categoriesSelected = 1;
             askLong(user);
