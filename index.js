@@ -409,7 +409,7 @@ function QR_askCategories(user)
     btnData.push({
         "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
         "quick_replies": [
-            {"content_type": "text", "title": Send, "payload": "send"}
+            {"content_type": "text", "title": "Send", "payload": "send"}
         ]
     });
     console.log(btnData);
