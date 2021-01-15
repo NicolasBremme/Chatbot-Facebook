@@ -201,6 +201,7 @@ app.get('/loginPosteria/', (req, res) => {
                             allUsers[sender].allAuthorsId.push(property);
                         }
                     }
+                    console.log('before QR.');
                     QR_askCategories(allUsers[sender]);
                     console.log('after QR.');
                 }
@@ -408,6 +409,7 @@ function QR_askCategories(user)
             {"content_type": "text", "title": Send, "payload": "send"}
         ]
     });
+    console.log(btnData);
     sendTextMessage(user, btnData, index, indexLimit, sendTextMessage);
 }
 
