@@ -233,7 +233,7 @@ function doMessage(user, event)
         delete allUsers[user.sender];
         return;
     }
-    if (user.urlEntered == 0) {
+    if (user.urlEntered == 0 && message.search(kuratorUrl) == -1) {
         checkURL(user, message);
         //user.skip = 1;
         return;
