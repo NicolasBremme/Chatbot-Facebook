@@ -168,6 +168,11 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
+app.get('/loginPosteria/', (req, res) => {
+    console.log('Connection effectué.');
+    console.log(res);
+});
+
 function doMessage(user, event)
 {
     let message = event.message.text;
