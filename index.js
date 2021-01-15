@@ -359,7 +359,7 @@ function showPostInfo(user)
 
 function QR_askAuthor(user)
 {
-    let btnCount = Math.ceil(user.allAuthors.length / 3);
+    let btnCount = 1;//Math.ceil(user.allAuthors.length / 3);
     let btnData = [];
 
     for (let i = 0, j = 0; i < btnCount; i++) {
@@ -367,9 +367,9 @@ function QR_askAuthor(user)
             "text": "Choisissez un auteur :",
             "quick_replies": []
         });
-        for (j = 0; j < 3 && user.allAuthors[(i * 3) + j]; j++) {
-            let buttons = btnData[i].quick_replies;
+        let buttons = btnData[i].quick_replies;
 
+        for (j = 0; user.allAuthors[(i * 3) + j]; j++) {
             buttons.push({"content_type": "text", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
         }
     }
@@ -389,29 +389,24 @@ function askLong(user)
 
 function QR_askCategories(user)
 {
-    let btnCount = Math.ceil(user.allCategories.length / 3);
+    let btnCount = 1;//Math.ceil(user.allCategories.length / 3);
     let btnData = [];
 
     for (let i = 0, j = 0; i < btnCount; i++) {
         btnData.push({
-            "text": "Choisissez une ou plusieurs catégorie(s) :",
+            "text": "Choisissez une ou plusieurs catégorie(s) et appuyez sur Send :",
             "quick_replies": []
         });
-        for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
-            let buttons = btnData[i].quick_replies;
+        let buttons = btnData[i].quick_replies;
 
+        for (j = 0; user.allCategories[(i * 3) + j]; j++) {
             buttons.push({"content_type": "text", "title": user.allCategories[(i * 3) + j], "payload": (i * 3) + j});
         }
+        buttons.push({"content_type": "text", "title": "Send", "payload": "send"});
     }
     let index = 0;
     let indexLimit = btnData.length;
 
-    btnData.push({
-        "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
-        "quick_replies": [
-            {"content_type": "text", "title": "Send", "payload": "send"}
-        ]
-    });
     console.log(btnData);
     sendTextMessage(user, btnData, index, indexLimit, sendTextMessage);
 }
