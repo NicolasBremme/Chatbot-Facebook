@@ -369,10 +369,7 @@ function QR_askAuthor(user)
             buttons.push({"content_type": "text", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
         }
     }
-    let index = 0;
-    let indexLimit = btnData.length - 1;
-
-    sendTextMessage(user, btnData, index, indexLimit, sendTextMessage);
+    sendTextMessage(user, btnData);
 }
 
 function askLong(user)
@@ -400,10 +397,7 @@ function QR_askCategories(user)
         }
         buttons.push({"content_type": "text", "title": "Send", "payload": "send"});
     }
-    let index = 0;
-    let indexLimit = btnData.length;
-
-    sendTextMessage(user, btnData, index, indexLimit, sendTextMessage);
+    sendTextMessage(user, btnData);
 }
 
 function kuratorRequest(uri, param, callback)
