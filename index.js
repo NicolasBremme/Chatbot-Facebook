@@ -1,6 +1,6 @@
 'use strict';
 
-const VERIFY_TOKEN = "EAAGCK9WZBPQoBAHJw8WypcdSU9lsVwtqZBDRmaQEuWiQYL569rZCSwmfZCZA6M37DAlgoYlO209tEHAALywGDfE7SrKCZBo6FaYKK9KpzDws1hLZCGAUlywJAbBL2wWiDqR56sZAodr9RSbPNlNta0PViudfD0jMigFVgVB6UYvZBEwZDZD",
+const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD",
     appUrl = "https://test--chatbot.herokuapp.com";
 const kuratorUrl = "https://app.posteria.fr",
     imageUrl = "http://image-kurator.fr/app";
@@ -443,9 +443,7 @@ function checkURL(user, text)
         console.log('Looks like an URI');
         user.urlEntered = 1;
         user.articleUrl = text;
-        console.log('outside\n');
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
-            console.log('inside\n');
             try {
                 body = JSON.parse(body);
                 let sender = parseInt(body.sender);
@@ -454,7 +452,6 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    console.log("here1\n");
                     createBtn(allUsers[sender], {
                         "type": "template",
                         "payload": {
@@ -465,7 +462,6 @@ function checkURL(user, text)
                             ]
                         }
                     });
-                    console.log("here2\n");
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
@@ -490,7 +486,7 @@ function createBtn(user, btnData, index, indexLimit, callback)
 {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:VERIFY_TOKEN},
+        qs: {access_token: VERIFY_TOKEN},
         method: 'POST',
         json: {
             recipient: {id: user.sender},
@@ -513,7 +509,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback)
 {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:VERIFY_TOKEN},
+        qs: {access_token: VERIFY_TOKEN},
         method: 'POST',
         json: {
             recipient: {id: user.sender},
