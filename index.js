@@ -441,7 +441,7 @@ function checkURL(user, text)
     console.log("Message: " + text);
     if (user.urlEntered == 0 && validUrl.isUri(text)){
         console.log('Looks like an URI');
-        sendTextMessage(user, { text: "Pick one", "quick_reply" : [ { "content_type": "text", "title": "one", "image-url": "https://cybersavoir.csdm.qc.ca/bibliotheques/files/2018/11/10_banques_dimages_gratuites_libres_de_droits-300x169.jpg"}, { "content_type": "text", "title": "two", "image-url": "https://cybersavoir.csdm.qc.ca/bibliotheques/files/2018/11/10_banques_dimages_gratuites_libres_de_droits-300x169.jpg"} ] } );
+        sendTextMessage(user, { text: "Pick one", "quick_replies" : [ { "content_type": "text", "title": "one", "image-url": "https://cybersavoir.csdm.qc.ca/bibliotheques/files/2018/11/10_banques_dimages_gratuites_libres_de_droits-300x169.jpg"}, { "content_type": "text", "title": "two", "image-url": "https://cybersavoir.csdm.qc.ca/bibliotheques/files/2018/11/10_banques_dimages_gratuites_libres_de_droits-300x169.jpg"} ] } );
         user.urlEntered = 1;
         user.articleUrl = text;
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
