@@ -3,8 +3,7 @@
 const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD",
     appUrl = "https://test--chatbot.herokuapp.com",
     pathToFiles = "/app/";
-// const kuratorUrl = "https://app.posteria.fr",
-const kuratorUrl = "https://preprod.kurator.fr/",
+const kuratorUrl = "https://app.posteria.fr",
     imageUrl = "http://image-kurator.fr/app";
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const { response } = require('express');
@@ -27,23 +26,6 @@ app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
 
 const getRandom = (min, max) => (Math.floor(Math.random() * ((max - min) + min)));
-
-//Quand le tweet est bon
-var rewardsUrlOk = [
-    "Génial ce tweet ! \u{1F609}",
-    "Super tweet ! \u{1F929}",
-    "Beau travail !  \u{1F642}",
-	"Well done ! \u{1F917}",
-	"Very well \u{1F618}",
-	"Very good \u{1F44D}",
-	"Bravo \u{1F44F}",
-	"Tweet validé \u{1F642}",
-	"Good work \u{1F44A}",
-	"Tweet ok \u{1F3FE}",
-	"Ton tweet est excellent \u{1F60E}",
-	"Géniiiiial !!!!! \u{1F60D}",
-	"Bon boulot !!! \u{1F601}"
-];
 
 //Quand catégories ok
 var rewardsCategoriesOk = [
