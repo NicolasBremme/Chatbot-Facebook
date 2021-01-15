@@ -361,7 +361,7 @@ function QR_askAuthor(user)
     };
     let buttons = btnData.quick_replies;
 
-    for (let j = 0; user.allAuthors[j]; j++) {
+    for (let j = 0; j < 13 && user.allAuthors[j]; j++) {
         buttons.push({"content_type": "text", "title": user.allAuthors[j], "payload": j});
     }
     sendTextMessage(user, btnData);
@@ -383,7 +383,7 @@ function QR_askCategories(user, mode)
     };
     let buttons = btnData.quick_replies;
 
-    for (let j = 0; user.allCategories[j]; j++) {
+    for (let j = 0; j < 12 && user.allCategories[j]; j++) {
         buttons.push({"content_type": "text", "title": user.allCategories[j], "payload": j});
     }
     buttons.push({"content_type": "text", "title": "Send", "payload": "send"});
