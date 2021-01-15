@@ -426,7 +426,7 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    sendTextMessage(allUsers[sender], [{attachment: {type: "image", payload: {url: kuratorUrl + "img/posteria/kurator_no_gbest-publication.jpg"}}}, {text: kuratorUrl + '?extern_id=' + sender}], 0, 1);
+                    sendTextMessage(allUsers[sender], [{attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}}, {text: kuratorUrl + '?extern_id=' + sender}], 0, 1);
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
