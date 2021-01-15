@@ -248,7 +248,9 @@ function doPostback(user, event)
 {
     let payload = event.postback.payload;
 
+    console.log('EHLLOOOOOOOOOOOO');
     if (user.categoriesSelected == 0) {
+        console.log('AZJDOIAHZDIOH');
         if (payload == "send" && user.categories.length != 0) {
             user.categoriesSelected = 1;
             askLong(user);
