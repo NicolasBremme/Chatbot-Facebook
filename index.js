@@ -201,9 +201,7 @@ app.get('/loginPosteria/', (req, res) => {
                             allUsers[sender].allAuthorsId.push(property);
                         }
                     }
-                    console.log('before QR.');
                     QR_askCategories(allUsers[sender]);
-                    console.log('after QR.');
                 }
                 catch (error) {
                     console.log(error);
@@ -325,14 +323,11 @@ function QR_askTime(user)
 {
     const btnData = {
         "text": "Choisissez un auteur :",
-        "quick_replies": [{
-            "text": "Choisissez le moment de publication :",
-            "quick_replies": [
-                {"content_type": "text", "title": "Immédiatement", "payload": "now"},
-                {"content_type": "text", "title": "Dans le tunnel de publication", "payload": "tunnel"},
-                {"content_type": "text", "title": "Annulation", "payload": "stop"}
-            ]
-        }]
+        "quick_replies": [
+            {"content_type": "text", "title": "Immédiatement", "payload": "now"},
+            {"content_type": "text", "title": "Dans le tunnel de publication", "payload": "tunnel"},
+            {"content_type": "text", "title": "Annulation", "payload": "stop"}
+        ]
     };
     sendTextMessage(user, btnData);
 }
