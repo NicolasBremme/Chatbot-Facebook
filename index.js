@@ -205,7 +205,8 @@ app.get('/loginPosteria/', (req, res) => {
                     QR_askCategories(allUsers[sender]);
                     console.log('after QR.');
                 }
-                catch {
+                catch (error) {
+                    console.log(error);
                     sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
                     delete allUsers[sender];
                     return;
@@ -306,7 +307,9 @@ function doPostback(user, event)
                         delete allUsers[sender];
                         return;
                     }
-                } catch {
+                }
+                catch (error) {
+                    console.log(error);
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
                     delete allUsers[sender];
                     return;
@@ -461,7 +464,9 @@ function checkURL(user, text)
                     }
                     delete allUsers[sender];
                 }
-            } catch {
+            }
+            catch (error) {
+                console.log(error);
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [1]"});
                 delete allUsers[sender];
                 return;
