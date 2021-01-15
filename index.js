@@ -267,6 +267,7 @@ function doPostback(user, event)
             if (newCategorie == 1) {
                 user.categories.push(user.allCategoriesId[parseInt(payload)]);
             }
+            QR_askCategories(user);
             return;
         }
     }
