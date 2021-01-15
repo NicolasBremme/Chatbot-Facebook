@@ -143,9 +143,6 @@ app.post('/webhook/', function (req, res)
         else if (event.postback && event.postback.payload) {
             doPostback(allUsers[sender], event);
         }
-        else if (event.account_linking) {
-            doLinking(allUsers[sender], event);
-        }
 
     }
     res.sendStatus(200)
@@ -202,7 +199,7 @@ app.get('/loginPosteria/', (req, res) => {
                             allUsers[sender].allAuthorsId.push(property);
                         }
                     }
-                    askCategories(allUsers[sender]);
+                    QR_askCategories(allUsers[sender]);
                 }
                 catch {
                     sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
@@ -215,7 +212,7 @@ app.get('/loginPosteria/', (req, res) => {
             delete allUsers[sender];
         }
     } else {
-        
+        return;
     }
 });
 
@@ -313,44 +310,6 @@ function doPostback(user, event)
             });
         }
         return;
-    }
-}
-
-function doLinking(user, event)
-{
-    let linking = event.account_linking;
-
-    if (user.isConnected == 0) {
-        if (linking.status == 'linked') {
-            user.isConnected = 1;
-            kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
-                try {
-                    body = JSON.parse(body);
-                    let sender = parseInt(body.sender);
-
-                    allUsers[sender].platform = body.platform;
-                    for (const property in body.categories) {
-                        allUsers[sender].allCategories.push(property);
-                        allUsers[sender].allCategoriesId.push(body.categories[property]);
-                    }
-                    if (allUsers[sender].platform == 'wordpress') {
-                        for (const property in body.authors) {
-                            allUsers[sender].allAuthors.push(body.authors[property].username);
-                            allUsers[sender].allAuthorsId.push(property);
-                        }
-                    }
-                    askCategories(allUsers[sender]);
-                }
-                catch {
-                    sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
-                    delete allUsers[sender];
-                    return;
-                }
-            });
-        } else {
-            sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
-            delete allUsers[sender];
-        }
     }
 }
 
@@ -552,7 +511,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback)
             callback(user, msgData, index + 1, indexLimit, callback);
         }
         else if ((user.platform == 'wall' || user.author.length != 0) && user.time.length == 0 && index >= indexLimit) {
-            askTime(user);
+            QR_askTime(user);
         }
     });
 }
