@@ -169,14 +169,20 @@ app.get('/webhook/', (req, res) => {
 });
 
 app.get('/loginPosteria/', (req, res) => {
+
     let code = null;
+    let sender = null;
 
     if (null != req.query.code) {
-        code = req.query.code;
+        code = parseInt(req.query.code, 10);
+    }
+    if (null != req.query.sender) {
+        sender = parseInt(req.query.sender, 10);
+        user = allUsers[sender];
     }
     res.sendStatus(200);
     if (user.isConnected == 0) {
-        if (code == 'linked') {
+        if (code == 1 && sender != null) {
             user.isConnected = 1;
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
                 try {
