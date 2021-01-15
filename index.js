@@ -216,7 +216,7 @@ app.get('/loginPosteria/', (req, res) => {
     } else {
         return;
     }
-    res.sendFile('/1.html');
+    res.sendFile('/test--chatbot/loginPosteria.html');
 });
 
 function doMessage(user, event)
