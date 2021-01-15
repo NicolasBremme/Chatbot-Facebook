@@ -1,7 +1,8 @@
 'use strict';
 
 const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD",
-    appUrl = "https://test--chatbot.herokuapp.com";
+    appUrl = "https://test--chatbot.herokuapp.com",
+    pathToFiles = "/app/";
 // const kuratorUrl = "https://app.posteria.fr",
 const kuratorUrl = "https://preprod.kurator.fr/",
     imageUrl = "http://image-kurator.fr/app";
@@ -216,7 +217,7 @@ app.get('/loginPosteria/', (req, res) => {
     } else {
         return;
     }
-    res.sendFile('/test--chatbot/loginPosteria.html');
+    res.sendFile(pathToFiles + 'loginPosteria.html');
 });
 
 function doMessage(user, event)
