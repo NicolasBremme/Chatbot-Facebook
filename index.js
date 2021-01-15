@@ -172,6 +172,7 @@ app.get('/webhook/', (req, res) => {
 app.get('/loginPosteria/', (req, res) => {
 
     let code = null;
+    let user = null;
     let sender = null;
 
     if (null != req.query.code) {
@@ -182,7 +183,7 @@ app.get('/loginPosteria/', (req, res) => {
         user = allUsers[sender];
     }
     res.sendStatus(200);
-    if (user.isConnected == 0) {
+    if (user != null && user.isConnected == 0) {
         if (code == 1 && sender != null) {
             user.isConnected = 1;
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
@@ -213,6 +214,8 @@ app.get('/loginPosteria/', (req, res) => {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
             delete allUsers[sender];
         }
+    } else {
+        
     }
 });
 
