@@ -443,7 +443,9 @@ function checkURL(user, text)
         console.log('Looks like an URI');
         user.urlEntered = 1;
         user.articleUrl = text;
+        console.log('outside\n');
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
+            console.log('inside\n');
             try {
                 body = JSON.parse(body);
                 let sender = parseInt(body.sender);
@@ -452,7 +454,6 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    console.log('here1');
                     createBtn(allUsers[sender], {
                         "type": "template",
                         "payload": {
@@ -463,7 +464,6 @@ function checkURL(user, text)
                             ]
                         }
                     });
-                    console.log('here2');
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
