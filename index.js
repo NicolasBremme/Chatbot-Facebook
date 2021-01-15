@@ -169,8 +169,44 @@ app.get('/webhook/', (req, res) => {
 });
 
 app.get('/loginPosteria/', (req, res) => {
-    console.log('Connection effectué.');
+    let code = null;
+
+    if (null != req.query.code) {
+        code = req.query.code;
+    }
     res.sendStatus(200);
+    if (user.isConnected == 0) {
+        if (code == 'linked') {
+            user.isConnected = 1;
+            kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
+                try {
+                    body = JSON.parse(body);
+                    let sender = parseInt(body.sender);
+
+                    allUsers[sender].platform = body.platform;
+                    for (const property in body.categories) {
+                        allUsers[sender].allCategories.push(property);
+                        allUsers[sender].allCategoriesId.push(body.categories[property]);
+                    }
+                    if (allUsers[sender].platform == 'wordpress') {
+                        for (const property in body.authors) {
+                            allUsers[sender].allAuthors.push(body.authors[property].username);
+                            allUsers[sender].allAuthorsId.push(property);
+                        }
+                    }
+                    askCategories(allUsers[sender]);
+                }
+                catch {
+                    sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
+                    delete allUsers[sender];
+                    return;
+                }
+            });
+        } else {
+            sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+            delete allUsers[sender];
+        }
+    }
 });
 
 function doMessage(user, event)
