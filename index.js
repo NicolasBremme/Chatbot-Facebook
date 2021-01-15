@@ -395,7 +395,7 @@ function QR_askCategories(user)
             "quick_replies": []
         });
         for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
-            let buttons = btnData[i].payload.buttons;
+            let buttons = btnData[i].quick_replies;
 
             buttons.push({"content_type": "text", "title": user.allCategories[(i * 3) + j], "payload": (i * 3) + j});
         }
