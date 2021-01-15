@@ -356,19 +356,14 @@ function showPostInfo(user)
 
 function QR_askAuthor(user)
 {
-    let btnCount = 1;//Math.ceil(user.allAuthors.length / 3);
-    let btnData = [];
+    let btnData = {
+        "text": "Choisissez un auteur :",
+        "quick_replies": []
+    };
+    let buttons = btnData[i].quick_replies;
 
-    for (let i = 0, j = 0; i < btnCount; i++) {
-        btnData.push({
-            "text": "Choisissez un auteur :",
-            "quick_replies": []
-        });
-        let buttons = btnData[i].quick_replies;
-
-        for (j = 0; user.allAuthors[(i * 3) + j]; j++) {
-            buttons.push({"content_type": "text", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
-        }
+    for (j = 0; user.allAuthors[(i * 3) + j]; j++) {
+        buttons.push({"content_type": "text", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
     }
     sendTextMessage(user, btnData);
 }
@@ -383,21 +378,16 @@ function askLong(user)
 
 function QR_askCategories(user)
 {
-    let btnCount = 1;//Math.ceil(user.allCategories.length / 3);
-    let btnData = [];
+    let btnData = {
+        "text": "Choisissez une ou plusieurs catégorie(s) et appuyez sur Send :",
+        "quick_replies": []
+    };
+    let buttons = btnData[i].quick_replies;
 
-    for (let i = 0, j = 0; i < btnCount; i++) {
-        btnData.push({
-            "text": "Choisissez une ou plusieurs catégorie(s) et appuyez sur Send :",
-            "quick_replies": []
-        });
-        let buttons = btnData[i].quick_replies;
-
-        for (j = 0; user.allCategories[(i * 3) + j]; j++) {
-            buttons.push({"content_type": "text", "title": user.allCategories[(i * 3) + j], "payload": (i * 3) + j});
-        }
-        buttons.push({"content_type": "text", "title": "Send", "payload": "send"});
+    for (j = 0; user.allCategories[(i * 3) + j]; j++) {
+        buttons.push({"content_type": "text", "title": user.allCategories[(i * 3) + j], "payload": (i * 3) + j});
     }
+    buttons.push({"content_type": "text", "title": "Send", "payload": "send"});
     sendTextMessage(user, btnData);
 }
 
