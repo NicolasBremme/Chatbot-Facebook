@@ -216,7 +216,7 @@ app.get('/loginPosteria/', (req, res) => {
     } else {
         return;
     }
-    res.sendFile('/loginPosteria.html');
+    res.sendFile('/1.html');
 });
 
 function doMessage(user, event)
