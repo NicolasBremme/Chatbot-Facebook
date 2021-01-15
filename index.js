@@ -143,7 +143,9 @@ app.post('/webhook/', function (req, res)
         else if (event.postback && event.postback.payload) {
             doPostback(allUsers[sender], event);
         }
-
+        else {
+            console.log(event);
+        }
     }
     res.sendStatus(200)
 });
