@@ -204,7 +204,7 @@ app.get('/loginPosteria/', (req, res) => {
                     QR_askCategories(allUsers[sender]);
                 }
                 catch (error) {
-                    console.log(error);
+                    console.log('[1]' + error);
                     sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
                     delete allUsers[sender];
                     return;
@@ -308,7 +308,7 @@ function doPostback(user, event)
                     }
                 }
                 catch (error) {
-                    console.log(error);
+                    console.log('[2]' + error);
                     console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
                     delete allUsers[sender];
                     return;
@@ -403,7 +403,6 @@ function QR_askCategories(user)
     let index = 0;
     let indexLimit = btnData.length;
 
-    console.log(btnData);
     sendTextMessage(user, btnData, index, indexLimit, sendTextMessage);
 }
 
@@ -457,7 +456,7 @@ function checkURL(user, text)
                 }
             }
             catch (error) {
-                console.log(error);
+                console.log('[3]' + error);
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [1]"});
                 delete allUsers[sender];
                 return;
@@ -466,29 +465,6 @@ function checkURL(user, text)
     } else {
         console.log('Not an URI');
     }
-}
-
-function createBtn(user, btnData, index, indexLimit, callback)
-{
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token: VERIFY_TOKEN},
-        method: 'POST',
-        json: {
-            recipient: {id: user.sender},
-            message: {attachment: (index != undefined) ? btnData[index] : btnData}
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error creating button: ', error);
-        }
-        else if (response.body.error) {
-            console.log('Error: ', response.body.error);
-        }
-        if (callback != undefined && index < indexLimit) {
-            callback(user, btnData, index + 1, indexLimit, callback);
-        }
-    });
 }
 
 function sendTextMessage(user, msgData, index, indexLimit, callback)
