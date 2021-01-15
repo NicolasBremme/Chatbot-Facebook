@@ -256,7 +256,7 @@ function doPostback(user, event)
             askLong(user);
             return;
         }
-        else {
+        else if (payload != "send") {
             let newCategorie = 1;
 
             for (let i = 0; i < user.categories.length; i++) {
@@ -270,6 +270,9 @@ function doPostback(user, event)
             }
             QR_askCategories(user, 0);
             return;
+        }
+        else {
+            QR_askCategories(user, 2);
         }
     }
     if (user.platform == 'wordpress' && user.author.length == 0) {
@@ -381,10 +384,20 @@ function askLong(user)
 function QR_askCategories(user, mode)
 {
     let btnData = {
-        "text": (mode == 1) ? "Choisissez une ou plusieurs catégorie(s) et appuyez sur Send :" : "Ensuite ?",
+        "text": "",
         "quick_replies": []
     };
     let buttons = btnData.quick_replies;
+
+    if (mode == 0) {
+        btnData.text = "Ensuite ?";
+    }
+    else if (mode == 1) {
+        btnData.text = "Choisissez une ou plusieurs catégorie(s) et appuyez sur Send :";
+    }
+    else if (mode == 2) {
+        btnData.text = "Vous devez sélectionner au moins 1 catégorie.";
+    }
 
     for (let j = 0; j < 12 && user.allCategories[j]; j++) {
         buttons.push({"content_type": "text", "title": user.allCategories[j], "payload": j});
