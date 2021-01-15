@@ -130,6 +130,11 @@ app.post('/webhook/', function (req, res)
 
         }
         else if (event.message && event.message.text) {
+            
+            for (const property in event) {
+                console.log(property);
+                console.log(event[property]);
+            }
             doMessage(allUsers[sender], event);
         }
         else if (event.message && event.message.attachments) {
