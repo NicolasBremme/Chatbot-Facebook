@@ -250,7 +250,6 @@ function doPostback(user, event)
     let payload = event.message.quick_reply.payload;
 
     if (user.categoriesSelected == 0) {
-        console.log(payload);
         if (payload == "send" && user.categories.length != 0) {
             user.categoriesSelected = 1;
             askLong(user);
@@ -273,6 +272,7 @@ function doPostback(user, event)
         }
         else {
             QR_askCategories(user, 2);
+            return;
         }
     }
     if (user.platform == 'wordpress' && user.author.length == 0) {
