@@ -185,21 +185,28 @@ app.get('/loginPosteria/', (req, res) => {
             user.isConnected = 1;
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
                 try {
+                    console.log('before json parse.');
                     body = JSON.parse(body);
                     let sender = parseInt(body.sender);
-
+                    
+                    console.log('before set platform.');
                     allUsers[sender].platform = body.platform;
+                    console.log('before cat.');
                     for (const property in body.categories) {
                         allUsers[sender].allCategories.push(property);
                         allUsers[sender].allCategoriesId.push(body.categories[property]);
                     }
+                    
+                    console.log('before WP.');
                     if (allUsers[sender].platform == 'wordpress') {
                         for (const property in body.authors) {
                             allUsers[sender].allAuthors.push(body.authors[property].username);
                             allUsers[sender].allAuthorsId.push(property);
                         }
                     }
+                    console.log('before QR.');
                     QR_askCategories(allUsers[sender]);
+                    console.log('after QR.');
                 }
                 catch {
                     sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
