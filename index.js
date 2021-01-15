@@ -428,7 +428,6 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    sendTextMessage(allUsers[sender], {text: kuratorUrl + 'img/posteria/kurator_no_gbest-publication.jpg'});
                     sendTextMessage(allUsers[sender], {text: kuratorUrl + '?extern_id=' + sender});
                 }
                 else {
