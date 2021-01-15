@@ -200,7 +200,7 @@ app.get('/loginPosteria/', (req, res) => {
                             allUsers[sender].allAuthorsId.push(property);
                         }
                     }
-                    QR_askCategories(allUsers[sender]);
+                    QR_askCategories(allUsers[sender], 1);
                 }
                 catch (error) {
                     console.log('[1] ' + error);
@@ -265,7 +265,7 @@ function doPostback(user, event)
             if (newCategorie == 1) {
                 user.categories.push(user.allCategoriesId[parseInt(payload)]);
             }
-            QR_askCategories(user);
+            QR_askCategories(user, 0);
             return;
         }
     }
@@ -375,10 +375,10 @@ function askLong(user)
     sendTextMessage(user, textDescLong);
 }
 
-function QR_askCategories(user)
+function QR_askCategories(user, mode)
 {
     let btnData = {
-        "text": "Choisissez une ou plusieurs catégorie(s) et appuyez sur Send :",
+        "text": (mode == 1) ? "Choisissez une ou plusieurs catégorie(s) et appuyez sur Send :" : "Ensuite ?",
         "quick_replies": []
     };
     let buttons = btnData.quick_replies;
