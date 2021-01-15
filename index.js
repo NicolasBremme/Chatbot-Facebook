@@ -227,9 +227,10 @@ function doMessage(user, event)
         delete allUsers[user.sender];
         return;
     }
-    if (user.urlEntered == 0 && message.search(kuratorUrl) == -1) {
-        checkURL(user, message);
-        //user.skip = 1;
+    if (user.urlEntered == 0) {
+        if (message.search(kuratorUrl) == -1) {
+            checkURL(user, message);
+        }
         return;
     }
     if (user.categoriesSelected == 1 && user.descLong.length == 0) {
