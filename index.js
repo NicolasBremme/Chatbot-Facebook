@@ -162,7 +162,9 @@ app.get('/loginPosteria/', (req, res) => {
         sender = parseInt(req.query.sender, 10);
         user = allUsers[sender];
     }
+    console.log("callback");
     if (user != null && user.isConnected == 0) {
+        console.log("callback: "+code+" : "+sender);
         if (code == 1 && sender != null) {
             user.isConnected = 1;
             kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
