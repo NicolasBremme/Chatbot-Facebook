@@ -192,7 +192,8 @@ app.get('/loginPosteria/', (req, res) => {
                     return;
                 }
             });
-        } else if (code == 2 && sender != null) {
+        }
+        else if (code == 2 && sender != null) {
             sendTextMessage(allUsers[sender], [
                 {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
                 {text: kuratorUrl + '?extern_id=' + sender}
