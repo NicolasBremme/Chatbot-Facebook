@@ -449,7 +449,7 @@ function checkURL(user, text)
                                         "type": "template",
                                         "payload": {
                                             "template_type": "button",
-                                            "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + " Veuillez vous connecter à Kurator :",
+                                            "text": "Veuillez vous connecter à Kurator :",
                                             "buttons": [
                                                 {"type": "account_link", "url": kuratorUrl + '?extern_id=' + sender},
                                             ]
