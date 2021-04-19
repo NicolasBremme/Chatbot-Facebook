@@ -425,17 +425,17 @@ function checkURL(user, text)
 
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
-                console.log(res);
-                console.log(body);
                 body = JSON.parse(body);
                 let sender = parseInt(body.sender);
-
+                
                 if (body.hasError == false && body.parseError == false) {
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
                     kuratorRequest('/users/login', {extern_id: sender, autologin: 1}, function(err, res, body) {
                         try {
+                            console.log(res);
+                            console.log(body);
                             body = JSON.parse(body);
                             let sender = parseInt(body.sender, 10);
                             let code = parseInt(body.code, 10);
