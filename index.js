@@ -228,6 +228,8 @@ function doMessage(user, event) {
 }
 
 function doPostback(user, event) {
+    console.log(event);
+    console.log(event.message);
     let payload = event.message.payload;
 
     if (user.categoriesSelected == 0) {
