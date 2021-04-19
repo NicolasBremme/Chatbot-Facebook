@@ -109,12 +109,15 @@ app.post('/webhook/', function (req, res) {
         }
 
         if (event.message && event.message.payload) {
+            console.log("éoihaozid");
             doPostback(allUsers[sender], event);
         }
         else if (event.message && event.message.text) {
+            console.log("pokpokpok");
             doMessage(allUsers[sender], event);
         }
         else if (event.message && event.message.attachments) {
+            console.log("nlknln");
             let url = event.message.attachments[0].url
 
             if(typeof url != 'undefined') {
@@ -125,6 +128,9 @@ app.post('/webhook/', function (req, res) {
             else{
                 console.log('attachment is an image');
             }
+        }
+        else {
+            console.log(event, event.message);
         }
     }
     res.sendStatus(200)
