@@ -167,6 +167,9 @@ app.get('/loginPosteria/', (req, res) => {
         if (code == 1 && sender != null) {
             getCategoriesAndAuthors(user);
         }
+        else if (code == 2 && sender != null) {
+
+        }
         else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
             delete allUsers[sender];
@@ -438,6 +441,8 @@ function checkURL(user, text)
                             let sender = parseInt(body.sender, 10);
                             let code = parseInt(body.code, 10);
 
+                            console.log(sender, code);
+
                             if (code == 1 && sender != null) {
                                 getCategoriesAndAuthors(allUsers[sender]);
                             }
@@ -448,7 +453,7 @@ function checkURL(user, text)
                                 ], 0, 1, sendTextMessage);
                             }
                             else {
-                                sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+                                sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.1'});
                                 delete allUsers[sender];
                             }
                         }
