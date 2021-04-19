@@ -383,9 +383,9 @@ function askCategories(user) {
                 }
             }
         });
-        btnData[i].payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
+        btnData[i].attachment.payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
         for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
-            let buttons = btnData[i].payload.buttons;
+            let buttons = btnData[i].attachment.payload.buttons;
 
             buttons.push({"type": "postback", "title": "", "payload": ""});
             buttons[j].title = user.allCategories[(i * 3) + j];
