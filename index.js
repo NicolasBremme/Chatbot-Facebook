@@ -436,14 +436,13 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    kuratorRequest('/users/login', {extern_id: sender, autologin: 1}, function(err, res, body) {
+                    kuratorRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
                         try {
                             let sender = parseInt(body.sender, 10);
-                            let code = parseInt(body.code, 10);
 
-                            console.log(sender, code);
+                            console.log(body);
 
-                            if (code == 1 && sender != null) {
+                            if (sender != null) {
                                 getCategoriesAndAuthors(allUsers[sender]);
                             }
                             else if (code == 2 && sender != null) {
