@@ -148,10 +148,8 @@ app.get('/webhook/', (req, res) => {
         }
     }
 });
-
 app.get('/loginPosteria/', (req, res) => {
 
-    console.log('REDIRECTED LOGIN');
     let code = null;
     let user = null;
     let sender = null;
@@ -167,15 +165,11 @@ app.get('/loginPosteria/', (req, res) => {
         if (code == 1 && sender != null) {
             getCategoriesAndAuthors(user);
         }
-        else if (code == 2 && sender != null) {
-
-        }
         else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
             delete allUsers[sender];
         }
-    }
-    else {
+    } else {
         return;
     }
     res.sendFile(pathToFiles + 'loginPosteria.html');
@@ -205,7 +199,7 @@ function getCategoriesAndAuthors(user) {
         }
         catch (error) {
             console.log('[1] ' + error);
-            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
             delete allUsers[sender];
             return;
         }
