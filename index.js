@@ -440,7 +440,8 @@ function checkURL(user, text)
                         try {
                             console.log(body);
                             body = JSON.parse(body);
-                            sender = body.sender;
+                            let sender = body.sender;
+                            let isLogged = body.logged;
 
                             if (body.hasError == true) {
                                 console.log('[5] ' + body.error);
@@ -448,13 +449,13 @@ function checkURL(user, text)
                                 delete allUsers[sender];
                             }
                             else {
-                                if (sender == -1) {
+                                if (sender != null && isLogged == false) {
                                     sendTextMessage(allUsers[sender], [
                                         {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
                                         {text: kuratorUrl + '?extern_id=' + sender}
                                     ], 0, 1, sendTextMessage);
                                 }
-                                else if (sender != null) {
+                                else if (sender != null && isLogged == true) {
                                     getCategoriesAndAuthors(allUsers[sender]);
                                 }
                                 else {
