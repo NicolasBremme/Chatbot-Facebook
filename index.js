@@ -445,6 +445,16 @@ function checkURL(user, text)
                                         {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
                                         {text: kuratorUrl + '?extern_id=' + sender}
                                     ], 0, 1, sendTextMessage);
+                                    createBtn(allUsers[sender], {
+                                        "type": "template",
+                                        "payload": {
+                                            "template_type": "button",
+                                            "text": rewardsUrlOk[getRandom(0, rewardsUrlOk.length)] + " Veuillez vous connecter à Kurator :",
+                                            "buttons": [
+                                                {"type": "account_link", "url": kuratorUrl + '?extern_id=' + sender},
+                                            ]
+                                        }
+                                    });
                                 }
                                 else if (sender != null && isLogged == true) {
                                     getCategoriesAndAuthors(allUsers[sender]);
@@ -483,6 +493,29 @@ function checkURL(user, text)
     } else {
         console.log('Not an URI');
     }
+}
+
+function createBtn(user, btnData, index, indexLimit, callback)
+{
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token: VERIFY_TOKEN},
+        method: 'POST',
+        json: {
+            recipient: {id: user.sender},
+            message: {attachment: (index != undefined) ? btnData[index] : btnData}
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error creating button: ', error);
+        }
+        else if (response.body.error) {
+            console.log('Error: ', response.body.error);
+        }
+        if (callback != undefined && index < indexLimit) {
+            callback(user, btnData, index + 1, indexLimit, callback);
+        }
+    });
 }
 
 function sendTextMessage(user, msgData, index, indexLimit, callback)
