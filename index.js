@@ -228,10 +228,9 @@ function doMessage(user, event) {
 }
 
 function doPostback(user, event) {
-    let payload = event.message.quick_reply.payload;
+    let payload = event.message.payload;
 
     if (user.categoriesSelected == 0) {
-        console.log('here');
         if (payload == "send" && user.categories.length != 0) {
             user.categoriesSelected = 1;
             askLong(user);
@@ -249,7 +248,6 @@ function doPostback(user, event) {
             if (newCategorie == 1) {
                 user.categories.push(user.allCategoriesId[parseInt(payload)]);
             }
-            console.log(user.categories);
             return;
         }
     }
