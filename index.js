@@ -108,7 +108,7 @@ app.post('/webhook/', function (req, res) {
             };
         }
 
-        if (event.message && event.message.quick_reply) {
+        if (event.message && event.message.payload) {
             doPostback(allUsers[sender], event);
         }
         else if (event.message && event.message.text) {
@@ -117,7 +117,7 @@ app.post('/webhook/', function (req, res) {
         else if (event.message && event.message.attachments) {
             let url = event.message.attachments[0].url
 
-            if(typeof url != 'undefined'){
+            if(typeof url != 'undefined') {
                 url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
                 event.message.text = url;
                 doMessage(allUsers[sender], event);
