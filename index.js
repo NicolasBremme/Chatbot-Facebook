@@ -579,7 +579,7 @@ function createBtn(user, btnData, index, indexLimit, callback) {
             console.log('[4]Error: ', response.body.error);
         }
         if (callback != undefined && index < indexLimit) {
-            callback(user, msgData, index + 1, indexLimit, callback);
+            callback(user, btnData, index + 1, indexLimit, callback);
         }
     });
 }
