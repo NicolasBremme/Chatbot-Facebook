@@ -162,54 +162,51 @@ app.get('/loginPosteria/', (req, res) => {
         sender = parseInt(req.query.sender, 10);
         user = allUsers[sender];
     }
-    console.log("callback");
     if (user != null && user.isConnected == 0) {
-        console.log("callback: "+code+" : "+sender);
         if (code == 1 && sender != null) {
-            user.isConnected = 1;
-            kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
-                try {
-                    body = JSON.parse(body);
-                    let sender = parseInt(body.sender);
-                    
-                    allUsers[sender].platform = body.platform;
-
-                    for (const property in body.categories) {
-                        allUsers[sender].allCategories.push(property);
-                        allUsers[sender].allCategoriesId.push(body.categories[property]);
-                    }
-
-                    if (allUsers[sender].platform == 'wordpress') {
-                        for (const property in body.authors) {
-                            allUsers[sender].allAuthors.push(body.authors[property].username);
-                            allUsers[sender].allAuthorsId.push(property);
-                        }
-                    }
-                    QR_askCategories(allUsers[sender], 1);
-                }
-                catch (error) {
-                    console.log('[1] ' + error);
-                    sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-                    delete allUsers[sender];
-                    return;
-                }
-            });
-        }
-        else if (code == 2 && sender != null) {
-            sendTextMessage(allUsers[sender], [
-                {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
-                {text: kuratorUrl + '?extern_id=' + sender}
-            ], 0, 1, sendTextMessage);
+            getCategoriesAndAuthors(user);
         }
         else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
             delete allUsers[sender];
         }
-    } else {
+    }
+    else {
         return;
     }
     res.sendFile(pathToFiles + 'loginPosteria.html');
 });
+
+function getCategoriesAndAuthors(user) {
+    user.isConnected = 1;
+    kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
+        try {
+            body = JSON.parse(body);
+            let sender = parseInt(body.sender);
+            
+            allUsers[sender].platform = body.platform;
+
+            for (const property in body.categories) {
+                allUsers[sender].allCategories.push(property);
+                allUsers[sender].allCategoriesId.push(body.categories[property]);
+            }
+
+            if (allUsers[sender].platform == 'wordpress') {
+                for (const property in body.authors) {
+                    allUsers[sender].allAuthors.push(body.authors[property].username);
+                    allUsers[sender].allAuthorsId.push(property);
+                }
+            }
+            QR_askCategories(allUsers[sender], 1);
+        }
+        catch (error) {
+            console.log('[1] ' + error);
+            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+            delete allUsers[sender];
+            return;
+        }
+    });
+}
 
 function doMessage(user, event)
 {
@@ -436,13 +433,38 @@ function checkURL(user, text)
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
                     kuratorRequest('/users/login', {extern_id: sender, autologin: 1}, function(err, res, body) {
-                        console.log(res);
+                        try {
+                            body = JSON.parse(body);
+                            let sender = parseInt(body.sender, 10);
+                            let code = parseInt(body.code, 10);
+
+                            if (code == 1 && sender != null) {
+                                getCategoriesAndAuthors(allUsers[sender]);
+                            }
+                            else if (code == 2 && sender != null) {
+                                sendTextMessage(allUsers[sender], [
+                                    {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
+                                    {text: kuratorUrl + '?extern_id=' + sender}
+                                ], 0, 1, sendTextMessage);
+                            }
+                            else {
+                                sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+                                delete allUsers[sender];
+                            }
+                        }
+                        catch (error) {
+                            console.log('[4] ' + error);
+                            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+                            delete allUsers[sender];
+                            return;
+                        }
                     });
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
                         sendTextMessage(allUsers[sender], {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations'});
-                    } else {
+                    }
+                    else {
                         sendTextMessage(allUsers[sender], {text: body.error});
                     }
                     delete allUsers[sender];
