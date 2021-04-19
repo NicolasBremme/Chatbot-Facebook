@@ -440,6 +440,7 @@ function checkURL(user, text)
                         try {
                             console.log(body);
                             body = JSON.parse(body);
+                            sender = body.sender;
 
                             if (body.hasError == true) {
                                 console.log('[5] ' + body.error);
