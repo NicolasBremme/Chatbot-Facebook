@@ -441,10 +441,10 @@ function checkURL(user, text)
                             }
                             else {
                                 if (sender != null && isLogged == false) {
-                                    sendTextMessage(allUsers[sender], [
-                                        {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
-                                        {text: kuratorUrl + '?extern_id=' + sender}
-                                    ], 0, 1, sendTextMessage);
+                                    // sendTextMessage(allUsers[sender], [
+                                    //     {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
+                                    //     {text: kuratorUrl + '?extern_id=' + sender}
+                                    // ], 0, 1, sendTextMessage);
                                     test(allUsers[sender]);
                                 }
                                 else if (sender != null && isLogged == true) {
@@ -524,12 +524,12 @@ function test(user) {
                     type: "template",
                     payload: {
                         template_type: "button",
-                        text: "Bonjour TEST",
+                        text: "Bonjour, veuillez vous connecter à Posteria",
                         buttons: [{
                             type: "web_url",
                             url: kuratorUrl + '?extern_id=' + user.sender,
-                            title: "BOUTTON",
-                            webview_height_ratio: "full"
+                            title: "Connexion",
+                            webview_height_ratio: "compact"
                         }]
                     }
                 }
