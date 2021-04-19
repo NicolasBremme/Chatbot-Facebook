@@ -493,7 +493,7 @@ function checkURL(user, text) {
                                                 text: "Bonjour, veuillez vous connecter à Posteria",
                                                 buttons: [{
                                                     type: "web_url",
-                                                    url: kuratorUrl + '?extern_id=' + user.sender,
+                                                    url: kuratorUrl + '?extern_id=' + sender,
                                                     title: "Connexion",
                                                     webview_height_ratio: "compact"
                                                 }]
