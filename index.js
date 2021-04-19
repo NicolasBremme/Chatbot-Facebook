@@ -108,16 +108,13 @@ app.post('/webhook/', function (req, res) {
             };
         }
 
-        if (event.message && event.message.payload) {
-            console.log("éoihaozid");
+        if (event.postback && event.postback.payload) {
             doPostback(allUsers[sender], event);
         }
         else if (event.message && event.message.text) {
-            console.log("pokpokpok");
             doMessage(allUsers[sender], event);
         }
         else if (event.message && event.message.attachments) {
-            console.log("nlknln");
             let url = event.message.attachments[0].url
 
             if(typeof url != 'undefined') {
@@ -128,9 +125,6 @@ app.post('/webhook/', function (req, res) {
             else{
                 console.log('attachment is an image');
             }
-        }
-        else {
-            console.log(event, event.message);
         }
     }
     res.sendStatus(200)
@@ -234,9 +228,7 @@ function doMessage(user, event) {
 }
 
 function doPostback(user, event) {
-    console.log(event);
-    console.log(event.message);
-    let payload = event.message.payload;
+    let payload = event.postback.payload;
 
     if (user.categoriesSelected == 0) {
         if (payload == "send" && user.categories.length != 0) {
@@ -355,6 +347,34 @@ function showPostInfo(user) {
     let indexLimit = showInfoText.length - 1;
 
     sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
+}
+
+function askAuthor(user)
+{
+    let btnCount = Math.ceil(user.allAuthors.length / 3);
+    let btnData = [];
+
+    for (let i = 0, j = 0; i < btnCount; i++) {
+        btnData.push({
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "button",
+                    "text": (i == 0) ? "Choisissez un auteur :" : "Suite :",
+                    "buttons": []
+                }
+            }
+        });
+        for (j = 0; j < 3 && user.allAuthors[(i * 3) + j]; j++) {
+            let buttons = btnData[i].attachment.payload.buttons;
+
+            buttons.push({"type": "postback", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
+        }
+    }
+    let index = 0;
+    let indexLimit = btnData.length - 1;
+
+    createBtn(user, btnData, index, indexLimit, createBtn);
 }
 
 function QR_askAuthor(user) {
