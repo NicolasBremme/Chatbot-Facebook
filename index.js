@@ -481,7 +481,7 @@ function checkURL(user, text) {
                             }
                             else {
                                 if (sender != null && isLogged == false) {
-                                    sendBtn(allUsers[sender], {
+                                    createBtn(allUsers[sender], {
                                         attachment: {
                                             type: "template",
                                             payload: {
@@ -562,7 +562,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback) {
     });
 }
 
-function sendBtn(user, btnData, index, indexLimit, callback) {
+function createBtn(user, btnData, index, indexLimit, callback) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
