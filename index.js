@@ -438,6 +438,7 @@ function checkURL(user, text)
                     allUsers[sender].desc = body.description;
                     kuratorRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
                         try {
+                            console.log(body);
                             body = JSON.parse(body);
 
                             if (body.hasError == true) {
