@@ -374,11 +374,13 @@ function askCategories(user) {
 
     for (let i = 0, j = 0; i < btnCount; i++) {
         btnData.push({
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": "",
-                "buttons": []
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "button",
+                    "text": "",
+                    "buttons": []
+                }
             }
         });
         btnData[i].payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
@@ -394,13 +396,15 @@ function askCategories(user) {
     let indexLimit = btnData.length;
 
     btnData.push({
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
-            "buttons": [
-                {"type": "postback", "title": "Send", "payload": "send"},
-            ]
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
+                "buttons": [
+                    {"type": "postback", "title": "Send", "payload": "send"},
+                ]
+            }
         }
     });
     createBtn(user, btnData, index, indexLimit, createBtn);
