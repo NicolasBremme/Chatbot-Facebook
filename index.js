@@ -149,7 +149,6 @@ app.get('/webhook/', (req, res) => {
     }
 });
 app.get('/loginPosteria/', (req, res) => {
-
     let code = null;
     let user = null;
     let sender = null;
@@ -169,8 +168,6 @@ app.get('/loginPosteria/', (req, res) => {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
             delete allUsers[sender];
         }
-    } else {
-        return;
     }
     res.sendFile(pathToFiles + 'loginPosteria.html');
 });
