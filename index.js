@@ -219,7 +219,7 @@ function doMessage(user, event) {
     if (user.categoriesSelected == 1 && user.descLong.length == 0) {
         user.descLong = message;
         if (user.platform == 'wordpress') {
-            QR_askAuthor(user);
+            askAuthor(user);
         } else {
             showPostInfo(user);
         }
@@ -303,15 +303,17 @@ function doPostback(user, event) {
 
 function askTime(user) {
     const btnData = {
-        "type": "template",
-        "payload": {
-            "template_type": "button",
-            "text": "Choisissez le moment de publication :",
-            "buttons": [
-                {"type": "postback", "title": "Immédiatement", "payload": "now"},
-                {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
-                {"type": "postback", "title": "Annulation", "payload": "stop"}
-            ]
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "Choisissez le moment de publication :",
+                "buttons": [
+                    {"type": "postback", "title": "Immédiatement", "payload": "now"},
+                    {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
+                    {"type": "postback", "title": "Annulation", "payload": "stop"}
+                ]
+            }
         }
     };
     createBtn(user, btnData);
