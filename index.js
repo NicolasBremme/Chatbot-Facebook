@@ -439,22 +439,26 @@ function checkURL(user, text)
                     kuratorRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
                         try {
                             body = JSON.parse(body);
-                            let sender = parseInt(body.sender, 10);
 
-                            console.log(body);
-
-                            if (sender != null) {
-                                getCategoriesAndAuthors(allUsers[sender]);
-                            }
-                            else if (code == 2 && sender != null) {
-                                sendTextMessage(allUsers[sender], [
-                                    {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
-                                    {text: kuratorUrl + '?extern_id=' + sender}
-                                ], 0, 1, sendTextMessage);
+                            if (body.hasError == true) {
+                                console.log('[5] ' + body.error);
+                                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+                                delete allUsers[sender];
                             }
                             else {
-                                sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.1'});
-                                delete allUsers[sender];
+                                if (sender == -1) {
+                                    sendTextMessage(allUsers[sender], [
+                                        {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
+                                        {text: kuratorUrl + '?extern_id=' + sender}
+                                    ], 0, 1, sendTextMessage);
+                                }
+                                else if (sender != null) {
+                                    getCategoriesAndAuthors(allUsers[sender]);
+                                }
+                                else {
+                                    sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+                                    delete allUsers[sender];
+                                }
                             }
                         }
                         catch (error) {
