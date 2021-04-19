@@ -435,7 +435,9 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    kuratorRequest('/users/login', {extern_id: sender, autologin: 1}, function(err, res, body) {});
+                    kuratorRequest('/users/login', {extern_id: sender, autologin: 1}, function(err, res, body) {
+                        console.log(res);
+                    });
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
