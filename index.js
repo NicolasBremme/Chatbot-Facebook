@@ -187,12 +187,18 @@ app.get('/loginPosteria/', (req, res) => {
                 }
                 catch (error) {
                     console.log('[1] ' + error);
-                    sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
+                    sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
                     delete allUsers[sender];
                     return;
                 }
             });
-        } else {
+        } else if (code == 2 && sender != null) {
+            sendTextMessage(allUsers[sender], [
+                {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
+                {text: kuratorUrl + '?extern_id=' + sender}
+            ], 0, 1, sendTextMessage);
+        }
+        else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
             delete allUsers[sender];
         }
@@ -359,7 +365,6 @@ function askLong(user)
 {
     const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
 
-    //user.skip = 1;
     sendTextMessage(user, textDescLong);
 }
 
@@ -417,6 +422,7 @@ function checkURL(user, text)
         console.log('Looks like an URI');
         user.urlEntered = 1;
         user.articleUrl = text;
+
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
                 body = JSON.parse(body);
@@ -426,10 +432,7 @@ function checkURL(user, text)
                     allUsers[sender].image = body.image;
                     allUsers[sender].title = body.title;
                     allUsers[sender].desc = body.description;
-                    sendTextMessage(allUsers[sender], [
-                        {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
-                        {text: kuratorUrl + '?extern_id=' + sender}
-                    ], 0, 1, sendTextMessage);
+                    kuratorRequest('', {extern_id: sender, autologin: 1}, function(err, res, body) {});
                 }
                 else {
                     if(body.error == 'Cannot parse the article.') {
@@ -442,7 +445,7 @@ function checkURL(user, text)
             }
             catch (error) {
                 console.log('[3] ' + error);
-                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [1]"});
+                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
                 delete allUsers[sender];
                 return;
             }
