@@ -79,8 +79,7 @@ var rewardsPublishOk = [
 
 let allUsers = {};
 
-app.post('/webhook/', function (req, res)
-{
+app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
     let messaging_events = req.body.entry[0].messaging;
     for (let i = 0; i < messaging_events.length; i++) {
@@ -192,7 +191,8 @@ function getCategoriesAndAuthors(user) {
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
-            QR_askCategories(allUsers[sender], 1);
+            // QR_askCategories(allUsers[sender], 1);
+            askCategories(allUsers[sender]);
         }
         catch (error) {
             console.log('[1] ' + error);
@@ -203,8 +203,7 @@ function getCategoriesAndAuthors(user) {
     });
 }
 
-function doMessage(user, event)
-{
+function doMessage(user, event) {
     let message = event.message.text;
 
     if (message == 'reset') {
@@ -228,8 +227,7 @@ function doMessage(user, event)
     }
 }
 
-function doPostback(user, event)
-{
+function doPostback(user, event) {
     let payload = event.message.quick_reply.payload;
 
     if (user.categoriesSelected == 0) {
@@ -238,7 +236,7 @@ function doPostback(user, event)
             askLong(user);
             return;
         }
-        else if (payload != "send") {
+        else {
             let newCategorie = 1;
 
             for (let i = 0; i < user.categories.length; i++) {
@@ -250,11 +248,6 @@ function doPostback(user, event)
             if (newCategorie == 1) {
                 user.categories.push(user.allCategoriesId[parseInt(payload)]);
             }
-            QR_askCategories(user, 0);
-            return;
-        }
-        else {
-            QR_askCategories(user, 2);
             return;
         }
     }
@@ -308,8 +301,23 @@ function doPostback(user, event)
     }
 }
 
-function QR_askTime(user)
-{
+function askTime(user) {
+    const btnData = {
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "Choisissez le moment de publication :",
+            "buttons": [
+                {"type": "postback", "title": "Immédiatement", "payload": "now"},
+                {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
+                {"type": "postback", "title": "Annulation", "payload": "stop"}
+            ]
+        }
+    };
+    createBtn(user, btnData);
+}
+
+function QR_askTime(user) {
     const btnData = {
         "text": "Choisissez un moment du publication :",
         "quick_replies": [
@@ -321,8 +329,7 @@ function QR_askTime(user)
     sendTextMessage(user, btnData);
 }
 
-function showPostInfo(user)
-{
+function showPostInfo(user) {
     let showInfoText = [
         {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"},
         {text: user.title},
@@ -342,8 +349,7 @@ function showPostInfo(user)
     sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
 }
 
-function QR_askAuthor(user)
-{
+function QR_askAuthor(user) {
     let btnData = {
         "text": "Choisissez un auteur :",
         "quick_replies": []
@@ -356,15 +362,51 @@ function QR_askAuthor(user)
     sendTextMessage(user, btnData);
 }
 
-function askLong(user)
-{
+function askLong(user) {
     const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
 
     sendTextMessage(user, textDescLong);
 }
 
-function QR_askCategories(user, mode)
-{
+function askCategories(user) {
+    let btnCount = Math.ceil(user.allCategories.length / 3);
+    let btnData = [];
+
+    for (let i = 0, j = 0; i < btnCount; i++) {
+        btnData.push({
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "",
+                "buttons": []
+            }
+        });
+        btnData[i].payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
+        for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
+            let buttons = btnData[i].payload.buttons;
+
+            buttons.push({"type": "postback", "title": "", "payload": ""});
+            buttons[j].title = user.allCategories[(i * 3) + j];
+            buttons[j].payload = (i * 3) + j;
+        }
+    }
+    let index = 0;
+    let indexLimit = btnData.length;
+
+    btnData.push({
+        "type": "template",
+        "payload": {
+            "template_type": "button",
+            "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
+            "buttons": [
+                {"type": "postback", "title": "Send", "payload": "send"},
+            ]
+        }
+    });
+    createBtn(user, btnData, index, indexLimit, createBtn);
+}
+
+function QR_askCategories(user, mode) {
     let btnData = {
         "text": "",
         "quick_replies": []
@@ -388,8 +430,7 @@ function QR_askCategories(user, mode)
     sendTextMessage(user, btnData);
 }
 
-function kuratorRequest(uri, param, callback)
-{
+function kuratorRequest(uri, param, callback) {
     let url = kuratorUrl + uri;
     let headers = {
         'User-Agent': 'Chatbot',
@@ -405,8 +446,7 @@ function kuratorRequest(uri, param, callback)
     request(option, callback);
 }
 
-function checkURL(user, text)
-{
+function checkURL(user, text) {
     let reqParam = {
         url: text,
         sender: user.sender
@@ -441,11 +481,21 @@ function checkURL(user, text)
                             }
                             else {
                                 if (sender != null && isLogged == false) {
-                                    // sendTextMessage(allUsers[sender], [
-                                    //     {attachment: {type: "image", payload: {url: kuratorUrl + "/img/posteria/kurator_no_gbest-publication.jpg"}}},
-                                    //     {text: kuratorUrl + '?extern_id=' + sender}
-                                    // ], 0, 1, sendTextMessage);
-                                    test(allUsers[sender]);
+                                    sendBtn(allUsers[sender], {
+                                        attachment: {
+                                            type: "template",
+                                            payload: {
+                                                template_type: "button",
+                                                text: "Bonjour, veuillez vous connecter à Posteria",
+                                                buttons: [{
+                                                    type: "web_url",
+                                                    url: kuratorUrl + '?extern_id=' + user.sender,
+                                                    title: "Connexion",
+                                                    webview_height_ratio: "compact"
+                                                }]
+                                            }
+                                        }
+                                    });
                                 }
                                 else if (sender != null && isLogged == true) {
                                     getCategoriesAndAuthors(allUsers[sender]);
@@ -486,8 +536,7 @@ function checkURL(user, text)
     }
 }
 
-function sendTextMessage(user, msgData, index, indexLimit, callback)
-{
+function sendTextMessage(user, msgData, index, indexLimit, callback) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
@@ -507,35 +556,30 @@ function sendTextMessage(user, msgData, index, indexLimit, callback)
             callback(user, msgData, index + 1, indexLimit, callback);
         }
         else if ((user.platform == 'wall' || user.author.length != 0) && user.time.length == 0 && index >= indexLimit) {
-            QR_askTime(user);
+            // QR_askTime(user);
+            askTime(user);
         }
     });
 }
 
-function test(user) {
+function sendBtn(user, btnData, index, indexLimit, callback) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
         method: 'POST',
         json: {
             recipient: {id: user.sender},
-            message: {
-                attachment: {
-                    type: "template",
-                    payload: {
-                        template_type: "button",
-                        text: "Bonjour, veuillez vous connecter à Posteria",
-                        buttons: [{
-                            type: "web_url",
-                            url: kuratorUrl + '?extern_id=' + user.sender,
-                            title: "Connexion",
-                            webview_height_ratio: "compact"
-                        }]
-                    }
-                }
-            }
+            message: (index != undefined) ? btnData[index] : btnData
         }
     }, function(error, response, body) {
-        console.log(response);
+        if (error) {
+            console.log('Error sending message: ', error);
+        }
+        else if (response.body.error) {
+            console.log('[4]Error: ', response.body.error);
+        }
+        if (callback != undefined && index < indexLimit) {
+            callback(user, msgData, index + 1, indexLimit, callback);
+        }
     });
 }
