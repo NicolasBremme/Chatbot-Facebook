@@ -425,6 +425,8 @@ function checkURL(user, text)
 
         kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
             try {
+                console.log(res);
+                console.log(body);
                 body = JSON.parse(body);
                 let sender = parseInt(body.sender);
 
