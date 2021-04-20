@@ -191,7 +191,6 @@ function getCategoriesAndAuthors(user) {
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
-            // QR_askCategories(allUsers[sender], 1);
             askCategories(allUsers[sender]);
         }
         catch (error) {
@@ -319,18 +318,6 @@ function askTime(user) {
     createBtn(user, btnData);
 }
 
-function QR_askTime(user) {
-    const btnData = {
-        "text": "Choisissez un moment du publication :",
-        "quick_replies": [
-            {"content_type": "text", "title": "Immédiatement", "payload": "now"},
-            {"content_type": "text", "title": "Dans le tunnel de publication", "payload": "tunnel"},
-            {"content_type": "text", "title": "Annulation", "payload": "stop"}
-        ]
-    };
-    sendTextMessage(user, btnData);
-}
-
 function showPostInfo(user) {
     let showInfoText = [
         {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"},
@@ -379,19 +366,6 @@ function askAuthor(user)
     createBtn(user, btnData, index, indexLimit, createBtn);
 }
 
-function QR_askAuthor(user) {
-    let btnData = {
-        "text": "Choisissez un auteur :",
-        "quick_replies": []
-    };
-    let buttons = btnData.quick_replies;
-
-    for (let j = 0; j < 13 && user.allAuthors[j]; j++) {
-        buttons.push({"content_type": "text", "title": user.allAuthors[j], "payload": j});
-    }
-    sendTextMessage(user, btnData);
-}
-
 function askLong(user) {
     const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
 
@@ -413,7 +387,7 @@ function askCategories(user) {
                 }
             }
         });
-        btnData[i].attachment.payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "Suite :";
+        btnData[i].attachment.payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "";
         for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
             let buttons = btnData[i].attachment.payload.buttons;
 
@@ -430,38 +404,14 @@ function askCategories(user) {
             "type": "template",
             "payload": {
                 "template_type": "button",
-                "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"send\":",
+                "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"Valider\":",
                 "buttons": [
-                    {"type": "postback", "title": "Send", "payload": "send"},
+                    {"type": "postback", "title": "Valider", "payload": "send"},
                 ]
             }
         }
     });
     createBtn(user, btnData, index, indexLimit, createBtn);
-}
-
-function QR_askCategories(user, mode) {
-    let btnData = {
-        "text": "",
-        "quick_replies": []
-    };
-    let buttons = btnData.quick_replies;
-
-    if (mode == 0) {
-        btnData.text = "Ensuite ?";
-    }
-    else if (mode == 1) {
-        btnData.text = "Choisissez une ou plusieurs catégorie(s) et appuyez sur Send :";
-    }
-    else if (mode == 2) {
-        btnData.text = "Vous devez sélectionner au moins 1 catégorie.";
-    }
-
-    for (let j = 0; j < 12 && user.allCategories[j]; j++) {
-        buttons.push({"content_type": "text", "title": user.allCategories[j], "payload": j});
-    }
-    buttons.push({"content_type": "text", "title": "Send", "payload": "send"});
-    sendTextMessage(user, btnData);
 }
 
 function kuratorRequest(uri, param, callback) {
@@ -590,7 +540,6 @@ function sendTextMessage(user, msgData, index, indexLimit, callback) {
             callback(user, msgData, index + 1, indexLimit, callback);
         }
         else if ((user.platform == 'wall' || user.author.length != 0) && user.time.length == 0 && index >= indexLimit) {
-            // QR_askTime(user);
             askTime(user);
         }
     });
