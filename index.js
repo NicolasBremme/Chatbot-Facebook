@@ -164,7 +164,7 @@ app.get('/loginPosteria/', (req, res) => {
         }
         else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
-            delete allUsers[sender];
+            return;
         }
     }
     res.sendFile(pathToFiles + 'loginPosteria.html');
@@ -456,7 +456,7 @@ function checkURL(user, text) {
                                 }
                                 else {
                                     sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
-                                    delete allUsers[sender];
+                                    return;
                                 }
                             }
                         }
