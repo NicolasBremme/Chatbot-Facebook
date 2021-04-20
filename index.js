@@ -370,7 +370,7 @@ function askCategories(user) {
                 }
             }
         });
-        btnData[i].attachment.payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "‎";
+        btnData[i].attachment.payload.text = (i == 0) ? "Choisissez une catégorie :" : "‎";
         for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
             let buttons = btnData[i].attachment.payload.buttons;
 
