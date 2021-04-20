@@ -380,7 +380,7 @@ function askCategories(user) {
         }
     }
     let index = 0;
-    let indexLimit = btnData.length;
+    let indexLimit = btnData.length - 1;
     createBtn(user, btnData, index, indexLimit, createBtn);
 }
 
