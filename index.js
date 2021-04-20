@@ -97,8 +97,7 @@ app.post('/webhook/', function (req, res) {
                 allCategoriesId: [],
                 allAuthors: [],
                 allAuthorsId: [],
-                categories: [],
-                categoriesSelected: 0,
+                categorie: -1,
                 descLong: "",
                 author: "",
                 title: "",
@@ -215,7 +214,7 @@ function doMessage(user, event) {
         }
         return;
     }
-    if (user.categoriesSelected == 1 && user.descLong.length == 0) {
+    if (user.categorie != -1 && user.descLong.length == 0) {
         user.descLong = message;
         if (user.platform == 'wordpress') {
             askAuthor(user);
@@ -229,29 +228,13 @@ function doMessage(user, event) {
 function doPostback(user, event) {
     let payload = event.postback.payload;
 
-    if (user.categoriesSelected == 0) {
-        if (payload == "send" && user.categories.length != 0) {
-            user.categoriesSelected = 1;
-            askLong(user);
-            return;
-        }
-        else {
-            let newCategorie = 1;
-
-            for (let i = 0; i < user.categories.length; i++) {
-                if (user.categories[i] == payload) {
-                    newCategorie = 0;
-                    break;
-                }
-            }
-            if (newCategorie == 1) {
-                user.categories.push(user.allCategoriesId[parseInt(payload)]);
-            }
-            return;
-        }
+    if (user.categorie == -1) {
+        user.categorie = user.allCategoriesId[parseInt(payload, 10)];
+        askLong(user);
+        return;
     }
     if (user.platform == 'wordpress' && user.author.length == 0) {
-        user.author = user.allAuthorsId[parseInt(payload)];
+        user.author = user.allAuthorsId[parseInt(payload,)];
         showPostInfo(user);
         return;
     }
@@ -268,7 +251,7 @@ function doPostback(user, event) {
                 description: user.desc,
                 image: user.image,
                 link: user.articleUrl,
-                categories: user.categories,
+                categories: [user.categories],
                 author: user.author,
                 userDesc: user.descLong,
                 time: user.time
@@ -387,7 +370,7 @@ function askCategories(user) {
                 }
             }
         });
-        btnData[i].attachment.payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "";
+        btnData[i].attachment.payload.text = (i == 0) ? "Choisissez une ou plusieurs catégorie(s) :" : "‎";
         for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
             let buttons = btnData[i].attachment.payload.buttons;
 
