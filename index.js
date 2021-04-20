@@ -179,6 +179,8 @@ function getCategoriesAndAuthors(user) {
             
             allUsers[sender].platform = body.platform;
 
+            allUsers[sender].tags = body.tags;
+
             for (const property in body.categories) {
                 allUsers[sender].allCategories.push(property);
                 allUsers[sender].allCategoriesId.push(body.categories[property]);
@@ -215,7 +217,7 @@ function doMessage(user, event) {
         return;
     }
     if (user.categorie != -1 && user.descLong.length == 0) {
-        user.descLong = message;
+        user.descLong = hashtagify(user, message);
         if (user.platform == 'wordpress') {
             askAuthor(user);
         } else {
@@ -223,6 +225,27 @@ function doMessage(user, event) {
         }
         return;
     }
+}
+
+function hashtagify(user, text) {
+    let title = user.title;
+    let hashtags = Object.keys(user.tags);
+    let authorizedEndingChar = ['.', ' ', ','];
+
+    for (let i = 0; i < hashtags.length; i++) {
+        let t = hashtags[i];
+        let index = text.toLowerCase().indexOf(t.toLowerCase());
+        if(index !== -1) {
+            if(index == 0) {
+                text = '#' + text.substr(index,1).toUpperCase() +text.substr(1) ;
+            }
+            else if(text.substr(index-1, 1) != '#' && text.substr(index-1, 1) == ' ' &&
+                (authorizedEndingChar.indexOf(text.substr(index +t.length, 1))!== -1 || text.substr(index +t.length, 1) == '')) {
+                text = text.substr(0, index) + '#' + text.substr(index,1).toUpperCase()+text.substr(index+1);
+            }
+        }
+    }
+
 }
 
 function doPostback(user, event) {
