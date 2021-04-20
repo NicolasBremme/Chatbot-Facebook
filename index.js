@@ -332,7 +332,7 @@ function askAuthor(user)
                 "type": "template",
                 "payload": {
                     "template_type": "button",
-                    "text": (i == 0) ? "Choisissez un auteur :" : "Suite :",
+                    "text": (i == 0) ? "Choisissez un auteur :" : "‎",
                     "buttons": []
                 }
             }
@@ -381,19 +381,6 @@ function askCategories(user) {
     }
     let index = 0;
     let indexLimit = btnData.length;
-
-    btnData.push({
-        "attachment": {
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": "Quand vous avez sélectionné toute les catégories, appuyez sur le bouton \"Valider\":",
-                "buttons": [
-                    {"type": "postback", "title": "Valider", "payload": "send"},
-                ]
-            }
-        }
-    });
     createBtn(user, btnData, index, indexLimit, createBtn);
 }
 
