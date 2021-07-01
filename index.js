@@ -1,7 +1,7 @@
 'use strict';
 
 const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD",
-    appUrl = "https://chatbot.posteria.fr",
+    appUrl = "https://test--chatbot.herokuapp.com/",
     pathToFiles = "/";
 const kuratorUrl = "https://app.posteria.fr",
     imageUrl = "http://image-kurator.fr/app";
@@ -228,7 +228,7 @@ function getEventType(event) {
         return "postback";
     }
     if (event.message && event.message.text) {
-        if (message == 'reset') {
+        if (event.message.text == 'reset') {
             delete allUsers[user.sender];
             return "none";
         }
