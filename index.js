@@ -277,14 +277,14 @@ function checkURL(user, event) {
                 catch (error) {
                     console.log('[4] ' + error);
                     sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-                    delete allUsers[sender];
+                    // delete allUsers[sender];
                 }
             });
         }
         catch (error) {
             console.log('[3] ' + error);
             sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-            delete allUsers[sender];
+            // delete allUsers[sender];
         }
     });
 }
