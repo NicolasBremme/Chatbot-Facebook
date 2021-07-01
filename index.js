@@ -217,8 +217,10 @@ function checkURL(user, event) {
         url: text,
         sender: user.sender
     };
+    var SENDERTEST = use.sender;
 
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
+        console.log(SENDERTEST);
         try {
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
@@ -315,7 +317,7 @@ function getCategoriesAndAuthors(user) {
         catch (error) {
             console.log('[1] ' + error);
             sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
-            delete allUsers[sender];
+            // delete allUsers[sender];
             return;
         }
     });
@@ -507,8 +509,6 @@ function getSelectedTime(user, event) {
         userDesc: user.descLong,
         time: user.time
     };
-    console.log(user);
-    console.log(postInfos);
 
     posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
         try {
@@ -526,7 +526,7 @@ function getSelectedTime(user, event) {
         catch (error) {
             console.log('[2] ' + error);
             console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-            delete allUsers[sender];
+            // delete allUsers[sender];
         }
     });
 }
