@@ -1,14 +1,14 @@
 'use strict';
 
 const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD",
-    appUrl = "https://test--chatbot.herokuapp.com",
-    pathToFiles = "/app/";
+    appUrl = "https://chatbot.posteria.fr",
+    pathToFiles = "/";
 const kuratorUrl = "https://app.posteria.fr",
     imageUrl = "http://image-kurator.fr/app";
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const { response } = require('express');
 const { fstat } = require('fs');
-const { parse } = require('path');
+const path = require('path');
 //  Imports dependencies and set up http server
 const
     request = require('request'),
@@ -77,57 +77,7 @@ var rewardsPublishOk = [
 	"Bravo !!!!!! \u{1F340}"
 ];
 
-let allUsers = {};
-
-app.post('/webhook/', function (req, res) {
-    console.log("WEBHOOK_EVENT_RECEIVED");
-    let messaging_events = req.body.entry[0].messaging;
-    for (let i = 0; i < messaging_events.length; i++) {
-        let event = messaging_events[i];
-        let sender = event.sender.id;
-
-        if (undefined === allUsers[sender]) {
-            allUsers[sender] = {
-                sender: sender,
-                urlEntered: 0,
-                isConnected: 0,
-                articleUrl: "",
-                platform: "",
-                allCategories: [],
-                allCategoriesId: [],
-                allAuthors: [],
-                allAuthorsId: [],
-                categorie: -1,
-                descLong: "",
-                author: "",
-                title: "",
-                image: "",
-                desc: "",
-                time: "",
-            };
-        }
-
-        if (event.postback && event.postback.payload) {
-            doPostback(allUsers[sender], event);
-        }
-        else if (event.message && event.message.text) {
-            doMessage(allUsers[sender], event);
-        }
-        else if (event.message && event.message.attachments) {
-            let url = event.message.attachments[0].url
-
-            if(typeof url != 'undefined') {
-                url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
-                event.message.text = url;
-                doMessage(allUsers[sender], event);
-            }
-            else{
-                console.log('attachment is an image');
-            }
-        }
-    }
-    res.sendStatus(200)
-});
+var allUsers = {};
 
 app.get('/webhook/', (req, res) => {
 
@@ -146,6 +96,7 @@ app.get('/webhook/', (req, res) => {
         }
     }
 });
+
 app.get('/loginPosteria/', (req, res) => {
     let code = null;
     let user = null;
@@ -164,15 +115,231 @@ app.get('/loginPosteria/', (req, res) => {
         }
         else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
-            return;
         }
     }
-    res.sendFile(pathToFiles + 'loginPosteria.html');
+
+    res.sendFile(pathToFiles + "loginPosteria.html");
 });
 
+app.post('/webhook/', function (req, res) {
+    console.log("WEBHOOK_EVENT_RECEIVED");
+    let messaging_events = req.body.entry[0].messaging;
+    var stepsDetails = [
+        {"event_type" : ["message", "attachments"], "function": checkURL},
+        {"event_type" : ["postback"], "function": getSelectedCategory},
+        {"event_type" : ["message"], "function": getDescLong},
+        {"event_type" : ["postback"], "function": getSelectedAuthor},
+        {"event_type" : ["postback"], "function": getSelectedTime},
+    ];
+
+    for (let i = 0; i < messaging_events.length; i++) {
+        let event = messaging_events[i];
+        let sender = event.sender.id;
+
+        if (undefined === allUsers[sender]) {
+            allUsers[sender] = {
+                sender: sender,
+                step: 0,
+                isConnected: 0,
+                articleUrl: "",
+                platform: "",
+                allCategories: [],
+                allCategoriesId: [],
+                allAuthors: [],
+                allAuthorsId: [],
+                tags: [],
+                categorie: -1,
+                descLong: "",
+                author: "",
+                title: "",
+                image: "",
+                desc: "",
+                time: "",
+            };
+        }
+
+        let eventType = getEventType(event, allUsers[sender]);
+        let currentStep = stepsDetails[step];
+
+        if (currentStep.event_type.includes(eventType)) {
+            currentStep.function(allUsers[sender], event);
+        }
+    }
+    res.sendStatus(200)
+});
+
+function getSelectedAuthor(user, event) {
+    let payload = event.postback.payload;
+
+    if (user.platform != 'wordpress' || typeof(user.allAuthorsId[parseInt(payload, 10)]) == "undefined") {
+        return;
+    }
+
+    user.author = user.allAuthorsId[parseInt(payload, 10)];
+    user.step++;
+    showPostInfo(user);
+}
+
+function getSelectedTime(user, event) {
+    let payload = event.postback.payload;
+
+    user.time = payload;
+
+    if (user.time == "stop") {
+        sendTextMessage(user, {text: "Ok, la publication est annulée."});
+        delete allUsers[user.sender];
+        return;
+    }
+    let postInfos = {
+        extern_id: user.sender,
+        title: user.title,
+        description: user.desc,
+        image: user.image,
+        link: user.articleUrl,
+        categories: [user.categories],
+        author: user.author,
+        userDesc: user.descLong,
+        time: user.time
+    };
+
+    posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
+        try {
+            body = JSON.parse(body);
+            let sender = parseInt(body.sender);
+
+            if (body.hasError == false) {
+                sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
+                delete allUsers[sender];
+                return;
+            }
+            sendTextMessage(allUsers[sender], {text: body.error});
+            delete allUsers[sender];
+        }
+        catch (error) {
+            console.log('[2] ' + error);
+            console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
+            delete allUsers[sender];
+        }
+    });
+}
+
+function getEventType(event) {
+    if (event.postback && event.postback.payload) {
+        return "postback";
+    }
+    if (event.message && event.message.text) {
+        if (message == 'reset') {
+            delete allUsers[user.sender];
+            return "none";
+        }
+        return "message";
+    }
+    if (event.message && event.message.attachments) {
+        return "attachment";
+    }
+    return "none";
+}
+
+function checkURL(user, event) {
+    let text = "null";
+
+    if (event.message && event.message.text) {
+        text = event.message.text;
+    }
+    else if (event.message && event.message.attachments) {
+        let url = event.message.attachments[0].url;
+
+        if(typeof url != 'undefined') {
+            url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
+            text = url;
+        }
+    }
+
+    if (!validUrl.isUri(text)) {
+        return;
+    }
+
+    user.articleUrl = text;
+    user.step++;
+
+    let reqParam = {
+        url: text,
+        sender: user.sender
+    };
+
+    posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
+        try {
+            body = JSON.parse(body);
+            let sender = parseInt(body.sender);
+            
+            if (body.hasError == true || body.parseError == true) {
+                if (body.error == 'Cannot parse the article.') {
+                    body.error = "Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations";
+                }
+                sendTextMessage(allUsers[sender], {text: body.error});
+                delete allUsers[sender];
+                return;
+            }
+
+            allUsers[sender].image = body.image;
+            allUsers[sender].title = body.title;
+            allUsers[sender].desc = body.description;
+            posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
+                try {
+                    body = JSON.parse(body);
+
+                    let sender = body.sender;
+                    let isLogged = body.logged;
+
+                    if (body.hasError == true) {
+                        console.log('[5] ' + body.error);
+                        sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+                        delete allUsers[sender];
+                        return;
+                    }
+
+                    if (sender == null) {
+                        sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+                        return;
+                    }
+
+                    if (isLogged) {
+                        getCategoriesAndAuthors(allUsers[sender]);
+                        return;
+                    }
+
+                    createBtn(allUsers[sender], {
+                        attachment: {
+                            type: "template",
+                            payload: {
+                                template_type: "button",
+                                text: "Bonjour, veuillez vous connecter à Posteria",
+                                buttons: [{
+                                    type: "web_url",
+                                    url: kuratorUrl + '/api/authorize?extern_id=' + sender,
+                                    title: "Connexion"
+                                }]
+                            }
+                        }
+                    });
+                }
+                catch (error) {
+                    console.log('[4] ' + error);
+                    sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+                    delete allUsers[sender];
+                }
+            });
+        }
+        catch (error) {
+            console.log('[3] ' + error);
+            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+            delete allUsers[sender];
+        }
+    });
+}
+
 function getCategoriesAndAuthors(user) {
-    user.isConnected = 1;
-    kuratorRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
+    posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
@@ -201,180 +368,6 @@ function getCategoriesAndAuthors(user) {
             return;
         }
     });
-}
-
-function doMessage(user, event) {
-    let message = event.message.text;
-
-    if (message == 'reset') {
-        delete allUsers[user.sender];
-        return;
-    }
-    if (user.urlEntered == 0) {
-        if (message.search(kuratorUrl) == -1) {
-            checkURL(user, message);
-        }
-        return;
-    }
-    if (user.categorie != -1 && user.descLong.length == 0) {
-        user.descLong = hashtagify(user, message);
-        if (user.platform == 'wordpress') {
-            askAuthor(user);
-        } else {
-            showPostInfo(user);
-        }
-        return;
-    }
-}
-
-function hashtagify(user, text) {
-    let hashtags = Object.keys(user.tags);
-    let authorizedEndingChar = ['.', ' ', ','];
-
-    for (let i = 0; i < hashtags.length; i++) {
-        let t = hashtags[i];
-        let index = text.toLowerCase().indexOf(t.toLowerCase());
-        if (index !== -1) {
-            if (index == 0) {
-                text = '#' + text.substr(index,1).toUpperCase() +text.substr(1) ;
-            }
-            else if (text.substr(index - 1, 1) != '#' && text.substr(index - 1, 1) == ' ' &&
-                (authorizedEndingChar.indexOf(text.substr(index + t.length, 1)) !== -1 || text.substr(index + t.length, 1) == '')) {
-                text = text.substr(0, index) + '#' + text.substr(index,1).toUpperCase() + text.substr(index + 1);
-            }
-        }
-    }
-    return text;
-}
-
-function doPostback(user, event) {
-    let payload = event.postback.payload;
-
-    if (user.categorie == -1) {
-        user.categorie = user.allCategoriesId[parseInt(payload, 10)];
-        askLong(user);
-        return;
-    }
-    if (user.platform == 'wordpress' && user.author.length == 0) {
-        user.author = user.allAuthorsId[parseInt(payload,)];
-        showPostInfo(user);
-        return;
-    }
-    if (user.time.length == 0) {
-        user.time = payload;
-        if (user.time == "stop") {
-            sendTextMessage(user, {text: "Ok, la publication est annulée."});
-            delete allUsers[user.sender];
-        }
-        else {
-            let postInfos = {
-                extern_id: user.sender,
-                title: user.title,
-                description: user.desc,
-                image: user.image,
-                link: user.articleUrl,
-                categories: [user.categories],
-                author: user.author,
-                userDesc: user.descLong,
-                time: user.time
-            };
-            kuratorRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
-                try {
-                    body = JSON.parse(body);
-                    let sender = parseInt(body.sender);
-
-                    if (body.hasError == false) {
-                        sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
-                        delete allUsers[sender];
-                        return;
-                    } else {
-            		    sendTextMessage(allUsers[sender], {text: body.error});
-                        delete allUsers[sender];
-                        return;
-                    }
-                }
-                catch (error) {
-                    console.log('[2] ' + error);
-                    console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-                    delete allUsers[sender];
-                    return;
-            	}
-            });
-        }
-        return;
-    }
-}
-
-function askTime(user) {
-    const btnData = {
-        "attachment": {
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": "Choisissez le moment de publication :",
-                "buttons": [
-                    {"type": "postback", "title": "Immédiatement", "payload": "now"},
-                    {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
-                    {"type": "postback", "title": "Annulation", "payload": "stop"}
-                ]
-            }
-        }
-    };
-    createBtn(user, btnData);
-}
-
-function showPostInfo(user) {
-    let showInfoText = [
-        {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"},
-        {text: user.title},
-        {text: user.descLong},
-        {
-            attachment: {
-                type: "image",
-                payload: {
-                    url: imageUrl + user.image
-                }
-            }
-        }
-    ];
-    let index = 0;
-    let indexLimit = showInfoText.length - 1;
-
-    sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
-}
-
-function askAuthor(user)
-{
-    let btnCount = Math.ceil(user.allAuthors.length / 3);
-    let btnData = [];
-
-    for (let i = 0, j = 0; i < btnCount; i++) {
-        btnData.push({
-            "attachment": {
-                "type": "template",
-                "payload": {
-                    "template_type": "button",
-                    "text": (i == 0) ? "Choisissez un auteur :" : "‎",
-                    "buttons": []
-                }
-            }
-        });
-        for (j = 0; j < 3 && user.allAuthors[(i * 3) + j]; j++) {
-            let buttons = btnData[i].attachment.payload.buttons;
-
-            buttons.push({"type": "postback", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
-        }
-    }
-    let index = 0;
-    let indexLimit = btnData.length - 1;
-
-    createBtn(user, btnData, index, indexLimit, createBtn);
-}
-
-function askLong(user) {
-    const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
-
-    sendTextMessage(user, textDescLong);
 }
 
 function askCategories(user) {
@@ -406,7 +399,130 @@ function askCategories(user) {
     createBtn(user, btnData, index, indexLimit, createBtn);
 }
 
-function kuratorRequest(uri, param, callback) {
+function getSelectedCategory(user, event) {
+    let payload = event.postback.payload;
+
+    if (typeof(user.allCategoriesId[parseInt(payload, 10)]) == "undefined") {
+        return;
+    }
+    user.categorie = user.allCategoriesId[parseInt(payload, 10)];
+    user.step++;
+    askLong(user);
+}
+
+function askLong(user) {
+    const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
+
+    sendTextMessage(user, textDescLong);
+}
+
+function getDescLong(user, event) {
+    let message = event.message.text;
+
+    if (message.length == 0) {
+        return;
+    }
+
+    user.descLong = hashtagify(user, message);
+    if (user.platform == 'wordpress') {
+        askAuthor(user);
+        user.step++;
+        return;
+    }
+    showPostInfo(user);
+    user.step += 2;
+}
+
+function hashtagify(user, text) {
+    if (user.platform == "wall") {
+        return text;
+    }
+    let hashtags = Object.keys(user.tags);
+    let authorizedEndingChar = ['.', ' ', ','];
+
+    for (let i = 0; i < hashtags.length; i++) {
+        let t = hashtags[i];
+        let index = text.toLowerCase().indexOf(t.toLowerCase());
+
+        if (index !== -1) {
+            if (index == 0) {
+                text = '#' + text.substr(index,1).toUpperCase() +text.substr(1) ;
+            }
+            else if (text.substr(index - 1, 1) != '#' && text.substr(index - 1, 1) == ' ' &&
+                (authorizedEndingChar.indexOf(text.substr(index + t.length, 1)) !== -1 || text.substr(index + t.length, 1) == '')) {
+                text = text.substr(0, index) + '#' + text.substr(index,1).toUpperCase() + text.substr(index + 1);
+            }
+        }
+    }
+    return text;
+}
+
+function askAuthor(user) {
+    let btnCount = Math.ceil(user.allAuthors.length / 3);
+    let btnData = [];
+
+    for (let i = 0, j = 0; i < btnCount; i++) {
+        btnData.push({
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "button",
+                    "text": (i == 0) ? "Choisissez un auteur :" : "‎",
+                    "buttons": []
+                }
+            }
+        });
+        for (j = 0; j < 3 && user.allAuthors[(i * 3) + j]; j++) {
+            let buttons = btnData[i].attachment.payload.buttons;
+
+            buttons.push({"type": "postback", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
+        }
+    }
+    let index = 0;
+    let indexLimit = btnData.length - 1;
+
+    createBtn(user, btnData, index, indexLimit, createBtn);
+}
+
+function showPostInfo(user) {
+    let showInfoText = [
+        {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"},
+        {text: user.title},
+        {text: user.descLong},
+        {
+            attachment: {
+                type: "image",
+                payload: {
+                    url: imageUrl + user.image
+                }
+            }
+        }
+    ];
+    let index = 0;
+    let indexLimit = showInfoText.length - 1;
+
+    sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
+}
+
+function askTime(user) {
+    const btnData = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": "Choisissez le moment de publication :",
+                "buttons": [
+                    {"type": "postback", "title": "Immédiatement", "payload": "now"},
+                    {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
+                    {"type": "postback", "title": "Annulation", "payload": "stop"}
+                ]
+            }
+        }
+    };
+    createBtn(user, btnData);
+}
+
+function posteriaRequest(uri, param, callback) {
     let url = kuratorUrl + uri;
     let headers = {
         'User-Agent': 'Chatbot',
@@ -420,96 +536,6 @@ function kuratorRequest(uri, param, callback) {
     };
 
     request(option, callback);
-}
-
-function checkURL(user, text) {
-    let reqParam = {
-        url: text,
-        sender: user.sender
-    };
-
-    console.log("Message: " + text);
-    if (user.urlEntered == 0 && validUrl.isUri(text)){
-        console.log('Looks like an URI');
-        user.urlEntered = 1;
-        user.articleUrl = text;
-
-        kuratorRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
-            try {
-                body = JSON.parse(body);
-                let sender = parseInt(body.sender);
-                
-                if (body.hasError == false && body.parseError == false) {
-                    allUsers[sender].image = body.image;
-                    allUsers[sender].title = body.title;
-                    allUsers[sender].desc = body.description;
-                    kuratorRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
-                        try {
-                            console.log(body);
-                            body = JSON.parse(body);
-                            let sender = body.sender;
-                            let isLogged = body.logged;
-
-                            if (body.hasError == true) {
-                                console.log('[5] ' + body.error);
-                                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-                                delete allUsers[sender];
-                            }
-                            else {
-                                if (sender != null && isLogged == false) {
-                                    createBtn(allUsers[sender], {
-                                        attachment: {
-                                            type: "template",
-                                            payload: {
-                                                template_type: "button",
-                                                text: "Bonjour, veuillez vous connecter à Posteria",
-                                                buttons: [{
-                                                    type: "web_url",
-                                                    url: kuratorUrl + '?extern_id=' + sender,
-                                                    title: "Connexion",
-                                                    webview_height_ratio: "compact"
-                                                }]
-                                            }
-                                        }
-                                    });
-                                }
-                                else if (sender != null && isLogged == true) {
-                                    getCategoriesAndAuthors(allUsers[sender]);
-                                }
-                                else {
-                                    sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
-                                    return;
-                                }
-                            }
-                        }
-                        catch (error) {
-                            console.log('[4] ' + error);
-                            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-                            delete allUsers[sender];
-                            return;
-                        }
-                    });
-                }
-                else {
-                    if(body.error == 'Cannot parse the article.') {
-                        sendTextMessage(allUsers[sender], {text: 'Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations'});
-                    }
-                    else {
-                        sendTextMessage(allUsers[sender], {text: body.error});
-                    }
-                    delete allUsers[sender];
-                }
-            }
-            catch (error) {
-                console.log('[3] ' + error);
-                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-                delete allUsers[sender];
-                return;
-            }
-        });
-    } else {
-        console.log('Not an URI');
-    }
 }
 
 function sendTextMessage(user, msgData, index, indexLimit, callback) {
@@ -528,10 +554,11 @@ function sendTextMessage(user, msgData, index, indexLimit, callback) {
         else if (response.body.error) {
             console.log('[4]Error: ', response.body.error);
         }
+
         if (callback != undefined && index < indexLimit) {
             callback(user, msgData, index + 1, indexLimit, callback);
         }
-        else if ((user.platform == 'wall' || user.author.length != 0) && user.time.length == 0 && index >= indexLimit) {
+        else if ((user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
             askTime(user);
         }
     });
@@ -553,6 +580,7 @@ function createBtn(user, btnData, index, indexLimit, callback) {
         else if (response.body.error) {
             console.log('[4]Error: ', response.body.error);
         }
+
         if (callback != undefined && index < indexLimit) {
             callback(user, btnData, index + 1, indexLimit, callback);
         }
