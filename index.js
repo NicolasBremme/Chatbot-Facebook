@@ -217,7 +217,7 @@ function checkURL(user, event) {
         url: text,
         sender: user.sender
     };
-    var SENDERTEST = use.sender;
+    var SENDERTEST = user.sender;
 
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
         console.log(SENDERTEST);
