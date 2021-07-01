@@ -190,6 +190,7 @@ function getSelectedTime(user, event) {
         delete allUsers[user.sender];
         return;
     }
+
     let postInfos = {
         extern_id: user.sender,
         title: user.title,
@@ -201,6 +202,8 @@ function getSelectedTime(user, event) {
         userDesc: user.descLong,
         time: user.time
     };
+    console.log(user);
+    console.log(postInfos);
 
     posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
         try {
