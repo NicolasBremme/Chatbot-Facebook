@@ -192,7 +192,7 @@ function getSelectedTime(user, event) {
 
     if (user.time == "stop") {
         sendTextMessage(user, {text: "Ok, la publication est annulée."});
-        delete allUsers[user.sender];
+        delete user;
         return;
     }
 
