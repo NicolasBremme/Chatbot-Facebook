@@ -161,6 +161,7 @@ app.post('/webhook/', function (req, res) {
         let eventType = getEventType(event, allUsers[sender]);
 
         if (eventType == "none") {
+            res.sendStatus(200);
             return;
         }
 
@@ -170,66 +171,8 @@ app.post('/webhook/', function (req, res) {
             currentStep.function(allUsers[sender], event);
         }
     }
-    res.sendStatus(200)
+    res.sendStatus(200);
 });
-
-function getSelectedAuthor(user, event) {
-    let payload = event.postback.payload;
-
-    if (user.platform != 'wordpress' || typeof(user.allAuthorsId[parseInt(payload, 10)]) == "undefined") {
-        return;
-    }
-
-    user.author = user.allAuthorsId[parseInt(payload, 10)];
-    user.step++;
-    showPostInfo(user);
-}
-
-function getSelectedTime(user, event) {
-    let payload = event.postback.payload;
-
-    user.time = payload;
-
-    if (user.time == "stop") {
-        sendTextMessage(user, {text: "Ok, la publication est annulée."});
-        delete allUsers[user.sender];
-        return;
-    }
-
-    let postInfos = {
-        extern_id: user.sender,
-        title: user.title,
-        description: user.desc,
-        image: user.image,
-        link: user.articleUrl,
-        categories: [user.categorie],
-        author: user.author,
-        userDesc: user.descLong,
-        time: user.time
-    };
-    console.log(user);
-    console.log(postInfos);
-
-    posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
-        try {
-            body = JSON.parse(body);
-            let sender = parseInt(body.sender);
-
-            if (body.hasError == false) {
-                sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
-                delete allUsers[sender];
-                return;
-            }
-            sendTextMessage(allUsers[sender], {text: body.error});
-            delete allUsers[sender];
-        }
-        catch (error) {
-            console.log('[2] ' + error);
-            console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-            delete allUsers[sender];
-        }
-    });
-}
 
 function getEventType(event, user) {
     if (event.postback && event.postback.payload) {
@@ -528,6 +471,64 @@ function askTime(user) {
         }
     };
     createBtn(user, btnData);
+}
+
+function getSelectedAuthor(user, event) {
+    let payload = event.postback.payload;
+
+    if (user.platform != 'wordpress' || typeof(user.allAuthorsId[parseInt(payload, 10)]) == "undefined") {
+        return;
+    }
+
+    user.author = user.allAuthorsId[parseInt(payload, 10)];
+    user.step++;
+    showPostInfo(user);
+}
+
+function getSelectedTime(user, event) {
+    let payload = event.postback.payload;
+
+    user.time = payload;
+
+    if (user.time == "stop") {
+        sendTextMessage(user, {text: "Ok, la publication est annulée."});
+        delete allUsers[user.sender];
+        return;
+    }
+
+    let postInfos = {
+        extern_id: user.sender,
+        title: user.title,
+        description: user.desc,
+        image: user.image,
+        link: user.articleUrl,
+        categories: [user.categorie],
+        author: user.author,
+        userDesc: user.descLong,
+        time: user.time
+    };
+    console.log(user);
+    console.log(postInfos);
+
+    posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
+        try {
+            body = JSON.parse(body);
+            let sender = parseInt(body.sender);
+
+            if (body.hasError == false) {
+                sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
+                delete allUsers[sender];
+                return;
+            }
+            sendTextMessage(allUsers[sender], {text: body.error});
+            delete allUsers[sender];
+        }
+        catch (error) {
+            console.log('[2] ' + error);
+            console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
+            delete allUsers[sender];
+        }
+    });
 }
 
 function posteriaRequest(uri, param, callback) {
