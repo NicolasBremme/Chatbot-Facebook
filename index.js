@@ -226,7 +226,7 @@ function getSelectedTime(user, event) {
     });
 }
 
-function getEventType(event) {
+function getEventType(event, user) {
     if (event.postback && event.postback.payload) {
         return "postback";
     }
