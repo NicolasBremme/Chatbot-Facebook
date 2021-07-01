@@ -217,10 +217,8 @@ function checkURL(user, event) {
         url: text,
         sender: user.sender
     };
-    var SENDERTEST = user.sender;
 
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
-        console.log(SENDERTEST);
         try {
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
