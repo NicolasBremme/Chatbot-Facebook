@@ -159,7 +159,7 @@ app.post('/webhook/', function (req, res) {
         }
 
         let eventType = getEventType(event, allUsers[sender]);
-        let currentStep = stepsDetails[step];
+        let currentStep = stepsDetails[allUsers[sender].step];
 
         if (currentStep.event_type.includes(eventType)) {
             currentStep.function(allUsers[sender], event);
