@@ -197,7 +197,7 @@ function getSelectedTime(user, event) {
         description: user.desc,
         image: user.image,
         link: user.articleUrl,
-        categories: [user.categories],
+        categories: [user.categorie],
         author: user.author,
         userDesc: user.descLong,
         time: user.time
