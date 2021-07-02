@@ -128,6 +128,7 @@ app.post('/proposeArticle/', (req, res) => {
                     }]
                 }]
             }
+        }
     });
 
     res.sendStatus(200);
