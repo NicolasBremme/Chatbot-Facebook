@@ -557,7 +557,7 @@ function getSelectedAuthor(user, event) {
     }
 
     user.author = user.allAuthorsId[parseInt(payload, 10)];
-    user.step += 2;
+    user.step++;
     if (user.tmpContentSelected == 0) {
         showPostInfo(user);
         return;
