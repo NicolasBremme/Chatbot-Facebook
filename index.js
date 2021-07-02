@@ -98,7 +98,7 @@ app.get('/webhook/', (req, res) => {
 });
 
 app.post('/proposeArticle/', (req, res) => {
-    console.log(req.query);
+    console.log(req);
     res.sendStatus(200);
 });
 
