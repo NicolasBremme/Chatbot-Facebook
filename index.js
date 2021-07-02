@@ -97,6 +97,11 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
+app.post('/proposeArticle/', (req, res) => {
+    console.log(req.query);
+    res.sendStatus(200);
+});
+
 app.get('/loginPosteria/', (req, res) => {
     let code = null;
     let user = null;
