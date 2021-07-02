@@ -208,6 +208,7 @@ function createUser(sender) {
         step: 0,
         isConnected: 0,
         tmpContent: "",
+        tmpContentSelected: 0,
         articleUrl: "",
         platform: "",
         allCategories: [],
@@ -248,6 +249,7 @@ function confirmArticle(user) {
     user.image = content.image;
     user.title = content.title;
     user.desc = content.description;
+    user.tmpContentSelected = 1;
     user.step++;
     
     checkLogin(user.sender);
@@ -288,7 +290,7 @@ function checkURL(user, event) {
         try {
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
-            
+
             if (body.hasError == true || body.parseError == true) {
                 if (body.error == 'Cannot parse the article.') {
                     body.error = "Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations";
@@ -447,8 +449,14 @@ function getDescLong(user, event) {
         user.step++;
         return;
     }
-    showPostInfo(user);
-    user.step += 2;
+
+    if (user.tmpContentSelected == 0) {
+        showPostInfo(user);
+        user.step += 2;
+        return;
+    }
+    askTime();
+    user.step += 3;
 }
 
 function hashtagify(user, text) {
@@ -548,8 +556,13 @@ function getSelectedAuthor(user, event) {
     }
 
     user.author = user.allAuthorsId[parseInt(payload, 10)];
-    user.step++;
-    showPostInfo(user);
+    if (user.tmpContentSelected == 0) {
+        showPostInfo(user);
+        user.step++;
+        return;
+    }
+    askTime();
+    user.step += 2;
 }
 
 function getSelectedTime(user, event) {
