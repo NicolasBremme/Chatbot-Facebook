@@ -100,32 +100,32 @@ app.get('/webhook/', (req, res) => {
 app.post('/proposeArticle/', (req, res) => {
     let body = req.body;
     let sender = body.sender;
-    let contentLink = body.bestContent.Content.link;
-    let contentImage = body.bestContent.Content.image;
-    let contentTitle = body.bestContent.Content.title;
+    let content = body.bestContent.Content;
 
     createUser(sender);
-    allUsers[sender].step = -1;
+    allUsers[sender].step = 0;
+    allUsers[sender].tmpContent = content;
+
     createBtn(allUsers[sender], {
         attachment: {
             type: "template",
             payload: {
                 template_type: "generic",
                 elements: [{
-                    title: contentTitle,
-                    image_url : imageUrl + contentImage,
+                    title: content.title,
+                    image_url : imageUrl + content.image,
                     default_action: {
                         type: "web_url",
-                        url: contentLink
+                        url: content.link
                     },
                     buttons: [{
                         type: "web_url",
-                        url: body.bestContent.Content.link,
+                        url: content.link,
                         title: "Aller sur l'article"
                     },
                     {
                         type: "postback",
-                        payload: "publish_article",
+                        payload: "do_curation",
                         title: "En faire la Curation"
                     }]
                 }]
@@ -135,26 +135,6 @@ app.post('/proposeArticle/', (req, res) => {
 
     res.sendStatus(200);
 });
-
-// createBtn(allUsers[sender], {
-//     attachment: {
-//         type: "template",
-//         payload: {
-//             template_type: "button",
-//             text: "Aujourd'hui nous vous proposons de publier cet article !",
-//             buttons: [{
-//                 type: "web_url",
-//                 url: body.bestContent.Content.link,
-//                 title: "Aller sur l'article"
-//             },
-//             {
-//                 type: "postback",
-//                 payload: "publish_article",
-//                 title: "En faire la Curation"
-//             }]
-//         }
-//     }
-// });
 
 app.get('/loginPosteria/', (req, res) => {
     let code = null;
@@ -184,7 +164,7 @@ app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
     let messaging_events = req.body.entry[0].messaging;
     var stepsDetails = [
-        {"event_type" : ["message", "attachments"], "function": checkURL},
+        {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
         {"event_type" : ["postback"], "function": getSelectedCategory},
         {"event_type" : ["message"], "function": getDescLong},
         {"event_type" : ["postback"], "function": getSelectedAuthor},
@@ -227,6 +207,7 @@ function createUser(sender) {
         sender: sender,
         step: 0,
         isConnected: 0,
+        tmpContent: "",
         articleUrl: "",
         platform: "",
         allCategories: [],
@@ -261,10 +242,25 @@ function getEventType(event, user) {
     return "none";
 }
 
+function confirmArticle(user) {
+    let content = user.tmpContent;
+
+    user.image = content.image;
+    user.title = content.title;
+    user.desc = content.description;
+    user.step++;
+    
+    checkLogin(user.sender);
+}
+
 function checkURL(user, event) {
     let text = "null";
 
-    if (event.message && event.message.text) {
+    if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
+        confirmArticle(user);
+        return;
+    }
+    else if (event.message && event.message.text) {
         text = event.message.text;
     }
     else if (event.message && event.message.attachments) {
@@ -305,56 +301,57 @@ function checkURL(user, event) {
             allUsers[sender].image = body.image;
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
-            posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
-                try {
-                    body = JSON.parse(body);
-
-                    let sender = body.sender;
-                    let isLogged = body.logged;
-
-                    if (body.hasError == true) {
-                        console.log('[5] ' + body.error);
-                        sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-                        delete allUsers[sender];
-                        return;
-                    }
-
-                    if (sender == null) {
-                        sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
-                        return;
-                    }
-
-                    if (isLogged) {
-                        getCategoriesAndAuthors(allUsers[sender]);
-                        return;
-                    }
-
-                    createBtn(allUsers[sender], {
-                        attachment: {
-                            type: "template",
-                            payload: {
-                                template_type: "button",
-                                text: "Bonjour, veuillez vous connecter à Posteria",
-                                buttons: [{
-                                    type: "web_url",
-                                    url: kuratorUrl + '/api/authorize?extern_id=' + sender,
-                                    title: "Connexion"
-                                }]
-                            }
-                        }
-                    });
-                }
-                catch (error) {
-                    console.log('[4] ' + error);
-                    sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-                    // delete allUsers[sender];
-                }
-            });
+            checkLogin(sender);
         }
         catch (error) {
             console.log('[3] ' + error);
             sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-            // delete allUsers[sender];
+        }
+    });
+}
+
+function checkLogin(sender) {
+    posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
+        try {
+            body = JSON.parse(body);
+            let sender = body.sender;
+            let isLogged = body.logged;
+
+            if (body.hasError == true) {
+                console.log('[5] ' + body.error);
+                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+                delete allUsers[sender];
+                return;
+            }
+
+            if (sender == null) {
+                sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+                return;
+            }
+
+            if (isLogged) {
+                getCategoriesAndAuthors(allUsers[sender]);
+                return;
+            }
+
+            createBtn(allUsers[sender], {
+                attachment: {
+                    type: "template",
+                    payload: {
+                        template_type: "button",
+                        text: "Bonjour, veuillez vous connecter à Posteria",
+                        buttons: [{
+                            type: "web_url",
+                            url: kuratorUrl + '/api/authorize?extern_id=' + sender,
+                            title: "Connexion"
+                        }]
+                    }
+                }
+            });
+        }
+        catch (error) {
+            console.log('[4] ' + error);
+            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
         }
     });
 }
