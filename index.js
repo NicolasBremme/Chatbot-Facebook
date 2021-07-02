@@ -102,6 +102,7 @@ app.post('/proposeArticle/', (req, res) => {
     let sender = body.sender;
     let contentLink = body.bestContent.Content.link;
     let contentImage = body.bestContent.Content.image;
+    let contentTitle = body.bestContent.Content.title;
 
     createUser(sender);
     allUsers[sender].step = -1;
@@ -111,7 +112,7 @@ app.post('/proposeArticle/', (req, res) => {
             payload: {
                 template_type: "generic",
                 elements: [{
-                    title: "Aujourd'hui nous vous proposons de publier cet article !",
+                    title: contentTitle,
                     image_url : imageUrl + contentImage,
                     default_action: {
                         type: "web_url",
