@@ -250,6 +250,7 @@ function confirmArticle(user) {
 
     user.image = content.image;
     user.title = content.title;
+    user.articleUrl = content.link;
     user.desc = content.description;
     user.tmpContentSelected = 1;
     user.step++;
