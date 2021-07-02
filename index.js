@@ -586,6 +586,10 @@ function getSelectedTime(user, event) {
         time: user.time
     };
 
+    if (user.tmpContentSelected == 1 && user.tmpContent !== "") {
+        postInfos.contentId = user.tmpContent.Content.id;
+    }
+
     posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
         try {
             body = JSON.parse(body);
@@ -602,7 +606,6 @@ function getSelectedTime(user, event) {
         catch (error) {
             console.log('[2] ' + error);
             console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-            // delete allUsers[sender];
         }
     });
 }
