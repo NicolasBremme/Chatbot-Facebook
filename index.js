@@ -591,6 +591,7 @@ function getSelectedTime(user, event) {
     if (user.tmpContentSelected == 1 && user.tmpContent !== "") {
         postInfos.contentId = user.tmpContent.id;
     }
+    console.log(postInfos);
 
     posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
         try {
