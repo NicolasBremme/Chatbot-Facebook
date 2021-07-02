@@ -98,7 +98,16 @@ app.get('/webhook/', (req, res) => {
 });
 
 app.post('/proposeArticle/', (req, res) => {
-    console.log(req);
+    try {
+        let body = JSON.parse(req.body);
+        let sender = body.sender;
+        let contentLink = body.bestContent.Content.link;
+
+        sendTextMessage(sender, {text: contentLink});
+    }
+    catch {
+        res.sendStatus(500);
+    }
     res.sendStatus(200);
 });
 
