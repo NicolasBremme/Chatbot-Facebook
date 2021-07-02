@@ -450,13 +450,12 @@ function getDescLong(user, event) {
         return;
     }
 
+    user.step += 2;
     if (user.tmpContentSelected == 0) {
         showPostInfo(user);
-        user.step += 2;
         return;
     }
     askTime(user);
-    user.step += 3;
 }
 
 function hashtagify(user, text) {
@@ -556,13 +555,12 @@ function getSelectedAuthor(user, event) {
     }
 
     user.author = user.allAuthorsId[parseInt(payload, 10)];
+    user.step += 2;
     if (user.tmpContentSelected == 0) {
         showPostInfo(user);
-        user.step++;
         return;
     }
     askTime(user);
-    user.step += 2;
 }
 
 function getSelectedTime(user, event) {
