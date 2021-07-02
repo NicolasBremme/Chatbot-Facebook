@@ -589,7 +589,7 @@ function getSelectedTime(user, event) {
     };
 
     if (user.tmpContentSelected == 1 && user.tmpContent !== "") {
-        postInfos.contentId = user.tmpContent.Content.id;
+        postInfos.contentId = user.tmpContent.id;
     }
 
     posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
