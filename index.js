@@ -102,7 +102,8 @@ app.post('/proposeArticle/', (req, res) => {
     let sender = body.sender;
     let contentLink = body.bestContent.Content.link;
 
-    sendTextMessage(sender, {text: contentLink});
+    createUser(sender);
+    sendTextMessage(allUsers[sender], {text: contentLink});
     res.sendStatus(200);
 });
 
@@ -146,25 +147,7 @@ app.post('/webhook/', function (req, res) {
         let sender = event.sender.id;
 
         if (undefined === allUsers[sender]) {
-            allUsers[sender] = {
-                sender: sender,
-                step: 0,
-                isConnected: 0,
-                articleUrl: "",
-                platform: "",
-                allCategories: [],
-                allCategoriesId: [],
-                allAuthors: [],
-                allAuthorsId: [],
-                tags: [],
-                categorie: -1,
-                descLong: "",
-                author: "",
-                title: "",
-                image: "",
-                desc: "",
-                time: "",
-            };
+            createUser(sender);
         }
 
         let eventType = getEventType(event, allUsers[sender]);
@@ -182,6 +165,28 @@ app.post('/webhook/', function (req, res) {
     }
     res.sendStatus(200);
 });
+
+function createUser(sender) {
+    allUsers[sender] = {
+        sender: sender,
+        step: 0,
+        isConnected: 0,
+        articleUrl: "",
+        platform: "",
+        allCategories: [],
+        allCategoriesId: [],
+        allAuthors: [],
+        allAuthorsId: [],
+        tags: [],
+        categorie: -1,
+        descLong: "",
+        author: "",
+        title: "",
+        image: "",
+        desc: "",
+        time: "",
+    };
+}
 
 function getEventType(event, user) {
     if (event.postback && event.postback.payload) {
