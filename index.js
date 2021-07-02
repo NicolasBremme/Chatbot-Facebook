@@ -105,8 +105,10 @@ app.post('/proposeArticle/', (req, res) => {
 
         sendTextMessage(sender, {text: contentLink});
     }
-    catch {
+    catch (error) {
+        console.log('[4] ' + error);
         res.sendStatus(500);
+        return;
     }
     res.sendStatus(200);
 });
