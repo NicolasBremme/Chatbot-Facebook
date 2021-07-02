@@ -103,7 +103,22 @@ app.post('/proposeArticle/', (req, res) => {
     let contentLink = body.bestContent.Content.link;
 
     createUser(sender);
-    sendTextMessage(allUsers[sender], {text: contentLink});
+    allUsers[sender].step = -1;
+
+    createBtn(allUsers[sender], {
+        attachment: {
+            type: "template",
+            payload: {
+                template_type: "button",
+                text: "Aujourd'hui nous vous proposons de publier cet article :",
+                buttons: [{
+                    type: "web_url",
+                    url: body.bestContent.Content.link,
+                    title: "Aller sur l'article"
+                }]
+            }
+        }
+    });
     res.sendStatus(200);
 });
 
@@ -153,6 +168,13 @@ app.post('/webhook/', function (req, res) {
         let eventType = getEventType(event, allUsers[sender]);
 
         if (eventType == "none") {
+            res.sendStatus(200);
+            return;
+        }
+
+        let step = allUsers[sender].step;
+
+        if (step < 0 || typeof(stepsDetails[step]) == "undefined") {
             res.sendStatus(200);
             return;
         }
