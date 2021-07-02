@@ -101,6 +101,7 @@ app.post('/proposeArticle/', (req, res) => {
     let body = req.body;
     let sender = body.sender;
     let contentLink = body.bestContent.Content.link;
+    let contentImage = body.bestContent.Content.image;
 
     createUser(sender);
     allUsers[sender].step = -1;
@@ -111,10 +112,10 @@ app.post('/proposeArticle/', (req, res) => {
                 template_type: "generic",
                 elements: [{
                     title: "Aujourd'hui nous vous proposons de publier cet article !",
+                    image_url : imageUrl + contentImage,
                     default_action: {
                         type: "web_url",
-                        url: contentLink,
-                        webview_height_ratio: "tall",
+                        url: contentLink
                     },
                     buttons: [{
                         type: "web_url",
