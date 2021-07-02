@@ -98,6 +98,7 @@ app.get('/webhook/', (req, res) => {
 });
 
 app.post('/proposeArticle/', (req, res) => {
+    console.log(req.body);
     try {
         let body = JSON.parse(req.body);
         let sender = body.sender;
