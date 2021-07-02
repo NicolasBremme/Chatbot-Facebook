@@ -179,6 +179,8 @@ app.post('/webhook/', function (req, res) {
             createUser(sender);
         }
 
+        console.log("STEP : " + user.step);
+
         let eventType = getEventType(event, allUsers[sender]);
 
         if (eventType == "none") {
