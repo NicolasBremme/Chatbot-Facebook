@@ -112,7 +112,7 @@ app.post('/proposeArticle/', (req, res) => {
             payload: {
                 template_type: "generic",
                 elements: [{
-                    title: content.title,
+                    title: "[${content.score}/10]${content.title}",
                     image_url : imageUrl + content.image,
                     default_action: {
                         type: "web_url",
