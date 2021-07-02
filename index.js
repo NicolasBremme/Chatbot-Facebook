@@ -104,29 +104,54 @@ app.post('/proposeArticle/', (req, res) => {
 
     createUser(sender);
     allUsers[sender].step = -1;
-
     createBtn(allUsers[sender], {
         attachment: {
             type: "template",
             payload: {
-                template_type: "button",
-                text: "Aujourd'hui nous vous proposons de publier cet article :",
-                buttons: [{
-                    type: "web_url",
-                    url: body.bestContent.Content.link,
-                    title: "Aller sur l'article"
-                },
-                {
-                    type: "postback",
-                    payload: "publish_article",
-                    title: "En faire la Curation"
-                }
-                ]
+                template_type: "generic",
+                elements: [{
+                    title: "Aujourd'hui nous vous proposons de publier cet article !",
+                    default_action: {
+                        type: "web_url",
+                        url: contentLink,
+                        webview_height_ratio: "tall",
+                    },
+                    buttons: [{
+                        type: "web_url",
+                        url: body.bestContent.Content.link,
+                        title: "Aller sur l'article"
+                    },
+                    {
+                        type: "postback",
+                        payload: "publish_article",
+                        title: "En faire la Curation"
+                    }]
+                }]
             }
-        }
     });
+
     res.sendStatus(200);
 });
+
+// createBtn(allUsers[sender], {
+//     attachment: {
+//         type: "template",
+//         payload: {
+//             template_type: "button",
+//             text: "Aujourd'hui nous vous proposons de publier cet article !",
+//             buttons: [{
+//                 type: "web_url",
+//                 url: body.bestContent.Content.link,
+//                 title: "Aller sur l'article"
+//             },
+//             {
+//                 type: "postback",
+//                 payload: "publish_article",
+//                 title: "En faire la Curation"
+//             }]
+//         }
+//     }
+// });
 
 app.get('/loginPosteria/', (req, res) => {
     let code = null;
