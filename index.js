@@ -98,6 +98,7 @@ app.get('/webhook/', (req, res) => {
 });
 
 app.post('/proposeArticle/', (req, res) => {
+    let body = req.body;
     let sender = body.sender;
     let contentLink = body.bestContent.Content.link;
 
