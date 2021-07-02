@@ -115,7 +115,13 @@ app.post('/proposeArticle/', (req, res) => {
                     type: "web_url",
                     url: body.bestContent.Content.link,
                     title: "Aller sur l'article"
-                }]
+                },
+                {
+                    type: "postback",
+                    payload: "publish_article",
+                    title: "En faire la Curation"
+                }
+                ]
             }
         }
     });
