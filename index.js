@@ -455,7 +455,7 @@ function getDescLong(user, event) {
         user.step += 2;
         return;
     }
-    askTime();
+    askTime(user);
     user.step += 3;
 }
 
@@ -561,7 +561,7 @@ function getSelectedAuthor(user, event) {
         user.step++;
         return;
     }
-    askTime();
+    askTime(user);
     user.step += 2;
 }
 
