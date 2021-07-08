@@ -5,7 +5,7 @@ const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOm
     pathToFiles = "/";
 const kuratorUrl = "https://app.posteria.fr",
     imageUrl = "http://image-kurator.fr/app";
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG, ENOTEMPTY } = require('constants');
 const { response } = require('express');
 const { fstat } = require('fs');
 const path = require('path');
@@ -150,6 +150,7 @@ app.get('/loginPosteria/', (req, res) => {
     }
     if (user != null && user.isConnected == 0) {
         if (code == 1 && sender != null) {
+            user.isConnected == 1;
             getCategoriesAndAuthors(user);
         }
         else {
@@ -178,8 +179,6 @@ app.post('/webhook/', function (req, res) {
         if (undefined === allUsers[sender]) {
             createUser(sender);
         }
-
-        console.log("STEP : " + allUsers[sender].step);
 
         let eventType = getEventType(event, allUsers[sender]);
 
@@ -335,6 +334,7 @@ function checkLogin(sender) {
             }
 
             if (isLogged) {
+                allUsers[sender].isConnected == 1;
                 getCategoriesAndAuthors(allUsers[sender]);
                 return;
             }
