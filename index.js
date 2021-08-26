@@ -231,6 +231,8 @@ function createUser(sender)
         time: "",
     };
 
+    console.log('CREATING USER');
+
     checkLogin(sender);
 }
 
@@ -322,6 +324,7 @@ function checkURL(user, event) {
 }
 
 function checkLogin(sender) {
+    console.log('LOGIN USER');
     posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
