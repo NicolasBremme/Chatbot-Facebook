@@ -2,7 +2,7 @@
 
 const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD",
     appUrl = "https://chatbot.posteria.fr/";
-const kuratorUrl = "https://app.posteria.fr",
+const kuratorUrl = "https://preprod.kurator.fr",
     imageUrl = "http://image-kurator.fr/app";
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG, ENOTEMPTY } = require('constants');
 const { response } = require('express');
@@ -233,7 +233,7 @@ function createUser(sender)
 
     console.log('CREATING USER');
 
-    checkLogin(sender);
+    checkLogin(allUsers[sender]);
 }
 
 function getEventType(event, user) {
