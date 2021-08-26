@@ -207,7 +207,8 @@ app.post('/webhook/', function (req, res) {
     res.sendStatus(200);
 });
 
-function createUser(sender) {
+function createUser(sender)
+{
     allUsers[sender] = {
         sender: sender,
         step: 0,
@@ -229,6 +230,8 @@ function createUser(sender) {
         desc: "",
         time: "",
     };
+
+    checkLogin(sender);
 }
 
 function getEventType(event, user) {
@@ -258,7 +261,7 @@ function confirmArticle(user) {
     user.tmpContentSelected = 1;
     user.step++;
     
-    checkLogin(user.sender);
+    //checkLogin(user.sender);
 }
 
 function checkURL(user, event) {
@@ -309,7 +312,7 @@ function checkURL(user, event) {
             allUsers[sender].image = body.image;
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
-            checkLogin(sender);
+            //checkLogin(sender);
         }
         catch (error) {
             console.log('[3] ' + error);
