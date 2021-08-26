@@ -644,6 +644,11 @@ function posteriaRequest(uri, param, callback) {
 }
 
 function sendTextMessage(user, msgData, index, indexLimit, callback) {
+
+    if (user.sender == 1651592678499031){
+        return;
+    }
+
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
