@@ -180,6 +180,8 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i];
         let sender = event.sender.id;
 
+        console.log(event);
+
         if (undefined === allUsers[sender]) {
             createUser(sender);
         }
@@ -668,7 +670,6 @@ function sendTextMessage(user, msgData, index, indexLimit, callback) {
 }
 
 function createBtn(user, btnData, index, indexLimit, callback) {
-    console.log(user);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
