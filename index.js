@@ -189,7 +189,7 @@ app.post('/webhook/', function (req, res) {
         let eventType = getEventType(event, allUsers[sender]);
 
         if (eventType == "none") {
-            res.sendStatus(200);
+            res.sendStatus(200); 
             return;
         }
 
