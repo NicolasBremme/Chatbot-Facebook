@@ -233,7 +233,7 @@ function createUser(sender)
 
     console.log('CREATING USER');
 
-    checkLogin(allUsers[sender]);
+    checkLogin(sender);
 }
 
 function getEventType(event, user) {
