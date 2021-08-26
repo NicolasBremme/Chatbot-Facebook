@@ -331,6 +331,8 @@ function checkLogin(sender) {
             let sender = body.sender;
             let isLogged = body.logged;
 
+            console.log(body);
+
             if (body.hasError == true) {
                 console.log('[5] ' + body.error);
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
