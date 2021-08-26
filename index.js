@@ -1,8 +1,7 @@
 'use strict';
 
 const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD",
-    appUrl = "https://test--chatbot.herokuapp.com/",
-    pathToFiles = "/";
+    appUrl = "https://chatbot.posteria.fr/";
 const kuratorUrl = "https://app.posteria.fr",
     imageUrl = "http://image-kurator.fr/app";
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG, ENOTEMPTY } = require('constants');
@@ -24,6 +23,7 @@ app.use(bodyParser.urlencoded({"extended": false}));
 let port = (process.env.PORT || 5000);
 app.set('port', port);
 app.listen(port, () => console.log('WEBHOOK_OK'));
+app.use(express.static("public"));
 
 const getRandom = (min, max) => (Math.floor(Math.random() * ((max - min) + min)));
 
@@ -158,7 +158,11 @@ app.get('/loginPosteria/', (req, res) => {
         }
     }
 
-    res.sendFile(pathToFiles + "loginPosteria.html");
+    let options = {
+        root: path.join(__dirname)
+    };
+
+    res.sendFile("loginPosteria.html", options);
 });
 
 app.post('/webhook/', function (req, res) {
@@ -387,7 +391,6 @@ function getCategoriesAndAuthors(user) {
         catch (error) {
             console.log('[1] ' + error);
             sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
-            // delete allUsers[sender];
             return;
         }
     });
