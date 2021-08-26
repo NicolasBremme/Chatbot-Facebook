@@ -668,6 +668,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback) {
 }
 
 function createBtn(user, btnData, index, indexLimit, callback) {
+    console.log(user);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
