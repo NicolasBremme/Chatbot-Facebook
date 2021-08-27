@@ -374,7 +374,7 @@ function checkLogin(sender)
             let isLogged = body.logged;
 
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-            console.log(body);
+            console.log('BODY', body);
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
             if (body.hasError == true) {
@@ -419,6 +419,8 @@ function checkLogin(sender)
 
 function getCategoriesAndAuthors(user)
 {
+    console.log('GET CAT AND AUTHORS');
+    
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
