@@ -373,6 +373,10 @@ function checkLogin(sender)
             let sender = body.sender;
             let isLogged = body.logged;
 
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+            console.log(body);
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+
             if (body.hasError == true) {
                 console.log('[5] ' + body.error);
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
@@ -414,6 +418,7 @@ function checkLogin(sender)
 }
 
 function getCategoriesAndAuthors(user) {
+    console.log('GET CAT AND AUTHORS');
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
