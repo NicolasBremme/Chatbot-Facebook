@@ -417,23 +417,26 @@ function checkLogin(sender)
     });
 }
 
-function getCategoriesAndAuthors(user) {
-    console.log('GET CAT AND AUTHORS');
+function getCategoriesAndAuthors(user)
+{
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
 
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+            console.log(allUsers[sender]);
             console.log(body);
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
             
             allUsers[sender].platform = body.platform;
             allUsers[sender].tags = body.tags;
 
-            for (const property in body.categories) {
-                allUsers[sender].allCategories.push(property);
-                allUsers[sender].allCategoriesId.push(body.categories[property]);
+            if (body.categories && body.categories.length){
+                for (const property in body.categories) {
+                    allUsers[sender].allCategories.push(property);
+                    allUsers[sender].allCategoriesId.push(body.categories[property]);
+                }
             }
 
             if (allUsers[sender].platform == 'wordpress') {
@@ -442,6 +445,7 @@ function getCategoriesAndAuthors(user) {
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
+
             askCategories(allUsers[sender]);
         }
         catch (error) {
