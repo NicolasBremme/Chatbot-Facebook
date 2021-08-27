@@ -331,7 +331,7 @@ function checkURL(user, event)
     let reqParam = {
         url: text,
         sender: user.sender
-    };
+    }; 
 
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
         try {
