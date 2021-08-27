@@ -291,6 +291,7 @@ function checkURL(user, event)
     checkLogin(user.sender);
 
     let text = "null";
+    let currentSender = user.sender;
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
         confirmArticle(user);
@@ -330,7 +331,7 @@ function checkURL(user, event)
 
     let reqParam = {
         url: text,
-        sender: user.sender
+        sender: currentSender
     }; 
 
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
@@ -353,7 +354,7 @@ function checkURL(user, event)
         }
         catch (error) {
             console.log('[3] ' + error);
-            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+            sendTextMessage(allUsers[currentSender], {text: "Une erreur s'est produite."});
         }
     });
 }
