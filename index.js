@@ -426,10 +426,9 @@ function checkLogin(sender)
 
 function getCategoriesAndAuthors(user)
 {
-    console.log('GET CAT AND AUTHORS');
-    
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
+            console.log(body);
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
 
