@@ -292,7 +292,7 @@ function checkURL(user, event) {
     }
 
     if (!validUrl.isUri(text)) {
-        createQuickReply(allUsers[sender], 'Choose an action', [
+        createQuickReply(user, 'Choose an action', [
             {
                 "content_type":"text",
                 "title":"Faire une curation",
