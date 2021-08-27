@@ -424,7 +424,7 @@ function getCategoriesAndAuthors(user)
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
 
-            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'); 
             console.log('USER', allUsers[sender]);
             console.log('BODY', body);
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
