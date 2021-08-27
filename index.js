@@ -418,9 +418,12 @@ function getCategoriesAndAuthors(user) {
         try {
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
+
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+            console.log(body);
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
             
             allUsers[sender].platform = body.platform;
-
             allUsers[sender].tags = body.tags;
 
             for (const property in body.categories) {
@@ -438,7 +441,7 @@ function getCategoriesAndAuthors(user) {
         }
         catch (error) {
             console.log('[1] ' + error);
-            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite. [2]"});
+            sendTextMessage(allUsers[user.sender], {text: "Une erreur s'est produite. [2]"});
             return;
         }
     });
