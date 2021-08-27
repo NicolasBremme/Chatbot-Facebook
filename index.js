@@ -426,7 +426,7 @@ function getCategoriesAndAuthors(user)
 
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
             console.log('USER', allUsers[sender]);
-            console.log(body);
+            console.log('BODY', body);
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
             
             allUsers[sender].platform = body.platform;
