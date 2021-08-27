@@ -185,52 +185,61 @@ app.get('/loginPosteria/', (req, res) => {
 });
 
 app.post('/webhook/', function (req, res) {
-    console.log("WEBHOOK_EVENT_RECEIVED");
-    let messaging_events = req.body.entry[0].messaging;
-    var stepsDetails = [
-        {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
-        {"event_type" : ["postback"], "function": getSelectedCategory},
-        {"event_type" : ["message"], "function": getDescLong},
-        {"event_type" : ["postback"], "function": getSelectedAuthor},
-        {"event_type" : ["postback"], "function": getSelectedTime},
-    ];
 
-    for (let i = 0; i < messaging_events.length; i++) {
-        let event = messaging_events[i];
-        let sender = event.sender.id;
+    try {
 
-        if (sender == replyBotId){
-            res.sendStatus(200);
-            return;
+        let messaging_events = req.body.entry[0].messaging;
+        var stepsDetails = [
+            {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
+            {"event_type" : ["postback"], "function": getSelectedCategory},
+            {"event_type" : ["message"], "function": getDescLong},
+            {"event_type" : ["postback"], "function": getSelectedAuthor},
+            {"event_type" : ["postback"], "function": getSelectedTime},
+        ];
+    
+        for (let i = 0; i < messaging_events.length; i++) {
+            let event = messaging_events[i];
+            let sender = event.sender.id;
+    
+            if (sender == replyBotId){
+                res.sendStatus(200);
+                return;
+            }
+    
+            console.log(event);
+    
+            if (!allUsers[sender]) {
+                createUser(sender);
+            }
+    
+            let eventType = getEventType(event, allUsers[sender]);
+    
+            if (eventType == "none") {
+                res.sendStatus(200); 
+                return;
+            }
+    
+            let step = allUsers[sender].step;
+    
+            if (step < 0 || typeof(stepsDetails[step]) == "undefined") {
+                res.sendStatus(200);
+                return;
+            }
+    
+            let currentStep = stepsDetails[allUsers[sender].step];
+    
+            if (currentStep.event_type.includes(eventType)) {
+                currentStep.function(allUsers[sender], event);
+            }
         }
 
-        console.log(event);
+        res.sendStatus(200);
 
-        if (!allUsers[sender]) {
-            createUser(sender);
-        }
-
-        let eventType = getEventType(event, allUsers[sender]);
-
-        if (eventType == "none") {
-            res.sendStatus(200); 
-            return;
-        }
-
-        let step = allUsers[sender].step;
-
-        if (step < 0 || typeof(stepsDetails[step]) == "undefined") {
-            res.sendStatus(200);
-            return;
-        }
-
-        let currentStep = stepsDetails[allUsers[sender].step];
-
-        if (currentStep.event_type.includes(eventType)) {
-            currentStep.function(allUsers[sender], event);
-        }
+    } catch(error){
+        console.log('ERROR', error);
+        res.sendStatus(403);
     }
-    res.sendStatus(200);
+
 });
 
 function createUser(sender)
