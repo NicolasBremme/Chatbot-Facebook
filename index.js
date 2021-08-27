@@ -1,14 +1,17 @@
 'use strict';
 
-const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD",
-    appUrl = "https://chatbot.posteria.fr/";
+const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD";
+
 const kuratorUrl = "https://preprod.kurator.fr",
-    imageUrl = "http://image-kurator.fr/app";
+      imageUrl = "http://image-kurator.fr/app",
+      appUrl = "https://chatbot.posteria.fr/";
+
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG, ENOTEMPTY } = require('constants');
 const { response } = require('express');
 const { fstat } = require('fs');
 const path = require('path');
-//  Imports dependencies and set up http server
+const replyBotId = 1651592678499031,
+
 const
     request = require('request'),
     express = require('express'),
@@ -78,6 +81,7 @@ var rewardsPublishOk = [
 ];
 
 var allUsers = {};
+var currentAction = null;
 
 app.get('/webhook/', (req, res) => {
 
@@ -98,6 +102,7 @@ app.get('/webhook/', (req, res) => {
 });
 
 app.post('/proposeArticle/', (req, res) => {
+
     let body = req.body;
     let sender = body.sender;
     let content = body.bestContent.Content;
@@ -169,6 +174,7 @@ app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
     let messaging_events = req.body.entry[0].messaging;
     var stepsDetails = [
+        {"event_type" : ["message"], "function": },
         {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
         {"event_type" : ["postback"], "function": getSelectedCategory},
         {"event_type" : ["message"], "function": getDescLong},
@@ -182,7 +188,7 @@ app.post('/webhook/', function (req, res) {
 
         console.log(event);
 
-        if (undefined === allUsers[sender]) {
+        if (!allUsers[sender]) {
             createUser(sender);
         }
 
@@ -233,8 +239,6 @@ function createUser(sender)
         time: "",
     };
 
-    console.log('CREATING USER');
-
     checkLogin(sender);
 }
 
@@ -269,6 +273,7 @@ function confirmArticle(user) {
 }
 
 function checkURL(user, event) {
+
     let text = "null";
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
@@ -288,6 +293,19 @@ function checkURL(user, event) {
     }
 
     if (!validUrl.isUri(text)) {
+        createQuickReply(allUsers[sender], 'Choose an action :', [
+            {
+                "content_type":"text",
+                "title":"Faire une curation",
+                "payload":"<POSTBACK_PAYLOAD>",
+                "image_url":"http://example.com/img/red.png"
+            },{
+                "content_type":"text",
+                "title":"Voir mes statistiques",
+                "payload":"<POSTBACK_PAYLOAD>",
+                "image_url":"http://example.com/img/green.png"
+            }]
+        );
         return;
     }
 
@@ -316,7 +334,6 @@ function checkURL(user, event) {
             allUsers[sender].image = body.image;
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
-            //checkLogin(sender);
         }
         catch (error) {
             console.log('[3] ' + error);
@@ -325,15 +342,15 @@ function checkURL(user, event) {
     });
 }
 
-function checkLogin(sender) {
-    console.log('LOGIN USER');
+function checkLogin(sender)
+{
     posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
+        
         try {
+
             body = JSON.parse(body);
             let sender = body.sender;
             let isLogged = body.logged;
-
-            console.log(body);
 
             if (body.hasError == true) {
                 console.log('[5] ' + body.error);
@@ -367,8 +384,8 @@ function checkLogin(sender) {
                     }
                 }
             });
-        }
-        catch (error) {
+
+        } catch (error) {
             console.log('[4] ' + error);
             sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
         }
@@ -670,6 +687,33 @@ function sendTextMessage(user, msgData, index, indexLimit, callback) {
         }
         else if ((user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
             askTime(user);
+        }
+    });
+}
+
+function createQuickReply(user, message, quickReplies)
+{
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token: VERIFY_TOKEN},
+        method: 'POST',
+        json: {
+            recipient: {id: user.sender},
+            message: {
+                "text" : message,
+                "quick_replies" : quickReplies
+            }
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error sending message: ', error);
+        }
+        else if (response.body.error) {
+            console.log('[4]Error: ', response.body.error);
+        }
+
+        if (callback != undefined && index < indexLimit) {
+            callback(user, btnData, index + 1, indexLimit, callback);
         }
     });
 }
