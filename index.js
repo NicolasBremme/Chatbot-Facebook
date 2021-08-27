@@ -708,11 +708,7 @@ function createQuickReply(user, message, quickReplies)
             console.log('Error sending message: ', error);
         }
         else if (response.body.error) {
-            console.log('[4]Error: ', response.body.error);
-        }
-
-        if (callback != undefined && index < indexLimit) {
-            callback(user, btnData, index + 1, indexLimit, callback);
+            console.log('[5] Error: ', response.body.error);
         }
     });
 }
