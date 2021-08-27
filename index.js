@@ -242,8 +242,6 @@ function createUser(sender)
         desc: "",
         time: "",
     };
-
-    checkLogin(sender);
 }
 
 function getEventType(event, user) {
@@ -296,7 +294,7 @@ function checkURL(user, event)
         }
     }
 
-    if (!validUrl.isUri(text)) {
+    if (!validUrl.isUri(text) && user.isConnected === 1) {
         createQuickReply(user, 'Choose an action', [
             {
                 "content_type" : "text",
