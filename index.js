@@ -174,7 +174,6 @@ app.post('/webhook/', function (req, res) {
     console.log("WEBHOOK_EVENT_RECEIVED");
     let messaging_events = req.body.entry[0].messaging;
     var stepsDetails = [
-        {"event_type" : ["message"], "function": },
         {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
         {"event_type" : ["postback"], "function": getSelectedCategory},
         {"event_type" : ["message"], "function": getDescLong},
@@ -293,7 +292,7 @@ function checkURL(user, event) {
     }
 
     if (!validUrl.isUri(text)) {
-        createQuickReply(allUsers[sender], 'Choose an action :', [
+        createQuickReply(allUsers[sender], 'Choose an action', [
             {
                 "content_type":"text",
                 "title":"Faire une curation",
@@ -662,7 +661,7 @@ function posteriaRequest(uri, param, callback) {
 
 function sendTextMessage(user, msgData, index, indexLimit, callback) {
 
-    if (user.sender == 1651592678499031){
+    if (user.sender == replyBotId){
         return;
     }
 
