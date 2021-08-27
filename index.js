@@ -288,10 +288,12 @@ function confirmArticle(user) {
 
 function checkURL(user, event)
 {
-    checkLogin(user.sender);
+    if (user.isConnected === 0){
+        checkLogin(user.sender);
+        return;
+    }
 
     let text = "null";
-    let currentSender = user.sender;
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
         confirmArticle(user);
@@ -332,7 +334,9 @@ function checkURL(user, event)
     let reqParam = {
         url: text,
         sender: currentSender
-    }; 
+    };
+
+    console.log(user);
 
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
         try {
@@ -354,7 +358,7 @@ function checkURL(user, event)
         }
         catch (error) {
             console.log('[3] ' + error);
-            sendTextMessage(allUsers[currentSender], {text: "Une erreur s'est produite."});
+            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
         }
     });
 }
@@ -382,7 +386,7 @@ function checkLogin(sender)
             }
 
             if (isLogged) {
-                allUsers[sender].isConnected == 1;
+                allUsers[sender].isConnected = 1;
                 getCategoriesAndAuthors(allUsers[sender]);
                 return;
             }
