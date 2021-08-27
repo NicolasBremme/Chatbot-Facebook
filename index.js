@@ -157,6 +157,19 @@ app.get('/loginPosteria/', (req, res) => {
         if (code == 1 && sender != null) {
             user.isConnected == 1;
             getCategoriesAndAuthors(user);
+            createQuickReply(user, 'Choose an action', [
+                {
+                    "content_type" : "text",
+                    "title" : "Faire une curation",
+                    "payload" : "MAIN_MENU_PAYLOAD",
+                    "image_url" : ""
+                },{
+                    "content_type" : "text",
+                    "title" : "Voir mes statistiques",
+                    "payload" : "MAIN_MENU_PAYLOAD",
+                    "image_url" : ""
+                }]
+            );
         }
         else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
