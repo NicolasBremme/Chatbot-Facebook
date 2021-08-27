@@ -425,7 +425,7 @@ function getCategoriesAndAuthors(user)
             let sender = parseInt(body.sender);
 
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-            console.log(allUsers[sender]);
+            console.log('USER', allUsers[sender]);
             console.log(body);
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
             
@@ -439,14 +439,16 @@ function getCategoriesAndAuthors(user)
                 }
             }
 
-            if (allUsers[sender].platform == 'wordpress') {
+            if ((allUsers[sender].platform && allUsers[sender].platform == 'wordpress') &&
+                (body.authors && body.authors.length)) {
+                
                 for (const property in body.authors) {
                     allUsers[sender].allAuthors.push(body.authors[property].username);
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
 
-            askCategories(allUsers[sender]);
+            //askCategories(allUsers[sender]);
         }
         catch (error) {
             console.log('[1] ' + error);
