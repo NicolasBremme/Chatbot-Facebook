@@ -305,7 +305,7 @@ function checkURL(user, event) {
                 "payload":"<POSTBACK_PAYLOAD>",
                 "image_url":"http://example.com/img/green.png"
             }]
-        );
+        ); 
         return;
     }
 
