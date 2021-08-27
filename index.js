@@ -378,13 +378,11 @@ function checkLogin(sender)
 
         try {
 
+            console.log('BODY', body);
+
             body = JSON.parse(body);
             let sender = body.sender;
             let isLogged = body.logged;
-
-            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-            console.log('BODY', body);
-            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
             if (body.hasError == true) {
                 console.log('[5] ' + body.error);
