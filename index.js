@@ -10,7 +10,7 @@ const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG, ENOTEMPTY } = require('constants');
 const { response } = require('express');
 const { fstat } = require('fs');
 const path = require('path');
-const replyBotId = 1651592678499031,
+const replyBotId = 1651592678499031;
 
 const
     request = require('request'),
