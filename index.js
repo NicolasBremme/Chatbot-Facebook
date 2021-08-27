@@ -185,6 +185,11 @@ app.post('/webhook/', function (req, res) {
         let event = messaging_events[i];
         let sender = event.sender.id;
 
+        if (sender == replyBotId){
+            res.sendStatus(200);
+            return;
+        }
+
         console.log(event);
 
         if (!allUsers[sender]) {
@@ -661,9 +666,6 @@ function posteriaRequest(uri, param, callback) {
 
 function sendTextMessage(user, msgData, index, indexLimit, callback) {
 
-    if (user.sender == replyBotId){
-        return;
-    }
 
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
