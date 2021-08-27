@@ -272,11 +272,11 @@ function confirmArticle(user) {
     user.desc = content.description;
     user.tmpContentSelected = 1;
     user.step++;
-    
-    //checkLogin(user.sender);
 }
 
-function checkURL(user, event) {
+function checkURL(user, event)
+{
+    checkLogin(user.sender);
 
     let text = "null";
 
@@ -299,15 +299,15 @@ function checkURL(user, event) {
     if (!validUrl.isUri(text)) {
         createQuickReply(user, 'Choose an action', [
             {
-                "content_type":"text",
-                "title":"Faire une curation",
-                "payload":"<POSTBACK_PAYLOAD>",
-                "image_url":"http://example.com/img/red.png"
+                "content_type" : "text",
+                "title" : "Faire une curation",
+                "payload" : "MAIN_MENU_PAYLOAD",
+                "image_url" : ""
             },{
-                "content_type":"text",
-                "title":"Voir mes statistiques",
-                "payload":"<POSTBACK_PAYLOAD>",
-                "image_url":"http://example.com/img/green.png"
+                "content_type" : "text",
+                "title" : "Voir mes statistiques",
+                "payload" : "MAIN_MENU_PAYLOAD",
+                "image_url" : ""
             }]
         ); 
         return;
@@ -349,10 +349,6 @@ function checkURL(user, event) {
 function checkLogin(sender)
 {
     posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
-
-        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-        console.log(body);
-        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
         try {
 
