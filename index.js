@@ -678,6 +678,7 @@ function posteriaRequest(uri, param, callback) {
 }
 
 function sendTextMessage(user, msgData, index, indexLimit, callback) {
+    console.log("endTextMessage: " + user);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
@@ -726,6 +727,7 @@ function createQuickReply(user, message, quickReplies) {
 }
 
 function createBtn(user, btnData, index, indexLimit, callback) {
+    console.log("createBtn: " + user);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
