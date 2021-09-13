@@ -290,6 +290,12 @@ function showMenu(user) {
             "title" : "Voir mes stats",
             "payload" : "menu_stat",
             "image_url" : ""
+        },
+        {
+            "content_type" : "text",
+            "title" : "Configuration",
+            "payload" : "menu_config",
+            "image_url" : ""
         }]
     );
 }
@@ -359,6 +365,9 @@ function actionFromMenu(user, event) {
             sendTextMessage(allUsers[sender], {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
             break;
         case "menu_stat":
+            workInProgress(user);
+            break;
+        case "menu_config":
             workInProgress(user);
             break;
         default:
