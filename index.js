@@ -176,6 +176,7 @@ app.post('/webhook/', function (req, res) {
     try {
         let messaging_events = req.body.entry[0].messaging;
         var stepsDetails = [
+            {"event_type" : ["message", "attachments", "postback"], "function": firstMessage},
             {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
             {"event_type" : ["postback"], "function": getSelectedCategory},
             {"event_type" : ["message"], "function": getDescLong},
@@ -275,6 +276,58 @@ function confirmArticle(user) {
     user.step++;
 }
 
+function firstMessage(user, event) {
+    if (user.isConnected === 1) {
+        checkURL(user, event);
+        user.step++;
+        return;
+    }
+
+    posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
+        try {
+            body = JSON.parse(body);
+            let sender = body.sender;
+            let isLogged = body.logged;
+
+            if (body.hasError == true) {
+                console.log('[5] ' + body.error);
+                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+                delete allUsers[sender];
+                return;
+            }
+
+            if (sender == null) {
+                sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+                return;
+            }
+
+            if (isLogged) {
+                allUsers[sender].isConnected = 1;
+                checkURL(user, event);
+                return;
+            }
+
+            createBtn(allUsers[sender], {
+                attachment: {
+                    type: "template",
+                    payload: {
+                        template_type: "button",
+                        text: "Bonjour, veuillez vous connecter à Posteria",
+                        buttons: [{
+                            type: "web_url",
+                            url: kuratorUrl + '/api/authorize?extern_id=' + sender,
+                            title: "Connexion"
+                        }]
+                    }
+                }
+            });
+        } catch (error) {
+            console.log('[4] ' + error);
+            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+        }
+    });
+}
+
 function showMenu(user, event) {
     createQuickReply(user, 'Choose an action', [
         {
@@ -293,11 +346,6 @@ function showMenu(user, event) {
 }
 
 function checkURL(user, event) {
-    if (user.isConnected === 0) {
-        checkLogin(user.sender);
-        return;
-    }
-
     let text = "null";
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
@@ -354,57 +402,7 @@ function checkURL(user, event) {
     });
 }
 
-function checkLogin(sender) {
-    posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
-        try {
-            console.log(body);
-            body = JSON.parse(body);
-            let sender = body.sender;
-            let isLogged = body.logged;
-
-            if (body.hasError == true) {
-                console.log('[5] ' + body.error);
-                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-                delete allUsers[sender];
-                return;
-            }
-
-            if (sender == null) {
-                sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
-                return;
-            }
-
-            if (isLogged) {
-                allUsers[sender].isConnected = 1;
-                getCategoriesAndAuthors(allUsers[sender]);
-                return;
-            }
-
-            console.log("Not connected ?");
-            createBtn(allUsers[sender], {
-                attachment: {
-                    type: "template",
-                    payload: {
-                        template_type: "button",
-                        text: "Bonjour, veuillez vous connecter à Posteria",
-                        buttons: [{
-                            type: "web_url",
-                            url: kuratorUrl + '/api/authorize?extern_id=' + sender,
-                            title: "Connexion"
-                        }]
-                    }
-                }
-            });
-
-        } catch (error) {
-            console.log('[4] ' + error);
-            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
-        }
-    });
-}
-
-function getCategoriesAndAuthors(user)
-{
+function getCategoriesAndAuthors(user) {
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
@@ -689,7 +687,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback) {
             console.log('Error sending message: ', error);
         }
         else if (response.body.error) {
-            console.log('[4]Error: ', response.body.error);
+            console.log('Text message Error: ', response.body.error);
         }
 
         if (callback != undefined && index < indexLimit) {
@@ -715,7 +713,7 @@ function createQuickReply(user, message, quickReplies) {
         }
     }, function(error, response, body) {
         if (error) {
-            console.log('Error sending message: ', error);
+            console.log('Error quick reply: ', error);
         }
         else if (response.body.error) {
             console.log('[5] Error: ', response.body.error);
@@ -737,7 +735,7 @@ function createBtn(user, btnData, index, indexLimit, callback) {
             console.log('Error sending message: ', error);
         }
         else if (response.body.error) {
-            console.log('[4]Error: ', response.body.error);
+            console.log('Button Error: ', response.body.error);
         }
 
         if (callback != undefined && index < indexLimit) {
