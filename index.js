@@ -163,21 +163,6 @@ app.get('/loginPosteria/', (req, res) => {
         }
     }
 
-    console.log(user);
-    createQuickReply(user, 'Choose an action', [
-        {
-            "content_type" : "text",
-            "title" : "Faire une curation",
-            "payload" : "MAIN_MENU_PAYLOAD",
-            "image_url" : ""
-        },{
-            "content_type" : "text",
-            "title" : "Voir mes statistiques",
-            "payload" : "MAIN_MENU_PAYLOAD",
-            "image_url" : ""
-        }]
-    );
-
     let options = {
         root: path.join(__dirname)
     };
@@ -189,6 +174,7 @@ app.post('/webhook/', function (req, res) {
     try {
         let messaging_events = req.body.entry[0].messaging;
         var stepsDetails = [
+            {"event_type" : ["message", "attachments", "postback"], "function": showMenu},
             {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
             {"event_type" : ["postback"], "function": getSelectedCategory},
             {"event_type" : ["message"], "function": getDescLong},
@@ -231,18 +217,14 @@ app.post('/webhook/', function (req, res) {
                 currentStep.function(allUsers[sender], event);
             }
         }
-
         res.sendStatus(200);
-
     } catch(error){
         console.log('ERROR', error);
         res.sendStatus(403);
     }
-
 });
 
-function createUser(sender)
-{
+function createUser(sender) {
     allUsers[sender] = {
         sender: sender,
         step: 0,
@@ -294,8 +276,24 @@ function confirmArticle(user) {
     user.step++;
 }
 
-function checkURL(user, event)
-{
+function showMenu(user, event) {
+    createQuickReply(user, 'Choose an action', [
+        {
+            "content_type" : "text",
+            "title" : "Faire une curation",
+            "payload" : "MAIN_MENU_PAYLOAD",
+            "image_url" : ""
+        },
+        {
+            "content_type" : "text",
+            "title" : "Voir mes statistiques",
+            "payload" : "MAIN_MENU_PAYLOAD",
+            "image_url" : ""
+        }]
+    );
+}
+
+function checkURL(user, event) {
     if (user.isConnected === 0){
         checkLogin(user.sender);
         return;
@@ -313,26 +311,14 @@ function checkURL(user, event)
     else if (event.message && event.message.attachments) {
         let url = event.message.attachments[0].url;
 
-        if(typeof url != 'undefined') {
+        if (typeof url != 'undefined') {
             url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
             text = url;
         }
     }
 
     if (!validUrl.isUri(text) && user.isConnected === 1) {
-        createQuickReply(user, 'Choose an action', [
-            {
-                "content_type" : "text",
-                "title" : "Faire une curation",
-                "payload" : "MAIN_MENU_PAYLOAD",
-                "image_url" : ""
-            },{
-                "content_type" : "text",
-                "title" : "Voir mes statistiques",
-                "payload" : "MAIN_MENU_PAYLOAD",
-                "image_url" : ""
-            }]
-        ); 
+        showMenu(user, event);
         return;
     }
 
@@ -445,8 +431,7 @@ function getCategoriesAndAuthors(user)
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
-
-            //askCategories(allUsers[sender]);
+            askCategories(allUsers[sender]);
         }
         catch (error) {
             console.log('[1] ' + error);
