@@ -163,7 +163,7 @@ app.get('/loginPosteria/', (req, res) => {
         }
     }
 
-    showMenu(user, null);
+    showMenu(user);
 
     let options = {
         root: path.join(__dirname)
@@ -177,6 +177,7 @@ app.post('/webhook/', function (req, res) {
         let messaging_events = req.body.entry[0].messaging;
         var stepsDetails = [
             {"event_type" : ["message", "attachments", "postback"], "function": firstMessage},
+            {"event_type" : ["postback"], "function": actionFromMenu},
             {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
             {"event_type" : ["postback"], "function": getSelectedCategory},
             {"event_type" : ["message"], "function": getDescLong},
@@ -276,6 +277,23 @@ function confirmArticle(user) {
     user.step++;
 }
 
+function showMenu(user) {
+    createQuickReply(user, "Choisissez un action:", [
+        {
+            "content_type" : "text",
+            "title" : "Faire une curation",
+            "payload" : "menu_curation",
+            "image_url" : ""
+        },
+        {
+            "content_type" : "text",
+            "title" : "Voir mes stats",
+            "payload" : "menu_stat",
+            "image_url" : ""
+        }]
+    );
+}
+
 function firstMessage(user, event) {
     if (user.isConnected === 1) {
         checkURL(user, event);
@@ -328,21 +346,24 @@ function firstMessage(user, event) {
     });
 }
 
-function showMenu(user, event) {
-    createQuickReply(user, 'Choose an action', [
-        {
-            "content_type" : "text",
-            "title" : "Faire une curation",
-            "payload" : "MAIN_MENU_PAYLOAD",
-            "image_url" : ""
-        },
-        {
-            "content_type" : "text",
-            "title" : "Voir mes statistiques",
-            "payload" : "MAIN_MENU_PAYLOAD",
-            "image_url" : ""
-        }]
-    );
+function workInProgress(user) {
+    user.step = 0;
+    sendTextMessage(allUsers[sender], {text: "Cette fonctionnalitée n'est pas encore disponible."});
+    showMenu(user);
+}
+
+function actionFromMenu(user, event) {
+    switch (event.payload) {
+        case "menu_curation":
+            user.step++;
+            sendTextMessage(allUsers[sender], {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
+            break;
+        case "menu_stat":
+            workInProgress(user);
+            break;
+        default:
+            break;
+    }
 }
 
 function checkURL(user, event) {
@@ -365,7 +386,7 @@ function checkURL(user, event) {
     }
 
     if (!validUrl.isUri(text) && user.isConnected === 1) {
-        showMenu(user, event);
+        showMenu(user);
         return;
     }
 
