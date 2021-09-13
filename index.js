@@ -283,7 +283,7 @@ function firstMessage(user, event) {
         return;
     }
 
-    posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
+    posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
             let sender = body.sender;
