@@ -396,8 +396,8 @@ function checkURL(user, event) {
         }
     }
 
-    if (!validUrl.isUri(text) && user.isConnected === 1) {
-        showMenu(user);
+    if (!validUrl.isUri(text)) {
+        sendTextMessage(allUsers[sender], {text: "Ce n'est pas un article valide."});
         return;
     }
 
