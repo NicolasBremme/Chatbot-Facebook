@@ -277,8 +277,11 @@ function confirmArticle(user) {
     user.step++;
 }
 
-function showMenu(user) {
-    createQuickReply(user, "Choisissez un action:", [
+function showMenu(user, message) {
+    if (typeof(message) == "undefined") {
+        message = "";
+    }
+    createQuickReply(user, message + "Choisissez un action:", [
         {
             "content_type" : "text",
             "title" : "Faire une curation",
@@ -354,8 +357,7 @@ function firstMessage(user, event) {
 
 function workInProgress(user) {
     user.step = 0;
-    sendTextMessage(allUsers[sender], {text: "Cette fonctionnalitée n'est pas encore disponible."});
-    showMenu(user);
+    showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
 }
 
 function actionFromMenu(user, event) {
