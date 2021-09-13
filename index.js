@@ -163,6 +163,8 @@ app.get('/loginPosteria/', (req, res) => {
         }
     }
 
+    showMenu(user);
+
     let options = {
         root: path.join(__dirname)
     };
@@ -174,7 +176,6 @@ app.post('/webhook/', function (req, res) {
     try {
         let messaging_events = req.body.entry[0].messaging;
         var stepsDetails = [
-            {"event_type" : ["message", "attachments", "postback"], "function": showMenu},
             {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
             {"event_type" : ["postback"], "function": getSelectedCategory},
             {"event_type" : ["message"], "function": getDescLong},
@@ -294,7 +295,7 @@ function showMenu(user, event) {
 }
 
 function checkURL(user, event) {
-    if (user.isConnected === 0){
+    if (user.isConnected === 0) {
         checkLogin(user.sender);
         return;
     }
@@ -357,8 +358,7 @@ function checkURL(user, event) {
     });
 }
 
-function checkLogin(sender)
-{
+function checkLogin(sender) {
     posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
 
         try {
