@@ -163,6 +163,7 @@ app.get('/loginPosteria/', (req, res) => {
         }
     }
 
+    console.log(user);
     createQuickReply(user, 'Choose an action', [
         {
             "content_type" : "text",
@@ -185,9 +186,7 @@ app.get('/loginPosteria/', (req, res) => {
 });
 
 app.post('/webhook/', function (req, res) {
-
     try {
-
         let messaging_events = req.body.entry[0].messaging;
         var stepsDetails = [
             {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
@@ -200,7 +199,7 @@ app.post('/webhook/', function (req, res) {
         for (let i = 0; i < messaging_events.length; i++) {
             let event = messaging_events[i];
             let sender = event.sender.id;
-    
+
             if (sender == replyBotId){
                 res.sendStatus(200);
                 return;
@@ -209,6 +208,8 @@ app.post('/webhook/', function (req, res) {
             if (!allUsers[sender]) {
                 createUser(sender);
             }
+
+            console.log(allUsers[sender]);
     
             let eventType = getEventType(event, allUsers[sender]);
     
@@ -692,8 +693,6 @@ function posteriaRequest(uri, param, callback) {
 }
 
 function sendTextMessage(user, msgData, index, indexLimit, callback) {
-
-
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
@@ -719,8 +718,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback) {
     });
 }
 
-function createQuickReply(user, message, quickReplies)
-{
+function createQuickReply(user, message, quickReplies) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
