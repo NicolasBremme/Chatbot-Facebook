@@ -364,7 +364,7 @@ function actionFromMenu(user, event) {
     switch (event.postback.payload) {
         case "menu_curation":
             user.step++;
-            sendTextMessage(allUsers[sender], {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
+            sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
             break;
         case "menu_stat":
             workInProgress(user);
