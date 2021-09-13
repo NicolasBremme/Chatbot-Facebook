@@ -163,7 +163,7 @@ app.get('/loginPosteria/', (req, res) => {
         }
     }
 
-    showMenu(user);
+    showMenu(user, null);
 
     let options = {
         root: path.join(__dirname)
@@ -360,8 +360,8 @@ function checkURL(user, event) {
 
 function checkLogin(sender) {
     posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
-
         try {
+            console.log(body);
             body = JSON.parse(body);
             let sender = body.sender;
             let isLogged = body.logged;
