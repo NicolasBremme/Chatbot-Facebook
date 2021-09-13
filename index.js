@@ -206,8 +206,6 @@ app.post('/webhook/', function (req, res) {
                 return;
             }
     
-            console.log(event);
-    
             if (!allUsers[sender]) {
                 createUser(sender);
             }
@@ -377,9 +375,6 @@ function checkLogin(sender)
     posteriaRequest('/api/autoLogin', {extern_id: sender}, function(err, res, body) {
 
         try {
-
-            console.log('BODY', body);
-
             body = JSON.parse(body);
             let sender = body.sender;
             let isLogged = body.logged;
@@ -428,15 +423,9 @@ function getCategoriesAndAuthors(user)
 {
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
-            console.log(body);
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
 
-            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'); 
-            console.log('USER', allUsers[sender]);
-            console.log('BODY', body);
-            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-            
             allUsers[sender].platform = body.platform;
             allUsers[sender].tags = body.tags;
 
@@ -665,7 +654,6 @@ function getSelectedTime(user, event) {
     if (user.tmpContentSelected == 1 && user.tmpContent !== "") {
         postInfos.contentId = user.tmpContent.id;
     }
-    //console.log(postInfos);
 
     posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
         try {
