@@ -397,7 +397,7 @@ function checkURL(user, event) {
     }
 
     if (!validUrl.isUri(text)) {
-        sendTextMessage(user, {text: "Ce n'est pas un article valide."});
+        showMenu(user);
         return;
     }
 
@@ -705,7 +705,6 @@ function posteriaRequest(uri, param, callback) {
 }
 
 function sendTextMessage(user, msgData, index, indexLimit, callback) {
-    console.log("endTextMessage: " + user);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
