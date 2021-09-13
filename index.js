@@ -397,7 +397,7 @@ function checkURL(user, event) {
     }
 
     if (!validUrl.isUri(text)) {
-        sendTextMessage(allUsers[sender], {text: "Ce n'est pas un article valide."});
+        sendTextMessage(user, {text: "Ce n'est pas un article valide."});
         return;
     }
 
