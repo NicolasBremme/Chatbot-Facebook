@@ -196,8 +196,6 @@ app.post('/webhook/', function (req, res) {
                 createUser(sender);
             }
 
-            console.log(allUsers[sender]);
-    
             let eventType = getEventType(event, allUsers[sender]);
     
             if (eventType == "none") {
@@ -331,8 +329,6 @@ function checkURL(user, event) {
         sender: currentSender
     };
 
-    console.log(user);
-
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
         try {
             body = JSON.parse(body);
@@ -384,6 +380,7 @@ function checkLogin(sender) {
                 return;
             }
 
+            console.log("Not connected ?");
             createBtn(allUsers[sender], {
                 attachment: {
                     type: "template",
@@ -727,7 +724,6 @@ function createQuickReply(user, message, quickReplies) {
 }
 
 function createBtn(user, btnData, index, indexLimit, callback) {
-    console.log("createBtn: " + user);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
