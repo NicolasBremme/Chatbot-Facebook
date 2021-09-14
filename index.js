@@ -406,7 +406,7 @@ function checkURL(user, event, fromMenu) {
 
     let reqParam = {
         url: text,
-        sender: currentSender
+        sender: user.sender
     };
 
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
