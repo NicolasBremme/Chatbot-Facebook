@@ -281,6 +281,7 @@ function showMenu(user, message) {
     if (typeof(message) == "undefined") {
         message = "";
     }
+
     createQuickReply(user, message + "Choisissez un action:", [
         {
             "content_type" : "text",
@@ -306,7 +307,6 @@ function showMenu(user, message) {
 function firstMessage(user, event) {
     if (user.isConnected === 1) {
         checkURL(user, event);
-        user.step++;
         return;
     }
 
@@ -377,7 +377,7 @@ function actionFromMenu(user, event) {
     }
 }
 
-function checkURL(user, event) {
+function checkURL(user, event, fromMenu) {
     let text = "null";
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
@@ -390,14 +390,14 @@ function checkURL(user, event) {
     else if (event.message && event.message.attachments) {
         let url = event.message.attachments[0].url;
 
-        if (typeof url != 'undefined') {
+        if (typeof(url) != 'undefined') {
             url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
             text = url;
         }
     }
 
-    if (!validUrl.isUri(text)) {
-        showMenu(user);
+    if (!validUrl.isUri(text) && typeof(fromMenu) == "undefined") {
+        // showMenu(user);
         return;
     }
 
@@ -415,7 +415,7 @@ function checkURL(user, event) {
             let sender = parseInt(body.sender);
 
             if (body.hasError == true || body.parseError == true) {
-                if (body.error == 'Cannot parse the article.') {
+                if (body.error == "Cannot parse the article.") {
                     body.error = "Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations";
                 }
                 sendTextMessage(allUsers[sender], {text: body.error});
