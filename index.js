@@ -364,7 +364,7 @@ function workInProgress(user) {
 }
 
 function actionFromMenu(user, event) {
-    if (event.message.quick_reply === undefined && event.message.quick_reply.payload === undefined) {
+    if (event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
         return;
     }
 
