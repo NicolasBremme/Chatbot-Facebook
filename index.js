@@ -473,7 +473,7 @@ function getCategoriesAndAuthors(user) {
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
-            console.log(allUsers[sender]);
+            console.log(allUsers[sender].allCategories);
             askCategories(allUsers[sender]);
         }
         catch (error) {
