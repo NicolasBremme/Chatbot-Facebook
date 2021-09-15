@@ -404,8 +404,10 @@ function checkURL(user, event) {
         }
     }
 
-    if (!validUrl.isUri(text) && typeof(event.fromMenu) == "undefined") {
-        showMenu(user);
+    if (!validUrl.isUri(text)) {
+        if (typeof(event.fromMenu) == "undefined") {
+            showMenu(user);
+        }
         return;
     }
 
