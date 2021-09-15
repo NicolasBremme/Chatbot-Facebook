@@ -364,8 +364,11 @@ function workInProgress(user) {
 }
 
 function actionFromMenu(user, event) {
-    console.log(event.postback.payload);
-    switch (event.postback.payload) {
+    if (event.message.payload === undefined) {
+        return;
+    }
+
+    switch (event.message.payload) {
         case "menu_curation":
             event.fromMenu = true;
             sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
