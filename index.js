@@ -364,6 +364,7 @@ function workInProgress(user) {
 }
 
 function actionFromMenu(user, event) {
+    console.log(event.postback.payload);
     switch (event.postback.payload) {
         case "menu_curation":
             event.fromMenu = true;
