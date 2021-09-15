@@ -310,6 +310,7 @@ function showMenu(user, message) {
             "image_url" : ""
         }]
     );
+    goToStep(user, 1);
 }
 
 function firstMessage(user, event) {
@@ -333,7 +334,6 @@ function firstMessage(user, event) {
 
             if (isLogged) {
                 allUsers[sender].isConnected = 1;
-                goToStep(user, 1);
                 showMenu(user);
                 return;
             }
@@ -360,7 +360,6 @@ function firstMessage(user, event) {
 }
 
 function workInProgress(user) {
-    goToStep(user, 0);
     showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
 }
 
