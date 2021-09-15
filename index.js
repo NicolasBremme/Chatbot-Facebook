@@ -407,6 +407,7 @@ function checkURL(user, event) {
     }
 
     if (!validUrl.isUri(text)) {
+        console.log("nique ta mère");
         if (typeof(event.fromMenu) == "undefined") {
             showMenu(user);
         }
