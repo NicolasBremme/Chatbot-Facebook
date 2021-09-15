@@ -439,6 +439,7 @@ function checkURL(user, event) {
             allUsers[sender].image = body.image;
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
+            getCategoriesAndAuthors(allUsers[sender]);
         }
         catch (error) {
             console.log('[3] ' + error);
