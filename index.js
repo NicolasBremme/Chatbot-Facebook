@@ -81,7 +81,15 @@ var rewardsPublishOk = [
 ];
 
 var allUsers = {};
-var currentAction = null;
+const stepsDetails = [
+    {"event_type" : ["message", "attachments", "postback"], "function": firstMessage},
+    {"event_type" : ["postback"], "function": actionFromMenu},
+    {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
+    {"event_type" : ["postback"], "function": getSelectedCategory},
+    {"event_type" : ["message"], "function": getDescLong},
+    {"event_type" : ["postback"], "function": getSelectedAuthor},
+    {"event_type" : ["postback"], "function": getSelectedTime},
+];
 
 app.get('/webhook/', (req, res) => {
 
@@ -175,15 +183,6 @@ app.get('/loginPosteria/', (req, res) => {
 app.post('/webhook/', function (req, res) {
     try {
         let messaging_events = req.body.entry[0].messaging;
-        var stepsDetails = [
-            {"event_type" : ["message", "attachments", "postback"], "function": firstMessage},
-            {"event_type" : ["postback"], "function": actionFromMenu},
-            {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
-            {"event_type" : ["postback"], "function": getSelectedCategory},
-            {"event_type" : ["message"], "function": getDescLong},
-            {"event_type" : ["postback"], "function": getSelectedAuthor},
-            {"event_type" : ["postback"], "function": getSelectedTime},
-        ];
     
         for (let i = 0; i < messaging_events.length; i++) {
             let event = messaging_events[i];
@@ -266,6 +265,15 @@ function getEventType(event, user) {
     return "none";
 }
 
+function goToStep(user, step, event, callFunction) {
+    if (stepsDetails[step] !== undefined) {
+        user.step = step;
+        if (callFunction !== undefined && event !== undefined && callFunction) {
+            stepsDetails[step].function(user, event);
+        }
+    }
+}
+
 function confirmArticle(user) {
     let content = user.tmpContent;
 
@@ -306,7 +314,7 @@ function showMenu(user, message) {
 
 function firstMessage(user, event) {
     if (user.isConnected === 1) {
-        checkURL(user, event);
+        goToStep(user, 2, event, true);
         return;
     }
 
@@ -330,8 +338,7 @@ function firstMessage(user, event) {
 
             if (isLogged) {
                 allUsers[sender].isConnected = 1;
-                allUsers[sender].step++;
-                checkURL(user, event);
+                goToStep(user, 2, event, true);
                 return;
             }
 
@@ -357,14 +364,15 @@ function firstMessage(user, event) {
 }
 
 function workInProgress(user) {
-    user.step = 0;
+    goToStep(user, 0);
     showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
 }
 
 function actionFromMenu(user, event) {
     switch (event.postback.payload) {
         case "menu_curation":
-            user.step++;
+            event.fromMenu = true;
+            goToStep(user, 2, event, true);
             sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
             break;
         case "menu_stat":
@@ -378,7 +386,7 @@ function actionFromMenu(user, event) {
     }
 }
 
-function checkURL(user, event, fromMenu) {
+function checkURL(user, event) {
     let text = "null"; 
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
@@ -397,7 +405,7 @@ function checkURL(user, event, fromMenu) {
         }
     }
 
-    if (!validUrl.isUri(text) && typeof(fromMenu) == "undefined") {
+    if (!validUrl.isUri(text) && typeof(event.fromMenu) == "undefined") {
         showMenu(user);
         return;
     }
