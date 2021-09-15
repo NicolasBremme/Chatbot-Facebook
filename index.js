@@ -456,6 +456,8 @@ function getCategoriesAndAuthors(user) {
             allUsers[sender].platform = body.platform;
             allUsers[sender].tags = body.tags;
 
+            console.log(body);
+
             if (body.categories && body.categories.length){
                 for (const property in body.categories) {
                     allUsers[sender].allCategories.push(property);
