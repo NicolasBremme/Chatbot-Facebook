@@ -333,7 +333,8 @@ function firstMessage(user, event) {
 
             if (isLogged) {
                 allUsers[sender].isConnected = 1;
-                goToStep(user, 2, event, true);
+                goToStep(user, 1);
+                showMenu(user);
                 return;
             }
 
