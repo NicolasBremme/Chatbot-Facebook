@@ -219,7 +219,7 @@ app.post('/webhook/', function (req, res) {
         }
         res.sendStatus(200);
     } catch(error){
-        console.log('ERROR', error);
+        console.log('ERROR: ', error);
         res.sendStatus(403);
     }
 });
@@ -229,6 +229,7 @@ function createUser(sender) {
         sender: sender,
         step: 0,
         isConnected: 0,
+        fromMenu: 0,
         tmpContent: "",
         tmpContentSelected: 0,
         articleUrl: "",
@@ -310,6 +311,7 @@ function showMenu(user, message) {
             "image_url" : ""
         }]
     );
+    user.fromMenu = 0;
     goToStep(user, 1);
 }
 
@@ -370,7 +372,7 @@ function actionFromMenu(user, event) {
 
     switch (event.message.quick_reply.payload) {
         case "menu_curation":
-            event.fromMenu = true;
+            user.fromMenu = true;
             sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
             goToStep(user, 2, event, true);
             break;
@@ -387,8 +389,6 @@ function actionFromMenu(user, event) {
 
 function checkURL(user, event) {
     let text = "null"; 
-    console.log("AHAHAHAHAHAHHA");
-    console.log(user.sender);
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
         confirmArticle(user);
@@ -407,8 +407,7 @@ function checkURL(user, event) {
     }
 
     if (!validUrl.isUri(text)) {
-        console.log("nique ta mère");
-        if (typeof(event.fromMenu) == "undefined") {
+        if (user.fromMenu == 0) {
             showMenu(user);
         }
         return;
@@ -767,6 +766,7 @@ function createQuickReply(user, message, quickReplies) {
 }
 
 function createBtn(user, btnData, index, indexLimit, callback) {
+    console.log(user);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
