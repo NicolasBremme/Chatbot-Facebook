@@ -387,6 +387,8 @@ function actionFromMenu(user, event) {
 
 function checkURL(user, event) {
     let text = "null"; 
+    console.log("AHAHAHAHAHAHHA");
+    console.log(user.sender);
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
         confirmArticle(user);
