@@ -364,7 +364,10 @@ function workInProgress(user) {
 }
 
 function actionFromMenu(user, event) {
-    if (event.message.quick_reply === undefined && event.message.quick_reply.payload === undefined)
+    if (event.message.quick_reply === undefined && event.message.quick_reply.payload === undefined) {
+        return;
+    }
+
     switch (event.message.quick_reply.payload) {
         case "menu_curation":
             event.fromMenu = true;
