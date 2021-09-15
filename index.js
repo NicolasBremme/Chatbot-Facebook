@@ -471,6 +471,7 @@ function getCategoriesAndAuthors(user) {
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
+            console.log(allUsers[sender]);
             askCategories(allUsers[sender]);
         }
         catch (error) {
@@ -766,7 +767,6 @@ function createQuickReply(user, message, quickReplies) {
 }
 
 function createBtn(user, btnData, index, indexLimit, callback) {
-    console.log(btnData);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
