@@ -313,11 +313,6 @@ function showMenu(user, message) {
 }
 
 function firstMessage(user, event) {
-    if (user.isConnected === 1) {
-        goToStep(user, 2, event, true);
-        return;
-    }
-
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
@@ -372,8 +367,8 @@ function actionFromMenu(user, event) {
     switch (event.postback.payload) {
         case "menu_curation":
             event.fromMenu = true;
-            goToStep(user, 2, event, true);
             sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
+            goToStep(user, 2, event, true);
             break;
         case "menu_stat":
             workInProgress(user);
