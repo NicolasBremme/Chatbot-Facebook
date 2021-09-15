@@ -456,16 +456,16 @@ function getCategoriesAndAuthors(user) {
             allUsers[sender].platform = body.platform;
             allUsers[sender].tags = body.tags;
 
-            console.log(body);
-
-            if (body.categories && body.categories.length){
+            if (body.categories && body.categories.length) {
                 for (const property in body.categories) {
+                    console.log(property);
+                    console.log(body.categories[property]);
                     allUsers[sender].allCategories.push(property);
                     allUsers[sender].allCategoriesId.push(body.categories[property]);
                 }
             }
 
-            if ((allUsers[sender].platform && allUsers[sender].platform == 'wordpress') &&
+            if ((allUsers[sender].platform && allUsers[sender].platform == 'wordpress') && 
                 (body.authors && body.authors.length)) {
                 
                 for (const property in body.authors) {
@@ -473,7 +473,6 @@ function getCategoriesAndAuthors(user) {
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
-            console.log(allUsers[sender].allCategories);
             askCategories(allUsers[sender]);
         }
         catch (error) {
