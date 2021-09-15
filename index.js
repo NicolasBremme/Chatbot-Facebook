@@ -766,7 +766,7 @@ function createQuickReply(user, message, quickReplies) {
 }
 
 function createBtn(user, btnData, index, indexLimit, callback) {
-    console.log(user);
+    console.log(btnData);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
