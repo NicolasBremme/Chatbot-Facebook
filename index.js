@@ -437,7 +437,7 @@ function checkURL(user, event) {
         }
         catch (error) {
             console.log('[3] ' + error);
-            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+            sendTextMessage(user, {text: "Une erreur s'est produite."});
         }
     });
 }
