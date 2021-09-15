@@ -456,7 +456,6 @@ function getCategoriesAndAuthors(user) {
             allUsers[sender].platform = body.platform;
             allUsers[sender].tags = body.tags;
 
-            console.log(body.categories);
             if (body.categories) {
                 for (const property in body.categories) {
                     console.log(property);
@@ -692,6 +691,8 @@ function getSelectedTime(user, event) {
             if (body.hasError == false) {
                 sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
                 delete allUsers[sender];
+                createUser(sender);
+                goToStep(allUsers[sender], 0, null, true);
                 return;
             }
             sendTextMessage(allUsers[sender], {text: body.error});
