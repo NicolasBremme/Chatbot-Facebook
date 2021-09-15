@@ -83,7 +83,7 @@ var rewardsPublishOk = [
 var allUsers = {};
 const stepsDetails = [
     {"event_type" : ["message", "attachments", "postback"], "function": firstMessage},
-    {"event_type" : ["message", "attachments", "postback"], "function": actionFromMenu},
+    {"event_type" : ["message"], "function": actionFromMenu},
     {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
     {"event_type" : ["postback"], "function": getSelectedCategory},
     {"event_type" : ["message"], "function": getDescLong},
