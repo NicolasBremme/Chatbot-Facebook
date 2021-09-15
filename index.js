@@ -330,6 +330,7 @@ function firstMessage(user, event) {
 
             if (isLogged) {
                 allUsers[sender].isConnected = 1;
+                allUsers[sender].step++;
                 checkURL(user, event);
                 return;
             }
@@ -378,7 +379,7 @@ function actionFromMenu(user, event) {
 }
 
 function checkURL(user, event, fromMenu) {
-    let text = "null";
+    let text = "null"; 
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
         confirmArticle(user);
@@ -397,7 +398,7 @@ function checkURL(user, event, fromMenu) {
     }
 
     if (!validUrl.isUri(text) && typeof(fromMenu) == "undefined") {
-        // showMenu(user);
+        showMenu(user);
         return;
     }
 
