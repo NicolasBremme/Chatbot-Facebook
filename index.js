@@ -316,6 +316,11 @@ function showMenu(user, message) {
 }
 
 function firstMessage(user, event) {
+    if (user.isConnected) {
+        checkURL(user, event);
+        return;
+    }
+
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
@@ -336,7 +341,6 @@ function firstMessage(user, event) {
 
             if (isLogged) {
                 allUsers[sender].isConnected = 1;
-                checkURL(allUsers[sender], null);
                 showMenu(allUsers[sender]);
                 return;
             }
