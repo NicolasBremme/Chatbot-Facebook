@@ -117,6 +117,7 @@ app.post('/proposeArticle/', (req, res) => {
 
     createUser(sender);
     allUsers[sender].step = 2;
+    allUsers[sender].isLogged = 1;
     allUsers[sender].tmpContent = content;
     if (content.score == "null" || content.score == null) {
         content.score = 0;
