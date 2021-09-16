@@ -383,7 +383,7 @@ function firstMessage(user, event) {
 
             if (isLogged) {
                 allUsers[sender].isConnected = 1;
-                checkURL(user, event);
+                goToStep(allUsers[sender], 2, event, true);
                 return;
             }
 
