@@ -330,13 +330,14 @@ function firstMessage(user, event) {
             }
 
             if (sender == null) {
-                sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+                sendTextMessage(allUsers[sender], {text: 'Impossible de vous connecter à Kurator.'});
                 return;
             }
 
             if (isLogged) {
                 allUsers[sender].isConnected = 1;
-                showMenu(user);
+                checkURL(allUsers[sender], null);
+                showMenu(allUsers[sender]);
                 return;
             }
 
@@ -361,10 +362,6 @@ function firstMessage(user, event) {
     });
 }
 
-function workInProgress(user) {
-    showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
-}
-
 function actionFromMenu(user, event) {
     if (event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
         return;
@@ -377,12 +374,13 @@ function actionFromMenu(user, event) {
             goToStep(user, 2, event, true);
             break;
         case "menu_stat":
-            workInProgress(user);
+            showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
             break;
         case "menu_config":
-            workInProgress(user);
+            showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
             break;
         default:
+            showMenu(user, "Je n'ai pas compris. ");
             break;
     }
 }
