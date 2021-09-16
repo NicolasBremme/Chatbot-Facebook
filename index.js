@@ -317,7 +317,6 @@ function showMenu(user, message) {
 
 function firstMessage(user, event) {
     if (user.isConnected) {
-        checkURL(user, event);
         return;
     }
 
@@ -341,7 +340,9 @@ function firstMessage(user, event) {
 
             if (isLogged) {
                 allUsers[sender].isConnected = 1;
-                showMenu(allUsers[sender]);
+                if (!checkURL(user, event)) {
+                    showMenu(allUsers[sender]);
+                }
                 return;
             }
 
@@ -394,7 +395,7 @@ function checkURL(user, event) {
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
         confirmArticle(user);
-        return;
+        return true;
     }
     else if (event.message && event.message.text) {
         text = event.message.text;
@@ -412,7 +413,7 @@ function checkURL(user, event) {
         if (user.fromMenu == 0) {
             showMenu(user);
         }
-        return;
+        return false;
     }
 
     user.articleUrl = text;
@@ -423,7 +424,7 @@ function checkURL(user, event) {
         sender: user.sender
     };
 
-    posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
+    return posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
         try {
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
@@ -434,13 +435,14 @@ function checkURL(user, event) {
                 }
                 sendTextMessage(allUsers[sender], {text: body.error});
                 delete allUsers[sender];
-                return;
+                return false;
             }
 
             allUsers[sender].image = body.image;
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
             getCategoriesAndAuthors(allUsers[sender]);
+            return true;
         }
         catch (error) {
             console.log('[3] ' + error);
