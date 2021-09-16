@@ -341,10 +341,6 @@ function showMenu(user, message) {
 }
 
 function firstMessage(user, event) {
-    if (user.isConnected == 1) {
-        return;
-    }
-
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
@@ -711,7 +707,7 @@ function getSelectedTime(user, event) {
             let sender = parseInt(body.sender);
 
             if (body.hasError == false) {
-                sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}, 0, 1, function(user, msgData, index, indexLimit, callback) {
+                sendTextMessage(allUsers[sender], [{text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}], 0, 1, function(user, msgData, index, indexLimit, callback) {
                     let sender = user.sender;
 
                     delete allUsers[sender];
