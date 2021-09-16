@@ -118,7 +118,9 @@ app.post('/proposeArticle/', (req, res) => {
     createUser(sender);
     allUsers[sender].step = 0;
     allUsers[sender].tmpContent = content;
-    if (content.score.toString() == "null")
+    if (content.score == "null" || content.score == null) {
+        content.score = 0;
+    }
 
     createBtn(allUsers[sender], {
         attachment: {
