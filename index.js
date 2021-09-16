@@ -747,6 +747,7 @@ function posteriaRequest(uri, param, callback) {
 }
 
 function sendTextMessage(user, msgData, index, indexLimit, callback) {
+    console.log((index != undefined) ? msgData[index].text : msgData.text);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
