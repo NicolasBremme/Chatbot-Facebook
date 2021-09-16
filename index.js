@@ -118,6 +118,7 @@ app.post('/proposeArticle/', (req, res) => {
     createUser(sender);
     allUsers[sender].step = 0;
     allUsers[sender].tmpContent = content;
+    if (content.score.toString() == "null")
 
     createBtn(allUsers[sender], {
         attachment: {
@@ -145,7 +146,7 @@ app.post('/proposeArticle/', (req, res) => {
             }
         }
     });
-    goToStep(allUsers[sender], 1);
+    goToStep(allUsers[sender], 2);
 
     res.sendStatus(200);
 });
@@ -383,7 +384,7 @@ function firstMessage(user, event) {
 }
 
 function actionFromMenu(user, event) {
-    if (event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
+    if (event.message === undefined || event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
         showMenu(user, "Je n'ai pas compris. ");
         return;
     }
