@@ -1,5 +1,52 @@
 'use strict';
 
+var rewardsCategoriesOk = [
+    "Super ! \u{1F60F}",
+    "Catégorie validée ! \u{1F603}",
+    "Great job \u{1F609}",
+	"Bon boulot \u{1F601}",
+	"Bonne déduction \u{1F638}",
+	"Excellent choix de catégorie \u{1F609}",
+	"Catégorie(s) acceptée(s) \u{1F61C}",
+	"Good \u{1F61C}",
+	"Très bien \u{1F609}",
+	"Perfect \u{1F60F}",
+	"Epatant \u{1F60A}",
+	"Vous faites un travail admirable \u{1F603}"
+];
+
+var rewardsInsightOk = [
+    "Super commentaire \u{1F604}",
+    "Génial ! \u{1F603}",
+    "Commentaire validé \u{1F60F}",
+	"Commentaire intéressant ! \u{1F60F}",
+	"Great ! \u{1F63A}",
+	"Great work ! \u{1F60F}",
+	"Excellent \u{1F440}",
+	"Très bien \u{1F609}",
+	"Geniiiial \u{1F604}",
+	"Good commentary \u{1F60A}",
+	"Très intéressant ! \u{1F642}",
+	"Very interesting! \u{1F44A}",
+	"Beau travail ! \u{1F607}"
+];
+
+var rewardsPublishOk = [
+    "Bravooo \u{1F60F}",
+    "Goooaaaal \u{1F603}",
+    "Good game ! \u{1F604}",
+	"Au top \u{1F917}",
+	"Bien joué ! \u{1F60A}",
+	"Congratulatiiion \u{1F389}",
+	"Votre article vient d’être publié \u{1F60C}",
+	"Félicitation \u{1F44C}",
+	"Vous avez réussi votre publication ! \u{1F604}",
+	"Article published \u{1F642}",
+	"Excellent travail \u{2705}",
+	"Parfait \u{1F63B}",
+	"Bravo !!!!!! \u{1F340}"
+];
+
 const VERIFY_TOKEN = "EAAGCK9WZBPQoBAFtfBeE2c0AaEBZBXiDVx2QIURpDtlgm2aotslZApzOmyHpxo1w2tMTXGyPeAQ7id1BOoVxulnaivH4QN7aS5sj3p2Q8FUIobUQlZBODdkZADTZB4Xj1fBYqvChZCtdc6M77a82A619ZBea1dPmqFNJRYmKJ3YnQQZDZD";
 
 const kuratorUrl = "https://preprod.kurator.fr",
@@ -29,58 +76,41 @@ app.listen(port, () => console.log('WEBHOOK_OK'));
 app.use(express.static("public"));
 
 const getRandom = (min, max) => (Math.floor(Math.random() * ((max - min) + min)));
-
-//Quand catégories ok
-var rewardsCategoriesOk = [
-    "Super ! \u{1F60F}",
-    "Catégorie validée ! \u{1F603}",
-    "Great job \u{1F609}",
-	"Bon boulot \u{1F601}",
-	"Bonne déduction \u{1F638}",
-	"Excellent choix de catégorie \u{1F609}",
-	"Catégorie(s) acceptée(s) \u{1F61C}",
-	"Good \u{1F61C}",
-	"Très bien \u{1F609}",
-	"Perfect \u{1F60F}",
-	"Epatant \u{1F60A}",
-	"Vous faites un travail admirable \u{1F603}"
-];
-
-//Quand insight ok
-var rewardsInsightOk = [
-    "Super commentaire \u{1F604}",
-    "Génial ! \u{1F603}",
-    "Commentaire validé \u{1F60F}",
-	"Commentaire intéressant ! \u{1F60F}",
-	"Great ! \u{1F63A}",
-	"Great work ! \u{1F60F}",
-	"Excellent \u{1F440}",
-	"Très bien \u{1F609}",
-	"Geniiiial \u{1F604}",
-	"Good commentary \u{1F60A}",
-	"Très intéressant ! \u{1F642}",
-	"Very interesting! \u{1F44A}",
-	"Beau travail ! \u{1F607}"
-];
-
-//Quand publication OK
-var rewardsPublishOk = [
-    "Bravooo \u{1F60F}",
-    "Goooaaaal \u{1F603}",
-    "Good game ! \u{1F604}",
-	"Au top \u{1F917}",
-	"Bien joué ! \u{1F60A}",
-	"Congratulatiiion \u{1F389}",
-	"Votre article vient d’être publié \u{1F60C}",
-	"Félicitation \u{1F44C}",
-	"Vous avez réussi votre publication ! \u{1F604}",
-	"Article published \u{1F642}",
-	"Excellent travail \u{2705}",
-	"Parfait \u{1F63B}",
-	"Bravo !!!!!! \u{1F340}"
-];
-
 var allUsers = {};
+
+class Step {
+    _construct(name, eventType, stepFunction) {
+        this.name = name;
+        this.eventType = eventType;
+        this.function = stepFunction;
+    };
+
+    setNextStepArray(nextStepArray) {
+        this.nextStepArray = nextStepArray;
+    };
+
+    getNextStep(nextStepName) {
+        for (let nextStep in this.nextArray) {
+            if (nextStep.name == nextStepName) {
+                return nextStep;
+            }
+        }
+        return null;
+    };
+}
+
+function createStepTree() {
+    var step_firstMessage = new Step("firstMessage", ["message", "attachments", "postback"], firstMessage);
+    var step_actionFromMenu = new Step("firstMessage", ["message", "attachments", "postback"], actionFromMenu);
+    var step_checkURL = new Step("firstMessage", ["message", "attachments", "postback"], checkURL);
+    var step_getSelectedCategory = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedCategory);
+    var step_getDescLong = new Step("firstMessage", ["message", "attachments", "postback"], getDescLong);
+    var step_getSelectedAuthor = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedAuthor);
+    var step_getSelectedAuthor = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedAuthor);
+
+    step_firstMessage
+}
+
 const stepsDetails = [
     {"event_type" : ["message", "attachments", "postback"], "function": firstMessage},
     {"event_type" : ["message", "attachments", "postback"], "function": actionFromMenu},
@@ -92,7 +122,6 @@ const stepsDetails = [
 ];
 
 app.get('/webhook/', (req, res) => {
-
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
@@ -110,14 +139,12 @@ app.get('/webhook/', (req, res) => {
 });
 
 app.post('/proposeArticle/', (req, res) => {
-
     let body = req.body;
     let sender = body.sender;
     let content = body.bestContent.Content;
 
     createUser(sender);
     allUsers[sender].step = 2;
-    allUsers[sender].isLogged = 1;
     allUsers[sender].tmpContent = content;
     if (content.score == "null" || content.score == null) {
         content.score = 0;
@@ -356,7 +383,7 @@ function firstMessage(user, event) {
 
             if (isLogged) {
                 allUsers[sender].isConnected = 1;
-                showMenu(allUsers[sender]);
+                checkURL(user, event);
                 return;
             }
 
@@ -491,7 +518,7 @@ function getCategoriesAndAuthors(user) {
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
-            askCategories(allUsers[sender]);
+            getDescLonCategories(allUsers[sender]);
         }
         catch (error) {
             console.log('[1] ' + error);
