@@ -83,7 +83,7 @@ var rewardsPublishOk = [
 var allUsers = {};
 const stepsDetails = [
     {"event_type" : ["message", "attachments", "postback"], "function": firstMessage},
-    {"event_type" : ["message"], "function": actionFromMenu},
+    {"event_type" : ["message", "attachments", "postback"], "function": actionFromMenu},
     {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
     {"event_type" : ["postback"], "function": getSelectedCategory},
     {"event_type" : ["message"], "function": getDescLong},
@@ -145,6 +145,7 @@ app.post('/proposeArticle/', (req, res) => {
             }
         }
     });
+    goToStep(user, 1);
 
     res.sendStatus(200);
 });
@@ -218,7 +219,7 @@ app.post('/webhook/', function (req, res) {
             }
         }
         res.sendStatus(200);
-    } catch(error){
+    } catch(error) {
         console.log('ERROR: ', error);
         res.sendStatus(403);
     }
@@ -283,7 +284,28 @@ function confirmArticle(user) {
     user.articleUrl = content.link;
     user.desc = content.description;
     user.tmpContentSelected = 1;
-    user.step++;
+    posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
+        try {
+            body = JSON.parse(body);
+            let sender = body.sender;
+            let isLogged = body.logged;
+
+            if (body.hasError == true) {
+                console.log('[5] ' + body.error);
+                sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+                delete allUsers[sender];
+                return;
+            }
+
+            if (isLogged) {
+                getCategoriesAndAuthors(user);
+                goToStep(user, 3);
+            }
+        } catch (error) {
+            console.log('[9] ' + error);
+            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+        }
+    });
 }
 
 function showMenu(user, message) {
@@ -316,7 +338,7 @@ function showMenu(user, message) {
 }
 
 function firstMessage(user, event) {
-    if (user.isConnected) {
+    if (user.isConnected == 1) {
         return;
     }
 
@@ -330,11 +352,6 @@ function firstMessage(user, event) {
                 console.log('[5] ' + body.error);
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
                 delete allUsers[sender];
-                return;
-            }
-
-            if (sender == null) {
-                sendTextMessage(allUsers[sender], {text: 'Impossible de vous connecter à Kurator.'});
                 return;
             }
 
