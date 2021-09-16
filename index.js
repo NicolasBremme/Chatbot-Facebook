@@ -691,10 +691,13 @@ function getSelectedTime(user, event) {
             let sender = parseInt(body.sender);
 
             if (body.hasError == false) {
-                sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]});
-                delete allUsers[sender];
-                createUser(sender);
-                goToStep(allUsers[sender], 0, null, true);
+                sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}, 0, 1, function(user, msgData, index, indexLimit, callback) {
+                    let sender = user.sender;
+
+                    delete user;
+                    createUser(sender);
+                    goToStep(user, 0, null, true);
+                });
                 return;
             }
             sendTextMessage(allUsers[sender], {text: body.error});
