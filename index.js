@@ -694,9 +694,9 @@ function getSelectedTime(user, event) {
                 sendTextMessage(allUsers[sender], {text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}, 0, 1, function(user, msgData, index, indexLimit, callback) {
                     let sender = user.sender;
 
-                    delete user;
+                    delete allUsers[sender];
                     createUser(sender);
-                    goToStep(user, 0, null, true);
+                    goToStep(allUsers[sender], 0, null, true);
                 });
                 return;
             }
