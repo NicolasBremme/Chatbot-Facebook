@@ -116,7 +116,7 @@ app.post('/proposeArticle/', (req, res) => {
     let content = body.bestContent.Content;
 
     createUser(sender);
-    allUsers[sender].step = 0;
+    allUsers[sender].step = 2;
     allUsers[sender].tmpContent = content;
     if (content.score == "null" || content.score == null) {
         content.score = 0;
@@ -148,7 +148,6 @@ app.post('/proposeArticle/', (req, res) => {
             }
         }
     });
-    goToStep(allUsers[sender], 2);
 
     res.sendStatus(200);
 });
@@ -316,7 +315,7 @@ function showMenu(user, message) {
         message = "";
     }
 
-    createQuickReply(user, message + "Choisissez un action:", [
+    createQuickReply(user, message + "Choisissez une action:", [
         {
             "content_type" : "text",
             "title" : "Faire une curation",
