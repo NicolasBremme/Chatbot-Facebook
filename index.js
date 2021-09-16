@@ -115,6 +115,7 @@ app.post('/proposeArticle/', (req, res) => {
     let sender = body.sender;
     let content = body.bestContent.Content;
 
+    console.log("HI HELLO EVERYONE WHAT IS HE DOING WOAAAAW");
     createUser(sender);
     allUsers[sender].step = 0;
     allUsers[sender].tmpContent = content;
