@@ -106,9 +106,36 @@ function createStepTree() {
     var step_getSelectedCategory = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedCategory);
     var step_getDescLong = new Step("firstMessage", ["message", "attachments", "postback"], getDescLong);
     var step_getSelectedAuthor = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedAuthor);
-    var step_getSelectedAuthor = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedAuthor);
+    var step_getSelectedTime = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedTime);
 
-    step_firstMessage
+    step_firstMessage.setNextStepArray([
+        step_checkURL
+    ]);
+
+    step_actionFromMenu.setNextStepArray([
+        step_checkURL
+    ]);
+
+    step_checkURL.setNextStepArray([
+        step_actionFromMenu,
+        step_getSelectedCategory
+    ]);
+
+    step_getSelectedCategory.setNextStepArray([
+        step_getDescLong,
+        step_getSelectedCategory,
+        step_getSelectedAuthor,
+        step_getSelectedTime
+    ]);
+
+    step_getDescLong.setNextStepArray([
+        step_getSelectedAuthor,
+        step_getSelectedTime
+    ]);
+
+    step_getSelectedAuthor.setNextStepArray([
+        step_getSelectedTime
+    ]);
 }
 
 const stepsDetails = [
