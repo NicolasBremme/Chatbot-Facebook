@@ -684,12 +684,10 @@ function getDescLong(user, event)
     if (user.platform == 'wordpress') {
         askAuthor(user);
         user.step = user.step.getNextStep('getSelectedAuthor');
-        //user.step++;
         return;
     }
 
     user.step = user.step.getNextStep('getSelectedTime');
-    //user.step += 2;
 
     if (user.tmpContentSelected == 0) {
         showPostInfo(user);
@@ -698,7 +696,8 @@ function getDescLong(user, event)
     askTime(user);
 }
 
-function hashtagify(user, text) {
+function hashtagify(user, text)
+{
     if (user.platform == "wall") {
         return text;
     }
@@ -722,93 +721,123 @@ function hashtagify(user, text) {
     return text;
 }
 
-function askAuthor(user) {
-    let btnCount = Math.ceil(user.allAuthors.length / 3);
-    let btnData = [];
+function askAuthor(user)
+{
+    try {
 
-    for (let i = 0, j = 0; i < btnCount; i++) {
-        btnData.push({
+        let btnCount = Math.ceil(user.allAuthors.length / 3);
+        let btnData = [];
+
+        for (let i = 0, j = 0; i < btnCount; i++) {
+            btnData.push({
+                "attachment": {
+                    "type": "template",
+                    "payload": {
+                        "template_type": "button",
+                        "text": (i == 0) ? "Choisissez un auteur :" : "‎",
+                        "buttons": []
+                    }
+                }
+            });
+            for (j = 0; j < 3 && user.allAuthors[(i * 3) + j]; j++) {
+                let buttons = btnData[i].attachment.payload.buttons;
+
+                buttons.push({"type": "postback", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
+            }
+        }
+        let index = 0;
+        let indexLimit = btnData.length - 1;
+
+        createBtn(user, btnData, index, indexLimit, createBtn);
+
+    } catch(error){
+        console.log('[12] ' + error);
+    }
+}
+
+function showPostInfo(user)
+{
+    try {
+
+        let showInfoText = [
+            {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"},
+            {text: user.title},
+            {text: user.descLong},
+            {
+                attachment: {
+                    type: "image",
+                    payload: {
+                        url: imageUrl + user.image
+                    }
+                }
+            }
+        ];
+        let index = 0;
+        let indexLimit = showInfoText.length - 1;
+    
+        sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
+
+    } catch(error){
+        console.log('[11] ' + error);
+    }
+}
+
+function askTime(user)
+{
+    try {
+
+        const btnData = {
             "attachment": {
                 "type": "template",
                 "payload": {
                     "template_type": "button",
-                    "text": (i == 0) ? "Choisissez un auteur :" : "‎",
-                    "buttons": []
+                    "text": "Choisissez le moment de publication :",
+                    "buttons": [
+                        {"type": "postback", "title": "Immédiatement", "payload": "now"},
+                        {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
+                        {"type": "postback", "title": "Annulation", "payload": "stop"}
+                    ]
                 }
             }
-        });
-        for (j = 0; j < 3 && user.allAuthors[(i * 3) + j]; j++) {
-            let buttons = btnData[i].attachment.payload.buttons;
+        };
 
-            buttons.push({"type": "postback", "title": user.allAuthors[(i * 3) + j], "payload": (i * 3) + j});
-        }
+        createBtn(user, btnData);
+
+    } catch(error){
+        console.log('[12] ' + error);
     }
-    let index = 0;
-    let indexLimit = btnData.length - 1;
-
-    createBtn(user, btnData, index, indexLimit, createBtn);
-}
-
-function showPostInfo(user) {
-    let showInfoText = [
-        {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"},
-        {text: user.title},
-        {text: user.descLong},
-        {
-            attachment: {
-                type: "image",
-                payload: {
-                    url: imageUrl + user.image
-                }
-            }
-        }
-    ];
-    let index = 0;
-    let indexLimit = showInfoText.length - 1;
-
-    sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
-}
-
-function askTime(user) {
-    const btnData = {
-        "attachment": {
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-                "text": "Choisissez le moment de publication :",
-                "buttons": [
-                    {"type": "postback", "title": "Immédiatement", "payload": "now"},
-                    {"type": "postback", "title": "Dans le tunnel de publication", "payload": "tunnel"},
-                    {"type": "postback", "title": "Annulation", "payload": "stop"}
-                ]
-            }
-        }
-    };
-    createBtn(user, btnData);
 }
 
 function getSelectedAuthor(user, event)
 {
-    let payload = event.postback.payload;
+    try {
 
-    if (user.platform != 'wordpress' || typeof(user.allAuthorsId[parseInt(payload, 10)]) == "undefined") {
-        return;
-    }
+        let payload = event.postback.payload;
 
-    user.author = user.allAuthorsId[parseInt(payload, 10)];
-    user.step = user.step.getNextStep('getSelectedTime');
-    //user.step++;
-    
-    if (user.tmpContentSelected == 0) {
-        showPostInfo(user);
-        return;
+        if (user.platform != 'wordpress' || typeof(user.allAuthorsId[parseInt(payload, 10)]) == "undefined") {
+            return;
+        }
+
+        user.author = user.allAuthorsId[parseInt(payload, 10)];
+        user.step = user.step.getNextStep('getSelectedTime');
+        //user.step++;
+        
+        if (user.tmpContentSelected == 0) {
+            showPostInfo(user);
+            return;
+        }
+        askTime(user);
+
+    } catch(error){
+        console.log('[13] ' + error);
     }
-    askTime(user);
 }
 
-function getSelectedTime(user, event) {
-    let payload = event.postback.payload;
+function getSelectedTime(user, event)
+{
+    console.log('GET SELECTED TIME');
 
+    let payload = event.postback.payload;
     user.time = payload;
 
     if (user.time == "stop") {
