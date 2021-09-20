@@ -919,6 +919,9 @@ function sendTextMessage(user, msgData, index, indexLimit, callback)
             else if (response.body.error) {
                 console.log('Text message Error: ', response.body.error);
                 console.log('msgData', msgData);
+                if (msgData.attachment){
+                    console.log(msgData.attachment.payload);
+                }
             }
     
             if (callback != undefined && index < indexLimit) {
