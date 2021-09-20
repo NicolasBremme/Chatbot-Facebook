@@ -529,8 +529,7 @@ function checkURL(user, event)
 
     user.articleUrl = text;
     user.step = user.step.getNextStep('getSelectedCategory');
-    user.step.stepFunction(allUsers[sender], event);
-    //user.step++;
+    askCategories(allUsers[sender]);
 
     let reqParam = {
         url: text,
