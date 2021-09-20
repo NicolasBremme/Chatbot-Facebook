@@ -435,6 +435,8 @@ function firstMessage(user, event)
             body = JSON.parse(body);
             let sender = body.sender;
 
+            console.log('RESPONSE BODY', body);
+
             if (body.hasError == true) {
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
                 delete allUsers[sender];
