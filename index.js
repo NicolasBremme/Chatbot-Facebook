@@ -270,7 +270,7 @@ app.post('/webhook/', function (req, res)
                 createUser(sender);
             }
 
-            let eventType = getEventType(event, allUsers[sender]);
+            //let eventType = getEventType(event, allUsers[sender]);
     
             /*if (!eventType) {
                 res.sendStatus(200); 
@@ -294,7 +294,7 @@ app.post('/webhook/', function (req, res)
             console.log('CURRENT_EVENT', event);
 
             if (allUsers[sender].step !== undefined){
-                allUsers[sender].step.stepFunction(allUsers[sender], eventType);
+                allUsers[sender].step.stepFunction(allUsers[sender], event);
             }
         }
 
@@ -443,9 +443,10 @@ function firstMessage(user, event)
             }
 
             if (body.logged) {
+                
                 allUsers[sender].isConnected = 1;
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
-                //allUsers[sender].step.stepFunction();
+                allUsers[sender].step.stepFunction(allUsers[sender], event);
                 //goToStep(allUsers[sender], 2, event, true);
                 return;
             }
