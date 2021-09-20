@@ -235,9 +235,11 @@ app.get('/loginPosteria/', (req, res) => {
         if (code == 1 && sender != null) {
             user.isConnected == 1;
             getCategoriesAndAuthors(user);
+            return;
         }
         else {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+            return;
         }
     }
 
@@ -539,7 +541,6 @@ function checkURL(user, event)
  
     user.articleUrl = text;
     user.step = user.step.getNextStep('getSelectedCategory');
-    askCategories(user);
  
     let reqParam = {
         url: text,
@@ -574,7 +575,8 @@ function checkURL(user, event)
     });
 }
 
-function getCategoriesAndAuthors(user) {
+function getCategoriesAndAuthors(user)
+{
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
@@ -585,8 +587,6 @@ function getCategoriesAndAuthors(user) {
 
             if (body.categories) {
                 for (const property in body.categories) {
-                    console.log(property);
-                    console.log(body.categories[property]);
                     allUsers[sender].allCategories.push(property);
                     allUsers[sender].allCategoriesId.push(body.categories[property]);
                 }
@@ -600,7 +600,6 @@ function getCategoriesAndAuthors(user) {
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
-            getDescLonCategories(allUsers[sender]);
         }
         catch (error) {
             console.log('[1] ' + error);
