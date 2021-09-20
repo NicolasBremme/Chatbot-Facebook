@@ -436,6 +436,8 @@ function firstMessage(user, event)
         body = JSON.parse(body);
         let sender = body.sender;
 
+        console.log('SENDER', sender);
+
         try {
 
             console.log('RESPONSE BODY', body);
