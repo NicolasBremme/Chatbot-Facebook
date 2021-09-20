@@ -99,14 +99,15 @@ class Step {
     };
 }
 
-function createStepTree() {
+function createStepTree()
+{
     var step_firstMessage = new Step("firstMessage", ["message", "attachments", "postback"], firstMessage);
-    var step_actionFromMenu = new Step("firstMessage", ["message", "attachments", "postback"], actionFromMenu);
-    var step_checkURL = new Step("firstMessage", ["message", "attachments", "postback"], checkURL);
-    var step_getSelectedCategory = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedCategory);
-    var step_getDescLong = new Step("firstMessage", ["message", "attachments", "postback"], getDescLong);
-    var step_getSelectedAuthor = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedAuthor);
-    var step_getSelectedTime = new Step("firstMessage", ["message", "attachments", "postback"], getSelectedTime);
+    var step_checkURL = new Step("checkURL", ["message", "attachments", "postback"], checkURL);
+    var step_actionFromMenu = new Step("actionFromMenu", ["message", "attachments", "postback"], actionFromMenu);
+    var step_getSelectedCategory = new Step("getSelectedCategory", ["message", "attachments", "postback"], getSelectedCategory);
+    var step_getDescLong = new Step("getDescLong", ["message", "attachments", "postback"], getDescLong);
+    var step_getSelectedAuthor = new Step("getSelectedAuthor", ["message", "attachments", "postback"], getSelectedAuthor);
+    var step_getSelectedTime = new Step("getSelectedTime", ["message", "attachments", "postback"], getSelectedTime);
 
     step_firstMessage.setNextStepArray([
         step_checkURL
@@ -136,6 +137,8 @@ function createStepTree() {
     step_getSelectedAuthor.setNextStepArray([
         step_getSelectedTime
     ]);
+
+    return (step_firstMessage);
 }
 
 const stepsDetails = [
@@ -165,13 +168,16 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
-app.post('/proposeArticle/', (req, res) => {
+app.post('/proposeArticle/', (req, res) =>
+{
     let body = req.body;
     let sender = body.sender;
     let content = body.bestContent.Content;
 
     createUser(sender);
-    allUsers[sender].step = 2;
+    allUsers[sender].step = allUsers[sender].step.getNextStep('actionFromMenu');
+    //allUsers[sender].step = 2;
+
     allUsers[sender].tmpContent = content;
     if (content.score == "null" || content.score == null) {
         content.score = 0;
@@ -238,11 +244,14 @@ app.get('/loginPosteria/', (req, res) => {
     res.sendFile("loginPosteria.html", options);
 });
 
-app.post('/webhook/', function (req, res) {
+app.post('/webhook/', function (req, res)
+{
     try {
+
         let messaging_events = req.body.entry[0].messaging;
     
-        for (let i = 0; i < messaging_events.length; i++) {
+        for (let i = 0; i < messaging_events.length; i++){
+
             let event = messaging_events[i];
             let sender = event.sender.id;
 
@@ -257,7 +266,7 @@ app.post('/webhook/', function (req, res) {
 
             let eventType = getEventType(event, allUsers[sender]);
     
-            if (eventType == "none") {
+            /*if (!eventType) {
                 res.sendStatus(200); 
                 return;
             }
@@ -270,22 +279,29 @@ app.post('/webhook/', function (req, res) {
             }
     
             let currentStep = stepsDetails[allUsers[sender].step];
-    
+
             if (currentStep.event_type.includes(eventType)) {
                 currentStep.function(allUsers[sender], event);
+            }*/
+
+            if (allUsers[sender].step){
+                allUsers[sender].step.function(allUsers[sender], eventType);
             }
         }
+
         res.sendStatus(200);
+
     } catch(error) {
         console.log('ERROR: ', error);
         res.sendStatus(403);
     }
 });
 
-function createUser(sender) {
+function createUser(sender)
+{
     allUsers[sender] = {
         sender: sender,
-        step: 0,
+        step: createStepTree(),
         isConnected: 0,
         fromMenu: 0,
         tmpContent: "",
@@ -307,21 +323,25 @@ function createUser(sender) {
     };
 }
 
-function getEventType(event, user) {
+function getEventType(event, user)
+{
     if (event.postback && event.postback.payload) {
         return "postback";
     }
+
     if (event.message && event.message.text) {
-        if (event.message.text == 'reset') {
+        if (event.message.text == "reset") {
             delete allUsers[user.sender];
-            return "none";
+            return (null);
         }
         return "message";
     }
+
     if (event.message && event.message.attachments) {
         return "attachment";
     }
-    return "none";
+
+    return (null);
 }
 
 function goToStep(user, step, event, callFunction) {
@@ -333,7 +353,8 @@ function goToStep(user, step, event, callFunction) {
     }
 }
 
-function confirmArticle(user) {
+function confirmArticle(user)
+{
     let content = user.tmpContent;
 
     user.image = content.image;
@@ -341,6 +362,7 @@ function confirmArticle(user) {
     user.articleUrl = content.link;
     user.desc = content.description;
     user.tmpContentSelected = 1;
+
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
         try {
             body = JSON.parse(body);
@@ -356,7 +378,8 @@ function confirmArticle(user) {
 
             if (isLogged) {
                 getCategoriesAndAuthors(user);
-                goToStep(user, 3);
+                allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
+                //goToStep(user, 3);
             }
         } catch (error) {
             console.log('[9] ' + error);
@@ -391,26 +414,29 @@ function showMenu(user, message) {
         }]
     );
     user.fromMenu = 0;
-    goToStep(user, 1);
+    //goToStep(user, 1);
 }
 
-function firstMessage(user, event) {
+function firstMessage(user, event)
+{
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
+
         try {
+
             body = JSON.parse(body);
             let sender = body.sender;
-            let isLogged = body.logged;
 
             if (body.hasError == true) {
-                console.log('[5] ' + body.error);
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
                 delete allUsers[sender];
+                console.log(body.error + ' [5]');
                 return;
             }
 
-            if (isLogged) {
+            if (body.logged) {
                 allUsers[sender].isConnected = 1;
-                goToStep(allUsers[sender], 2, event, true);
+                allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
+                //goToStep(allUsers[sender], 2, event, true);
                 return;
             }
 
@@ -445,7 +471,8 @@ function actionFromMenu(user, event) {
         case "menu_curation":
             user.fromMenu = true;
             sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
-            goToStep(user, 2, event, true);
+            allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
+            //goToStep(user, 2, event, true);
             break;
         case "menu_stat":
             showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
@@ -459,7 +486,8 @@ function actionFromMenu(user, event) {
     }
 }
 
-function checkURL(user, event) {
+function checkURL(user, event)
+{
     let text = "null"; 
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
@@ -480,13 +508,14 @@ function checkURL(user, event) {
 
     if (!validUrl.isUri(text)) {
         if (user.fromMenu == 0) {
-            showMenu(user);
+            user.step = user.step.getNextStep('actionFromMenu');
         }
         return;
     }
 
     user.articleUrl = text;
-    user.step++;
+    user.step = user.step.getNextStep('getSelectedCategory');
+    //user.step++;
 
     let reqParam = {
         url: text,
@@ -584,14 +613,16 @@ function askCategories(user) {
     createBtn(user, btnData, index, indexLimit, createBtn);
 }
 
-function getSelectedCategory(user, event) {
+function getSelectedCategory(user, event)
+{
     let payload = event.postback.payload;
 
     if (typeof(user.allCategoriesId[parseInt(payload, 10)]) == "undefined") {
         return;
     }
     user.categorie = user.allCategoriesId[parseInt(payload, 10)];
-    user.step++;
+    user.step = user.step.getNextStep('getDescLong');
+    //user.step++;
     askLong(user);
 }
 
@@ -601,7 +632,8 @@ function askLong(user) {
     sendTextMessage(user, textDescLong);
 }
 
-function getDescLong(user, event) {
+function getDescLong(user, event)
+{
     let message = event.message.text;
 
     if (message.length == 0) {
@@ -611,11 +643,14 @@ function getDescLong(user, event) {
     user.descLong = hashtagify(user, message);
     if (user.platform == 'wordpress') {
         askAuthor(user);
-        user.step++;
+        user.step = user.step.getNextStep('getSelectedAuthor');
+        //user.step++;
         return;
     }
 
-    user.step += 2;
+    user.step = user.step.getNextStep('getSelectedTime');
+    //user.step += 2;
+
     if (user.tmpContentSelected == 0) {
         showPostInfo(user);
         return;
@@ -712,7 +747,8 @@ function askTime(user) {
     createBtn(user, btnData);
 }
 
-function getSelectedAuthor(user, event) {
+function getSelectedAuthor(user, event)
+{
     let payload = event.postback.payload;
 
     if (user.platform != 'wordpress' || typeof(user.allAuthorsId[parseInt(payload, 10)]) == "undefined") {
@@ -720,7 +756,9 @@ function getSelectedAuthor(user, event) {
     }
 
     user.author = user.allAuthorsId[parseInt(payload, 10)];
-    user.step++;
+    user.step = user.step.getNextStep('getSelectedTime');
+    //user.step++;
+    
     if (user.tmpContentSelected == 0) {
         showPostInfo(user);
         return;
@@ -766,7 +804,7 @@ function getSelectedTime(user, event) {
 
                     delete allUsers[sender];
                     createUser(sender);
-                    goToStep(allUsers[sender], 0, null, true);
+                    //goToStep(allUsers[sender], 0, null, true);
                 });
                 return;
             }
