@@ -832,57 +832,66 @@ function getSelectedAuthor(user, event)
 
 function getSelectedTime(user, event)
 {
-    console.log('GET SELECTED TIME');
+    try {
 
-    let payload = event.postback.payload;
-    user.time = payload;
+        console.log('GET SELECTED TIME');
 
-    if (user.time == "stop") {
-        sendTextMessage(user, {text: "Ok, la publication est annulée."});
-        delete allUsers[user.sender];
-        return;
-    }
+        let payload = event.postback.payload;
+        user.time = payload;
 
-    let postInfos = {
-        extern_id: user.sender,
-        title: user.title,
-        description: user.desc,
-        image: user.image,
-        link: user.articleUrl,
-        categories: [user.categorie],
-        author: user.author,
-        userDesc: user.descLong,
-        time: user.time
-    };
+        if (user.time == "stop") {
+            sendTextMessage(user, {text: "Ok, la publication est annulée."});
+            delete allUsers[user.sender];
+            return;
+        }
 
-    if (user.tmpContentSelected == 1 && user.tmpContent !== "") {
-        postInfos.contentId = user.tmpContent.id;
-    }
+        let postInfos = {
+            extern_id: user.sender,
+            title: user.title,
+            description: user.desc,
+            image: user.image,
+            link: user.articleUrl,
+            categories: [user.categorie],
+            author: user.author,
+            userDesc: user.descLong,
+            time: user.time
+        };
 
-    posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
-        console.log('BODY RESP', body);
-        try {
-            body = JSON.parse(body);
-            let sender = parseInt(body.sender);
+        if (user.tmpContentSelected == 1 && user.tmpContent !== "") {
+            postInfos.contentId = user.tmpContent.id;
+        }
 
-            if (body.hasError == false) {
-                sendTextMessage(allUsers[sender], [{text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}], 0, 1, function(user, msgData, index, indexLimit, callback) {
-                    let sender = user.sender;
+        posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
+            console.log('BODY RESP', body);
+            try {
+                body = JSON.parse(body);
+                let sender = parseInt(body.sender);
 
-                    delete allUsers[sender];
-                    createUser(sender);
-                    //goToStep(allUsers[sender], 0, null, true);
-                });
-                return; 
+                if (body.hasError == false) {
+                    sendTextMessage(allUsers[sender], [{text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}], 0, 1, function(user, msgData, index, indexLimit, callback) {
+                        let sender = user.sender;
+
+                        delete allUsers[sender];
+                        createUser(sender);
+                        //goToStep(allUsers[sender], 0, null, true);
+                    });
+                    return; 
+                }
+                sendTextMessage(allUsers[sender], {text: body.error});
+                delete allUsers[sender]; 
             }
-            sendTextMessage(allUsers[sender], {text: body.error});
-            delete allUsers[sender]; 
-        }
-        catch (error) {
-            console.log('[2] ' + error);
-            console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-        }
-    });
+            catch (error) {
+                console.log('[2] ' + error);
+                console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
+            }
+        });
+
+    } catch(error){
+
+        delete allUsers[user.sender];
+        
+    }
+
 }
 
 function posteriaRequest(uri, param, callback) {
