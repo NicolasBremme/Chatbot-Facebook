@@ -80,7 +80,7 @@ var allUsers = {};
 
 class Step {
 
-    construct(name, eventType, stepFunction)
+    constructor(name, eventType, stepFunction)
     {
         this.name = name;
         this.eventType = eventType;
