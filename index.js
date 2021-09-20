@@ -196,7 +196,7 @@ app.post('/proposeArticle/', (req, res) =>
                 template_type: "generic",
                 elements: [{
                     title: "[" + content.score + "/10] " + content.title,
-                    image_url : imageUrl + content.image,
+                    image_url : kuratorUrl + content.image,
                     default_action: {
                         type: "web_url",
                         url: content.link
@@ -764,7 +764,7 @@ function showPostInfo(user)
                 attachment: {
                     type: "image",
                     payload: {
-                        url: imageUrl + user.image
+                        url: kuratorUrl + user.image
                     }
                 }
             }
