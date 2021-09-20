@@ -85,6 +85,9 @@ class Step {
         this.name = name;
         this.eventType = eventType;
         this.stepFunction = stepFunction;
+
+        console.log('this.name', this.name);
+        console.log('name', name);
     };
 
     triggerStepFunction(user, event)
@@ -296,7 +299,7 @@ app.post('/webhook/', function (req, res)
             if (allUsers[sender].step !== undefined){
 
                 console.log('IN');
-                console.log('name', allUsers[sender].step.name);
+                //console.log('name', allUsers[sender].step.name);
 
                 allUsers[sender].step.triggerStepFunction(allUsers[sender], eventType);
                 //allUsers[sender].step['function'](allUsers[sender], eventType);
