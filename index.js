@@ -612,6 +612,7 @@ function getCategoriesAndAuthors(user)
 function askCategories(user) {
 
     console.log('ASK CATEGORIES');
+    console.log('CATEGORIES', user.allCategories);
 
     let btnCount = Math.ceil(user.allCategories.length / 3);
     let btnData = [];
@@ -636,6 +637,9 @@ function askCategories(user) {
             buttons[j].payload = (i * 3) + j;
         }
     }
+
+    console.log('btnData', btnData);
+
     let index = 0;
     let indexLimit = btnData.length - 1;
     createBtn(user, btnData, index, indexLimit, createBtn);
