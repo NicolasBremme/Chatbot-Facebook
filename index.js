@@ -611,6 +611,9 @@ function getCategoriesAndAuthors(user) {
 }
 
 function askCategories(user) {
+
+    console.log('ASK CATEGORIES');
+
     let btnCount = Math.ceil(user.allCategories.length / 3);
     let btnData = [];
 
@@ -914,6 +917,7 @@ function createQuickReply(user, message, quickReplies) {
 }
 
 function createBtn(user, btnData, index, indexLimit, callback) {
+    console.log('CREATE BTN');
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
