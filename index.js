@@ -526,11 +526,11 @@ function checkURL(user, event)
         }
         return;
     }
-
+ 
     user.articleUrl = text;
     user.step = user.step.getNextStep('getSelectedCategory');
     askCategories(allUsers[sender]);
-
+ 
     let reqParam = {
         url: text,
         sender: user.sender
