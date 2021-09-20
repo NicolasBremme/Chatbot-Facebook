@@ -438,7 +438,7 @@ function firstMessage(user, event)
 
             body = JSON.parse(body);
             let sender = body.sender;
-            
+
             console.log('SENDER', sender);
 
             if (body.hasError == true) {
@@ -473,7 +473,7 @@ function firstMessage(user, event)
             });
         } catch (error) {
             console.log('[4] ' + error);
-            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+            //sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
         }
     });
 }
