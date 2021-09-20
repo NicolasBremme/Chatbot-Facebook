@@ -565,6 +565,7 @@ function checkURL(user, event)
             allUsers[sender].image = body.image;
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
+            
             getCategoriesAndAuthors(allUsers[sender]);
             askCategories(allUsers[sender]);
         }
@@ -600,6 +601,8 @@ function getCategoriesAndAuthors(user)
                     allUsers[sender].allAuthorsId.push(property);
                 }
             }
+
+            console.log('USER', allUsers[sender]);
         }
         catch (error) {
             console.log('[1] ' + error);
