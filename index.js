@@ -124,7 +124,7 @@ function createStepTree()
         step_getSelectedCategory
     ]);
 
-    console.log('step_checkURL', step_checkURL);
+    //console.log('step_checkURL', step_checkURL);
 
     step_getSelectedCategory.setNextStepArray([
         step_getDescLong,
@@ -289,6 +289,7 @@ app.post('/webhook/', function (req, res)
             }*/
 
             if (allUsers[sender].step !== undefined){
+                console.log('CURRENTSTEP', allUsers[sender].step);
                 allUsers[sender].step.stepFunction(allUsers[sender], eventType);
             }
         }
@@ -440,7 +441,7 @@ function firstMessage(user, event)
             if (body.logged) {
                 allUsers[sender].isConnected = 1;
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
-                console.log(allUsers[sender].step);
+                console.log('CURRENTSTEP FIRSTMESSAGE', allUsers[sender].step);
                 //allUsers[sender].step.stepFunction(allUsers[sender], eventType);
 
                 //goToStep(allUsers[sender], 2, event, true);
