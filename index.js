@@ -440,7 +440,8 @@ function firstMessage(user, event)
             if (body.logged) {
                 allUsers[sender].isConnected = 1;
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
-                allUsers[sender].step.stepFunction(allUsers[sender], eventType);
+                console.log(allUsers[sender].step);
+                //allUsers[sender].step.stepFunction(allUsers[sender], eventType);
 
                 //goToStep(allUsers[sender], 2, event, true);
                 return;
