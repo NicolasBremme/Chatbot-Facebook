@@ -545,10 +545,12 @@ function checkURL(user, event)
     };
 
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
-        try {
-            body = JSON.parse(body);
-            let sender = parseInt(body.sender);
 
+        body = JSON.parse(body);
+        let sender = parseInt(body.sender);
+
+        try {
+           
             if (body.hasError == true || body.parseError == true) {
                 if (body.error == "Cannot parse the article.") {
                     body.error = "Nous n\'avons pas pu récupérer l\'article \u{1F614} Nous manquons d\'informations";
