@@ -92,7 +92,7 @@ class Step {
     };
 
     getNextStep(nextStepName) {
-        for (let nextStep in this.nextArray) {
+        for (let nextStep in this.nextStepArray) {
             if (nextStep.name == nextStepName) {
                 return nextStep;
             }
@@ -288,8 +288,8 @@ app.post('/webhook/', function (req, res)
                 currentStep.function(allUsers[sender], event);
             }*/
 
+            console.log('CURRENT_STEP', allUsers[sender].step);
             if (allUsers[sender].step !== undefined){
-                console.log('CURRENTSTEP', allUsers[sender].step);
                 allUsers[sender].step.stepFunction(allUsers[sender], eventType);
             }
         }
