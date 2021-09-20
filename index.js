@@ -873,7 +873,7 @@ function getSelectedTime(user, event)
                     createUser(sender);
                     //goToStep(allUsers[sender], 0, null, true);
                 });
-                return;
+                return; 
             }
             sendTextMessage(allUsers[sender], {text: body.error});
             delete allUsers[sender]; 
