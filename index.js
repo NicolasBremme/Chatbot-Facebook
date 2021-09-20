@@ -271,7 +271,9 @@ app.post('/webhook/', function (req, res)
                 createUser(sender);
             }
 
-            let eventType = getEventType(event, allUsers[sender]);
+            if (!getEventType(event, allUsers[sender])){
+                return;
+            }
     
             /*if (!eventType) {
                 res.sendStatus(200); 
