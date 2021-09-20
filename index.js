@@ -860,6 +860,7 @@ function getSelectedTime(user, event)
     }
 
     posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
+        console.log('BODY RESP', body);
         try {
             body = JSON.parse(body);
             let sender = parseInt(body.sender);
