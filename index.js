@@ -388,7 +388,7 @@ function confirmArticle(user)
             }
 
             if (isLogged) {
-                getCategoriesAndAuthors(user);
+                //getCategoriesAndAuthors(user);
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
                 //goToStep(user, 3);
             }
@@ -566,8 +566,7 @@ function checkURL(user, event)
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
             
-            getCategoriesAndAuthors(allUsers[sender]);
-            askCategories(allUsers[sender]);
+            getCategoriesAndAuthors(allUsers[sender], true);
         }
         catch (error) {
             console.log('[3] ' + error);
@@ -576,7 +575,7 @@ function checkURL(user, event)
     });
 }
 
-function getCategoriesAndAuthors(user)
+function getCategoriesAndAuthors(user, askCategories = false)
 {
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
@@ -602,7 +601,9 @@ function getCategoriesAndAuthors(user)
                 }
             }
 
-            console.log('USER', allUsers[sender]);
+            if (askCategories){
+                askCategories(allUsers[sender]);
+            }
         }
         catch (error) {
             console.log('[1] ' + error);
