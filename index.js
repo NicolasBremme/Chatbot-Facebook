@@ -290,6 +290,7 @@ app.post('/webhook/', function (req, res)
             }*/
 
             if (allUsers[sender].step){
+                console.log('ca23ca2222222');
                 allUsers[sender].step['function'](allUsers[sender], eventType);
             }
         }
