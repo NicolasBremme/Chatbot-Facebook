@@ -92,11 +92,13 @@ class Step {
     };
 
     getNextStep(nextStepName) {
-        for (let nextStep in this.nextStepArray) {
-            if (nextStep.name == nextStepName) {
-                return nextStep;
+
+        for (let i = 0; i < this.nextStepArray.length; i++){
+            if (this.nextStepArray[i].name === nextStepName){
+                return (this.nextStepArray[i]);
             }
         }
+
         return null;
     };
 }
