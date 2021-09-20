@@ -236,9 +236,8 @@ app.get('/loginPosteria/', (req, res) => {
             user.isConnected == 1;
             getCategoriesAndAuthors(user);
             return;
-        }
-        else {
-            sendTextMessage(user, {text: 'Impossible de vous connecter à Kurator.'});
+        } else {
+            sendTextMessage(user, {text: 'Impossible de vous connecter à Posteria.'});
             return;
         }
     }
@@ -567,6 +566,7 @@ function checkURL(user, event)
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
             getCategoriesAndAuthors(allUsers[sender]);
+            askCategories(allUsers[sender]);
         }
         catch (error) {
             console.log('[3] ' + error);
