@@ -903,31 +903,37 @@ function posteriaRequest(uri, param, callback) {
     request(option, callback);
 }
 
-function sendTextMessage(user, msgData, index, indexLimit, callback) {
-    console.log((index != undefined) ? msgData[index].text : msgData.text);
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token: VERIFY_TOKEN},
-        method: 'POST',
-        json: {
-            recipient: {id: user.sender},
-            message: (index != undefined) ? msgData[index] : msgData
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error sending message: ', error);
-        }
-        else if (response.body.error) {
-            console.log('Text message Error: ', response.body.error);
-        }
+function sendTextMessage(user, msgData, index, indexLimit, callback)
+{
+    try {
 
-        if (callback != undefined && index < indexLimit) {
-            callback(user, msgData, index + 1, indexLimit, callback);
-        }
-        else if ((user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
-            askTime(user);
-        }
-    });
+        request({
+            url: 'https://graph.facebook.com/v2.6/me/messages',
+            qs: {access_token: VERIFY_TOKEN},
+            method: 'POST',
+            json: {
+                recipient: {id: user.sender},
+                message: (index != undefined) ? msgData[index] : msgData
+            }
+        }, function(error, response, body) {
+            if (error) {
+                console.log('Error sending message: ', error);
+            }
+            else if (response.body.error) {
+                console.log('Text message Error: ', response.body.error);
+            }
+    
+            if (callback != undefined && index < indexLimit) {
+                callback(user, msgData, index + 1, indexLimit, callback);
+            }
+            else if ((user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
+                askTime(user);
+            }
+        });
+
+    } catch(error){
+        console.log('[14] ' + error);
+    }
 }
 
 function createQuickReply(user, message, quickReplies) {
