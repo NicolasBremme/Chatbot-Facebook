@@ -433,14 +433,13 @@ function firstMessage(user, event)
 
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
 
-        body = JSON.parse(body);
-        let sender = body.sender;
-
-        console.log('SENDER', sender);
 
         try {
 
-            console.log('RESPONSE BODY', body);
+            body = JSON.parse(body);
+            let sender = body.sender;
+            
+            console.log('SENDER', sender);
 
             if (body.hasError == true) {
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
