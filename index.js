@@ -575,7 +575,7 @@ function checkURL(user, event)
     });
 }
 
-function getCategoriesAndAuthors(user, askCategories = false)
+function getCategoriesAndAuthors(user, _askCategories = false)
 {
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
@@ -601,7 +601,7 @@ function getCategoriesAndAuthors(user, askCategories = false)
                 }
             }
 
-            if (askCategories){
+            if (_askCategories){
                 askCategories(allUsers[sender]);
             }
         }
