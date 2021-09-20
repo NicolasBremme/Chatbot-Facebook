@@ -79,7 +79,9 @@ const getRandom = (min, max) => (Math.floor(Math.random() * ((max - min) + min))
 var allUsers = {};
 
 class Step {
-    construct(name, eventType, stepFunction) {
+
+    construct(name, eventType, stepFunction)
+    {
         this.name = name;
         this.eventType = eventType;
         this.stepFunction = stepFunction;
@@ -126,6 +128,8 @@ function createStepTree()
         step_actionFromMenu,
         step_getSelectedCategory
     ]);
+
+    console.log('step_checkURL', step_checkURL);
 
     step_getSelectedCategory.setNextStepArray([
         step_getDescLong,
@@ -291,6 +295,8 @@ app.post('/webhook/', function (req, res)
 
             if (allUsers[sender].step !== undefined){
                 console.log('IN');
+                console.log(typeof(allUsers[sender].step));
+
                 allUsers[sender].step.triggerStepFunction(allUsers[sender], eventType);
                 //allUsers[sender].step['function'](allUsers[sender], eventType);
             }
