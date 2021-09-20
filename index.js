@@ -79,15 +79,15 @@ const getRandom = (min, max) => (Math.floor(Math.random() * ((max - min) + min))
 var allUsers = {};
 
 class Step {
-    _construct(name, eventType, stepFunction) {
+    construct(name, eventType, stepFunction) {
         this.name = name;
         this.eventType = eventType;
-        this.function = stepFunction;
+        this.stepFunction = stepFunction;
     };
 
     triggerStepFunction(user, event)
     {
-        this.function.call(user, event);
+        this.stepFunction(user, event);
     }
 
     setNextStepArray(nextStepArray) {
@@ -289,8 +289,8 @@ app.post('/webhook/', function (req, res)
                 currentStep.function(allUsers[sender], event);
             }*/
 
-            if (allUsers[sender].step){
-
+            if (allUsers[sender].step !== undefined){
+                console.log('IN');
                 allUsers[sender].step.triggerStepFunction(allUsers[sender], eventType);
                 //allUsers[sender].step['function'](allUsers[sender], eventType);
             }
