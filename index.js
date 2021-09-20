@@ -290,10 +290,11 @@ app.post('/webhook/', function (req, res)
                 currentStep.function(allUsers[sender], event);
             }*/
 
-            console.log('CURRENT_STEP', allUsers[sender].step);
-            console.log('CURRENT_EVENT', event);
+            //console.log('CURRENT_STEP', allUsers[sender].step);
+            //console.log('CURRENT_EVENT', event);
 
             if (allUsers[sender].step !== undefined){
+                console.log('TRIGGER STEP FUNCTION', allUsers[sender].step.name);
                 allUsers[sender].step.stepFunction(allUsers[sender], event);
             }
         }
@@ -428,6 +429,8 @@ function showMenu(user, message) {
 
 function firstMessage(user, event)
 {
+    console.log('FIRST MESSAGE');
+
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
 
         body = JSON.parse(body);
@@ -474,7 +477,10 @@ function firstMessage(user, event)
     });
 }
 
-function actionFromMenu(user, event) {
+function actionFromMenu(user, event)
+{
+    console.log('ACTIONFROMMENU');
+
     if (event.message === undefined || event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
         showMenu(user, "Je n'ai pas compris. ");
         return;
@@ -501,6 +507,8 @@ function actionFromMenu(user, event) {
 
 function checkURL(user, event)
 {
+    console.log('CHECKURL');
+
     let text = "null"; 
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
@@ -629,6 +637,8 @@ function askCategories(user) {
 
 function getSelectedCategory(user, event)
 {
+    console.log('GET SELECTED CATEGORY');
+
     let payload = event.postback.payload;
 
     if (typeof(user.allCategoriesId[parseInt(payload, 10)]) == "undefined") {
@@ -648,6 +658,8 @@ function askLong(user) {
 
 function getDescLong(user, event)
 {
+    console.log('GET DESC LONG');
+
     let message = event.message.text;
 
     if (message.length == 0) {
