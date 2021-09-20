@@ -876,7 +876,7 @@ function getSelectedTime(user, event)
                 return;
             }
             sendTextMessage(allUsers[sender], {text: body.error});
-            delete allUsers[sender];
+            delete allUsers[sender]; 
         }
         catch (error) {
             console.log('[2] ' + error);
