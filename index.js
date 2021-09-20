@@ -300,7 +300,7 @@ app.post('/webhook/', function (req, res)
         console.log('ERROR: ', error);
         res.sendStatus(403);
     }
-});
+}); 
 
 function createUser(sender)
 {
