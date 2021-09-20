@@ -85,15 +85,7 @@ class Step {
         this.name = name;
         this.eventType = eventType;
         this.stepFunction = stepFunction;
-
-        console.log('this.name', this.name);
-        console.log('name', name);
     };
-
-    triggerStepFunction(user, event)
-    {
-        this.stepFunction(user, event);
-    }
 
     setNextStepArray(nextStepArray) {
         this.nextStepArray = nextStepArray;
@@ -297,12 +289,7 @@ app.post('/webhook/', function (req, res)
             }*/
 
             if (allUsers[sender].step !== undefined){
-
-                console.log('IN');
-                //console.log('name', allUsers[sender].step.name);
-
-                allUsers[sender].step.triggerStepFunction(allUsers[sender], eventType);
-                //allUsers[sender].step['function'](allUsers[sender], eventType);
+                allUsers[sender].step.stepFunction(allUsers[sender], eventType);
             }
         }
 
