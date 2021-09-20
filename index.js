@@ -443,7 +443,7 @@ function firstMessage(user, event)
             }
 
             if (body.logged) {
-                
+
                 allUsers[sender].isConnected = 1;
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
                 allUsers[sender].step.stepFunction(allUsers[sender], event);
@@ -499,8 +499,6 @@ function actionFromMenu(user, event) {
 
 function checkURL(user, event)
 {
-    console.log('EVENT', event);
-
     let text = "null"; 
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
@@ -522,12 +520,14 @@ function checkURL(user, event)
     if (!validUrl.isUri(text)) {
         if (user.fromMenu == 0) {
             user.step = user.step.getNextStep('actionFromMenu');
+            user.step.stepFunction(allUsers[sender], event);
         }
         return;
     }
 
     user.articleUrl = text;
     user.step = user.step.getNextStep('getSelectedCategory');
+    user.step.stepFunction(allUsers[sender], event);
     //user.step++;
 
     let reqParam = {
