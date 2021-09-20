@@ -430,10 +430,10 @@ function firstMessage(user, event)
 {
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
 
-        try {
+        body = JSON.parse(body);
+        let sender = body.sender;
 
-            body = JSON.parse(body);
-            let sender = body.sender;
+        try {
 
             console.log('RESPONSE BODY', body);
 
