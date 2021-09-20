@@ -85,6 +85,11 @@ class Step {
         this.function = stepFunction;
     };
 
+    triggerStepFunction(user, event)
+    {
+        this.function(user, event);
+    }
+
     setNextStepArray(nextStepArray) {
         this.nextStepArray = nextStepArray;
     };
@@ -285,7 +290,7 @@ app.post('/webhook/', function (req, res)
             }*/
 
             if (allUsers[sender].step){
-                allUsers[sender].step.function(allUsers[sender], eventType);
+                allUsers[sender].step.triggerStepFunction(allUsers[sender], eventType);
             }
         }
 
