@@ -272,6 +272,8 @@ app.post('/webhook/', function (req, res)
             }
 
             if (event.message && event.message.text && event.message.text == 'reset'){
+                console.log('RESET');
+                res.sendStatus(200);
                 delete allUsers[sender];
                 return;
             }
