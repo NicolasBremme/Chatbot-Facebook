@@ -443,9 +443,6 @@ function firstMessage(user, event)
             if (body.logged) {
                 allUsers[sender].isConnected = 1;
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
-                console.log('CURRENTSTEP FIRSTMESSAGE', allUsers[sender].step);
-                //allUsers[sender].step.stepFunction(allUsers[sender], eventType);
-
                 //goToStep(allUsers[sender], 2, event, true);
                 return;
             }
