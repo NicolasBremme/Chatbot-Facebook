@@ -495,6 +495,8 @@ function actionFromMenu(user, event) {
 
 function checkURL(user, event)
 {
+    console.log('EVENT', event);
+    
     let text = "null"; 
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
