@@ -271,10 +271,11 @@ app.post('/webhook/', function (req, res)
                 createUser(sender);
             }
 
-            if (!getEventType(event, allUsers[sender])){
+            if (event.message && event.message.text && event.message.text == 'reset'){
+                delete allUsers[sender];
                 return;
             }
-    
+
             /*if (!eventType) {
                 res.sendStatus(200); 
                 return;
