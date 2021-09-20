@@ -471,8 +471,9 @@ function firstMessage(user, event)
                     }
                 }
             });
-        } catch (error) {
-            console.log('[4] ' + error);
+        } catch (x) {
+            console.log(x.stack);
+            //console.log('[4] ' + error);
             //sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
         }
     });
