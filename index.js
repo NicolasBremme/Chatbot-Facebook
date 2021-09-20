@@ -291,6 +291,8 @@ app.post('/webhook/', function (req, res)
             }*/
 
             console.log('CURRENT_STEP', allUsers[sender].step);
+            console.log('CURRENT_EVENT', event);
+
             if (allUsers[sender].step !== undefined){
                 allUsers[sender].step.stepFunction(allUsers[sender], eventType);
             }
@@ -443,6 +445,7 @@ function firstMessage(user, event)
             if (body.logged) {
                 allUsers[sender].isConnected = 1;
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
+                //allUsers[sender].step.stepFunction();
                 //goToStep(allUsers[sender], 2, event, true);
                 return;
             }
@@ -496,7 +499,7 @@ function actionFromMenu(user, event) {
 function checkURL(user, event)
 {
     console.log('EVENT', event);
-    
+
     let text = "null"; 
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
