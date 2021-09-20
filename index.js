@@ -87,7 +87,7 @@ class Step {
 
     triggerStepFunction(user, event)
     {
-        this.function(user, event);
+        this.function.call(user, event);
     }
 
     setNextStepArray(nextStepArray) {
