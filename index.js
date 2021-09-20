@@ -294,8 +294,9 @@ app.post('/webhook/', function (req, res)
             }*/
 
             if (allUsers[sender].step !== undefined){
+
                 console.log('IN');
-                console.log(typeof(allUsers[sender].step));
+                console.log('name', allUsers[sender].step.name);
 
                 allUsers[sender].step.triggerStepFunction(allUsers[sender], eventType);
                 //allUsers[sender].step['function'](allUsers[sender], eventType);
