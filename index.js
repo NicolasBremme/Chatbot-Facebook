@@ -271,10 +271,9 @@ app.post('/webhook/', function (req, res)
                 createUser(sender);
             }
 
-            if (event.message && event.message.text && event.message.text == 'reset'){
-                console.log('RESET');
+            if (event.message && event.message.text && (event.message.text).toLowerCase() == 'reset'){
                 res.sendStatus(200);
-                delete allUsers[sender];
+                delete allUsers[sender].step;
                 return;
             }
 
@@ -618,7 +617,6 @@ function getCategoriesAndAuthors(user, _askCategories = false)
 function askCategories(user) {
 
     console.log('ASK CATEGORIES');
-    console.log('CATEGORIES', user.allCategories);
 
     let btnCount = Math.ceil(user.allCategories.length / 3);
     let btnData = [];
@@ -662,13 +660,12 @@ function getSelectedCategory(user, event)
     }
     user.categorie = user.allCategoriesId[parseInt(payload, 10)];
     user.step = user.step.getNextStep('getDescLong');
-    //user.step++;
     askLong(user);
 }
 
-function askLong(user) {
+function askLong(user)
+{
     const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
-
     sendTextMessage(user, textDescLong);
 }
 
@@ -822,7 +819,6 @@ function getSelectedAuthor(user, event)
 
         user.author = user.allAuthorsId[parseInt(payload, 10)];
         user.step = user.step.getNextStep('getSelectedTime');
-        //user.step++;
         
         if (user.tmpContentSelected == 0) {
             showPostInfo(user);
@@ -899,7 +895,8 @@ function getSelectedTime(user, event)
 
 }
 
-function posteriaRequest(uri, param, callback) {
+function posteriaRequest(uri, param, callback)
+{
     let url = kuratorUrl + uri;
     let headers = {
         'User-Agent': 'Chatbot',
