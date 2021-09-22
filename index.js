@@ -871,12 +871,14 @@ function getSelectedTime(user, event)
                 let sender = parseInt(body.sender);
 
                 if (body.hasError == false) {
+                    console.log('OK RESP', body.errorMsg);
                     sendTextMessage(allUsers[sender], [{text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}], 0, 1, function() {
                         delete allUsers[sender].step;
                         allUsers[sender].step = createStepTree();
                     });
                     return; 
                 }
+                console.log('ERROR ON BODY RESP', body.error);
                 sendTextMessage(allUsers[sender], {text: body.error});
                 delete allUsers[sender];
             }
