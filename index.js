@@ -541,9 +541,9 @@ function checkURL(user, event)
 
     if (validUrl.isUri(text) == undefined) {
         if (!user.fromMenu) {
-            console.log('fromMenu');
+            console.log('FROM MENU GO');
+            showMenu(user);
             user.step = user.step.getNextStep('actionFromMenu');
-            user.step.stepFunction(allUsers[sender], event);
         }
         return;
     }
