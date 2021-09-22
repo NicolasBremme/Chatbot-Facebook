@@ -500,7 +500,7 @@ function actionFromMenu(user, event)
     switch (event.message.quick_reply.payload) {
         case "menu_curation":
             user.fromMenu = true;
-            sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
+            //sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
             delete allUsers[sender].step;
             allUsers[sender].step = createStepTree();
             break;
