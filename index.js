@@ -257,7 +257,7 @@ app.post('/webhook/', function (req, res)
 {
     try {
 
-        console.log('REQUEST', req);
+        console.log('REQUEST', req.body);
 
         let messaging_events = req.body.entry[0].messaging;
     
