@@ -536,8 +536,8 @@ function checkURL(user, event)
         }
     }
 
-    console.log('checkUrl', text);
-    console.log('validUrl', validUrl.isUri(text));
+    console.log('Url', text);
+    console.log('isWebUri', isWebUri(text));
 
     if (!isWebUri(text)) {
         if (!user.fromMenu) {
