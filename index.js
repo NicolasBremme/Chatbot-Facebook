@@ -552,11 +552,11 @@ function checkURL(user, event)
     console.log('user', user);
 
     if (validUrl.isUri(text) == undefined) {
-        if (!user.fromMenu) {
+        //if (!user.fromMenu) {
             console.log('FROM MENU GO');
             showMenu(user);
             user.step = user.step.getNextStep('actionFromMenu');
-        }
+        //}
         return;
     }
  
