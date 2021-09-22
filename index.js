@@ -539,7 +539,7 @@ function checkURL(user, event)
     console.log('validUrl', validUrl.isUri(text));
     console.log('user', user);
 
-    if (validUrl.isUri(text) === undefined) {
+    if (validUrl.isUri(text) == undefined) {
         if (!user.fromMenu) {
             user.step = user.step.getNextStep('actionFromMenu');
             user.step.stepFunction(allUsers[sender], event);
