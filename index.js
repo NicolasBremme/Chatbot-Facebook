@@ -541,6 +541,7 @@ function checkURL(user, event)
 
     if (validUrl.isUri(text) == undefined) {
         if (!user.fromMenu) {
+            console.log('fromMenu');
             user.step = user.step.getNextStep('actionFromMenu');
             user.step.stepFunction(allUsers[sender], event);
         }
