@@ -535,6 +535,10 @@ function checkURL(user, event)
         }
     }
 
+    console.log('text', text);
+    console.log('validUrl', validUrl.isUri(text));
+    console.log('user', user);
+
     if (validUrl.isUri(text) === undefined) {
         if (!user.fromMenu) {
             user.step = user.step.getNextStep('actionFromMenu');
