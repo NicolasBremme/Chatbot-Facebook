@@ -181,7 +181,7 @@ app.post('/proposeArticle/', (req, res) =>
     let content = body.bestContent.Content;
 
     createUser(sender);
-    allUsers[sender].step = allUsers[sender].step.getNextStep('actionFromMenu');
+    allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
     //allUsers[sender].step = 2;
 
     allUsers[sender].tmpContent = content;
