@@ -220,7 +220,7 @@ app.post('/proposeArticle/', (req, res) =>
 });
 
 app.get('/loginPosteria/', (req, res) => {
-    
+
     let code = null;
     let user = null;
     let sender = null;
@@ -534,6 +534,9 @@ function checkURL(user, event)
             text = url;
         }
     }
+
+    console.log('checkUrl', text);
+    console.log('validUrl', validUrl.isUri(text));
 
     if (!validUrl.isUri(text)) {
         if (user.fromMenu == 0) {
