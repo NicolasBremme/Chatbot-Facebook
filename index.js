@@ -537,6 +537,7 @@ function checkURL(user, event)
 
     console.log('Url', text);
     console.log('isUri', validUrl.isUri(text));
+    console.log('isUri 2', validUrl.isUri('https://github.com/ogt/valid-url'));
 
     if (!validUrl.isUri(text)) {
         if (!user.fromMenu) {
