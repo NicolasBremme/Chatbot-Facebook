@@ -438,8 +438,6 @@ function showMenu(user, message) {
 
 function firstMessage(user, event)
 {
-    console.log('FIRST MESSAGE');
-
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
 
         let sender = null;
@@ -495,8 +493,6 @@ function actionFromMenu(user, event)
 {
     try {
 
-        console.log('ACTION FROM MENU');
-
         if (event.message === undefined || event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
             showMenu(user, "Je n'ai pas compris.");
             return;
@@ -527,8 +523,6 @@ function actionFromMenu(user, event)
 
 function checkURL(user, event)
 {
-    console.log('CHECK URL');
-
     let text = ''; 
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
@@ -547,20 +541,14 @@ function checkURL(user, event)
         }
     }
 
-    console.log('text', text);
-    console.log('validUrl', validUrl.isUri(text));
-    console.log('user', user);
-
     if (validUrl.isUri(text) == undefined) {
-        //if (!user.fromMenu) {
-            console.log('FROM MENU GO');
+        if (!user.fromMenu) {
             showMenu(user);
             user.step = user.step.getNextStep('actionFromMenu');
-        //}
+        }
         return;
     }
  
-    console.log('GO SELECTED CATEGORY');
     user.articleUrl = text;
     user.step = user.step.getNextStep('getSelectedCategory');
  
@@ -662,8 +650,6 @@ function askCategories(user)
 {
     try {
 
-        console.log('ASK CATEGORIES');
-
         let btnCount = Math.ceil(user.allCategories.length / 3);
         let btnData = [];
     
@@ -731,8 +717,6 @@ function askLong(user)
 function getDescLong(user, event)
 {
     try {
-
-        console.log('GET DESC LONG');
 
         let message = event.message.text;
 
@@ -900,8 +884,6 @@ function getSelectedTime(user, event)
 {
     try {
 
-        console.log('GET SELECTED TIME');
-
         let payload = event.postback.payload;
         user.time = payload;
 
@@ -932,8 +914,6 @@ function getSelectedTime(user, event)
             let sender = null;
 
             try {
-
-                console.log('BODY RESP', body);
 
                 body = JSON.parse(body);
                 sender = parseInt(body.sender);
