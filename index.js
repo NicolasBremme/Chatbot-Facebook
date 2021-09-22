@@ -55,7 +55,7 @@ const kuratorUrl = "https://preprod.kurator.fr",
 
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG, ENOTEMPTY } = require('constants');
 const { response } = require('express');
-const { fstat } = require('fs');
+const { fstat, stat } = require('fs');
 const path = require('path');
 const replyBotId = 1651592678499031;
 
@@ -126,8 +126,6 @@ function createStepTree()
         step_getSelectedCategory
     ]);
 
-    //console.log('step_checkURL', step_checkURL);
-
     step_getSelectedCategory.setNextStepArray([
         step_getDescLong,
         step_getSelectedCategory,
@@ -158,6 +156,7 @@ const stepsDetails = [
 ];
 
 app.get('/webhook/', (req, res) => {
+
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
@@ -176,47 +175,56 @@ app.get('/webhook/', (req, res) => {
 
 app.post('/proposeArticle/', (req, res) =>
 {
-    let body = req.body;
-    let sender = body.sender;
-    let content = body.bestContent.Content;
+    let responseStatus = 200;
 
-    createUser(sender);
-    allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
-    //allUsers[sender].step = 2;
+    try {
 
-    allUsers[sender].tmpContent = content;
-    if (content.score == "null" || content.score == null) {
-        content.score = 0;
+        let body = req.body;
+        let sender = body.sender;
+        let content = body.bestContent.Content;
+    
+        createUser(sender);
+        allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
+        allUsers[sender].tmpContent = content;
+
+        if (content.score == null) {
+            content.score = 0;
+        }
+    
+        createBtn(allUsers[sender], {
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "generic",
+                    elements: [{
+                        title: "[" + content.score + "/10] " + content.title,
+                        image_url : kuratorUrl + content.image,
+                        default_action: {
+                            type: "web_url",
+                            url: content.link
+                        },
+                        buttons: [{
+                            type: "web_url",
+                            url: content.link,
+                            title: "Aller sur l'article"
+                        },
+                        {
+                            type: "postback",
+                            payload: "do_curation",
+                            title: "En faire la Curation"
+                        }]
+                    }]
+                }
+            }
+        });
+
+    } catch(error){
+
+        responseStatus = 400;
+        console.log('[0]', error);
     }
 
-    createBtn(allUsers[sender], {
-        attachment: {
-            type: "template",
-            payload: {
-                template_type: "generic",
-                elements: [{
-                    title: "[" + content.score + "/10] " + content.title,
-                    image_url : kuratorUrl + content.image,
-                    default_action: {
-                        type: "web_url",
-                        url: content.link
-                    },
-                    buttons: [{
-                        type: "web_url",
-                        url: content.link,
-                        title: "Aller sur l'article"
-                    },
-                    {
-                        type: "postback",
-                        payload: "do_curation",
-                        title: "En faire la Curation"
-                    }]
-                }]
-            }
-        }
-    });
-
-    res.sendStatus(200);
+    res.sendStatus(responseStatus);
 });
 
 app.get('/loginPosteria/', (req, res) => {
@@ -255,10 +263,11 @@ app.get('/loginPosteria/', (req, res) => {
 
 app.post('/webhook/', function (req, res)
 {
+    let responseStatus = 200;
+
     try {
 
         let messaging_events = req.body.entry[0].messaging;
-        console.log('messaging_events', messaging_events);
     
         for (let i = 0; i < messaging_events.length; i++){
 
@@ -274,8 +283,6 @@ app.post('/webhook/', function (req, res)
                 createUser(sender);
             }
 
-            console.log('SENDER ID', sender);
-
             if (event.message && event.message.text && (event.message.text).toLowerCase() == 'reset'){
                 delete allUsers[sender].step;
                 allUsers[sender].step = createStepTree();
@@ -284,39 +291,18 @@ app.post('/webhook/', function (req, res)
                 return;
             }
 
-            /*if (!eventType) {
-                res.sendStatus(200); 
-                return;
-            }
-    
-            let step = allUsers[sender].step;
-    
-            if (step < 0 || typeof(stepsDetails[step]) == "undefined") {
-                res.sendStatus(200);
-                return;
-            }
-    
-            let currentStep = stepsDetails[allUsers[sender].step];
-
-            if (currentStep.event_type.includes(eventType)) {
-                currentStep.function(allUsers[sender], event);
-            }*/
-
-            //console.log('CURRENT_STEP', allUsers[sender].step);
-            //console.log('CURRENT_EVENT', event);
-
             if (allUsers[sender].step !== undefined){
                 console.log('TRIGGER STEP FUNCTION', allUsers[sender].step.name);
                 allUsers[sender].step.stepFunction(allUsers[sender], event);
             }
         }
 
-        res.sendStatus(200);
-
     } catch(error) {
-        console.log('ERROR: ', error);
-        res.sendStatus(403);
-    } 
+        console.log('[01]', error);
+        responseStatus = 400;
+    }
+
+    res.sendStatus(responseStatus);
 }); 
 
 function createUser(sender)
@@ -386,31 +372,42 @@ function confirmArticle(user)
     user.tmpContentSelected = 1;
 
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
+
+        let sender = null;
+
         try {
+
             body = JSON.parse(body);
-            let sender = body.sender;
+            sender = parseInt(body.sender);
+
+        } catch(error){
+            console.log('PARSE ERROR [0]', error);
+        }
+
+        try {
+
             let isLogged = body.logged;
 
             if (body.hasError == true) {
-                console.log('[5] ' + body.error);
+                console.log('[02]', body.error);
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
                 delete allUsers[sender];
                 return;
             }
 
             if (isLogged) {
-                //getCategoriesAndAuthors(user);
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
-                //goToStep(user, 3);
             }
+
         } catch (error) {
-            console.log('[9] ' + error);
+            console.log('[03]', error);
             sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
         }
     });
 }
 
 function showMenu(user, message) {
+
     if (typeof(message) == "undefined") {
         message = "";
     }
@@ -435,6 +432,7 @@ function showMenu(user, message) {
             "image_url" : ""
         }]
     );
+
     user.fromMenu = 0;
 }
 
@@ -444,15 +442,23 @@ function firstMessage(user, event)
 
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
 
+        let sender = null;
+
         try {
 
             body = JSON.parse(body);
-            let sender = body.sender;
+            sender = parseInt(body.sender);
+
+        } catch(error){
+            console.log('PARSE ERROR [01]', error);
+        }
+
+        try {
 
             if (body.hasError == true) {
                 sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
                 delete allUsers[sender];
-                console.log(body.error + ' [5]');
+                console.log('[04]', body.error);
                 return;
             }
 
@@ -461,7 +467,6 @@ function firstMessage(user, event)
                 allUsers[sender].isConnected = 1;
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
                 allUsers[sender].step.stepFunction(allUsers[sender], event);
-                //goToStep(allUsers[sender], 2, event, true);
                 return;
             }
 
@@ -480,9 +485,8 @@ function firstMessage(user, event)
                 }
             });
         } catch (x) {
-            console.log(x.stack);
-            //console.log('[4] ' + error);
-            //sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
+            console.log('[05]', error);
+            sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
         }
     });
 }
@@ -492,7 +496,6 @@ function actionFromMenu(user, event)
     try {
 
         console.log('ACTION FROM MENU');
-        console.log(event);
 
         if (event.message === undefined || event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
             showMenu(user, "Je n'ai pas compris.");
@@ -502,9 +505,9 @@ function actionFromMenu(user, event)
         switch (event.message.quick_reply.payload) {
             case "menu_curation":
                 user.fromMenu = true;
-                //sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
                 delete user.step;
                 user.step = createStepTree();
+                sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
                 break;
             case "menu_stat":
                 showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
@@ -518,7 +521,7 @@ function actionFromMenu(user, event)
         }
 
     } catch(error){
-        console.log('[15] ' + error);
+        console.log('[06]', error);
     }
 }
 
@@ -526,7 +529,7 @@ function checkURL(user, event)
 {
     console.log('CHECK URL');
 
-    let text = "null"; 
+    let text = ''; 
 
     if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
         confirmArticle(user);
@@ -567,8 +570,16 @@ function checkURL(user, event)
 
     posteriaRequest("/api/getArticleInfo", reqParam, function(err, res, body) {
 
-        body = JSON.parse(body);
-        let sender = parseInt(body.sender);
+        let sender = null;
+
+        try {
+
+            body = JSON.parse(body);
+            sender = parseInt(body.sender);
+
+        } catch(error){
+            console.log('PARSE ERROR [03]', error);
+        }
 
         try {
            
@@ -590,7 +601,7 @@ function checkURL(user, event)
             }
         }
         catch (error) {
-            console.log('[3] ' + error);
+            console.log('[07]', error);
             sendTextMessage(user, {text: "Une erreur s'est produite."});
         }
     });
@@ -599,9 +610,19 @@ function checkURL(user, event)
 function getCategoriesAndAuthors(user, callback = null)
 {
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
+
+        let sender = null;
+
         try {
+
             body = JSON.parse(body);
-            let sender = parseInt(body.sender);
+            sender = parseInt(body.sender);
+
+        } catch(error){
+            console.log('PARSE ERROR [04]', error);
+        }
+        
+        try {
 
             allUsers[sender].platform = body.platform;
             allUsers[sender].tags = body.tags;
@@ -627,92 +648,115 @@ function getCategoriesAndAuthors(user, callback = null)
             }
         }
         catch (error) {
-            console.log('[1] ' + error);
+            console.log('[08]', error);
             sendTextMessage(allUsers[user.sender], {text: "Une erreur s'est produite. [2]"});
             return;
         }
     });
 }
 
-function askCategories(user) {
+function askCategories(user)
+{
+    try {
 
-    console.log('ASK CATEGORIES');
+        console.log('ASK CATEGORIES');
 
-    let btnCount = Math.ceil(user.allCategories.length / 3);
-    let btnData = [];
-
-    for (let i = 0, j = 0; i < btnCount; i++) {
-        btnData.push({
-            "attachment": {
-                "type": "template",
-                "payload": {
-                    "template_type": "button",
-                    "text": "",
-                    "buttons": []
+        let btnCount = Math.ceil(user.allCategories.length / 3);
+        let btnData = [];
+    
+        for (let i = 0, j = 0; i < btnCount; i++) {
+            btnData.push({
+                "attachment": {
+                    "type": "template",
+                    "payload": {
+                        "template_type": "button",
+                        "text": "",
+                        "buttons": []
+                    }
                 }
+            });
+            btnData[i].attachment.payload.text = (i == 0) ? "Choisissez une catégorie :" : "‎";
+            for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
+                let buttons = btnData[i].attachment.payload.buttons;
+    
+                buttons.push({"type": "postback", "title": "", "payload": ""});
+                buttons[j].title = user.allCategories[(i * 3) + j];
+                buttons[j].payload = (i * 3) + j;
             }
-        });
-        btnData[i].attachment.payload.text = (i == 0) ? "Choisissez une catégorie :" : "‎";
-        for (j = 0; j < 3 && user.allCategories[(i * 3) + j]; j++) {
-            let buttons = btnData[i].attachment.payload.buttons;
-
-            buttons.push({"type": "postback", "title": "", "payload": ""});
-            buttons[j].title = user.allCategories[(i * 3) + j];
-            buttons[j].payload = (i * 3) + j;
         }
+    
+        let index = 0;
+        let indexLimit = btnData.length - 1;
+        createBtn(user, btnData, index, indexLimit, createBtn);
+
+    } catch(error){
+        console.log('[09]', error);
     }
-
-    console.log('btnData', btnData);
-
-    let index = 0;
-    let indexLimit = btnData.length - 1;
-    createBtn(user, btnData, index, indexLimit, createBtn);
 }
 
 function getSelectedCategory(user, event)
 {
-    console.log('GET SELECTED CATEGORY');
+    try {
 
-    let payload = event.postback.payload;
+        console.log('GET SELECTED CATEGORY');
 
-    if (typeof(user.allCategoriesId[parseInt(payload, 10)]) == "undefined") {
-        return;
+        let payload = event.postback.payload;
+
+        if (typeof(user.allCategoriesId[parseInt(payload, 10)]) == "undefined") {
+            return;
+        }
+
+        user.categorie = user.allCategoriesId[parseInt(payload, 10)];
+        user.step = user.step.getNextStep('getDescLong');
+        askLong(user);
+
+    } catch(error){
+        console.log('[10]', error);
     }
-    user.categorie = user.allCategoriesId[parseInt(payload, 10)];
-    user.step = user.step.getNextStep('getDescLong');
-    askLong(user);
 }
 
 function askLong(user)
 {
-    const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
-    sendTextMessage(user, textDescLong);
+    try {
+
+        const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
+        sendTextMessage(user, textDescLong);
+
+    } catch(error){
+        console.log('[11]', error);
+    }
 }
 
 function getDescLong(user, event)
 {
-    console.log('GET DESC LONG');
+    try {
 
-    let message = event.message.text;
+        console.log('GET DESC LONG');
 
-    if (message.length == 0) {
-        return;
+        let message = event.message.text;
+
+        if (message.length == 0) {
+            return;
+        }
+    
+        user.descLong = hashtagify(user, message);
+        if (user.platform == 'wordpress') {
+            askAuthor(user);
+            user.step = user.step.getNextStep('getSelectedAuthor');
+            return;
+        }
+    
+        user.step = user.step.getNextStep('getSelectedTime');
+    
+        if (user.tmpContentSelected == 0) {
+            showPostInfo(user);
+            return;
+        }
+        askTime(user);
+
+    } catch(error){
+        console.log('[12]', error);
     }
-
-    user.descLong = hashtagify(user, message);
-    if (user.platform == 'wordpress') {
-        askAuthor(user);
-        user.step = user.step.getNextStep('getSelectedAuthor');
-        return;
-    }
-
-    user.step = user.step.getNextStep('getSelectedTime');
-
-    if (user.tmpContentSelected == 0) {
-        showPostInfo(user);
-        return;
-    }
-    askTime(user);
 }
 
 function hashtagify(user, text)
@@ -770,7 +814,7 @@ function askAuthor(user)
         createBtn(user, btnData, index, indexLimit, createBtn);
 
     } catch(error){
-        console.log('[12] ' + error);
+        console.log('[13]', error);
     }
 }
 
@@ -797,7 +841,7 @@ function showPostInfo(user)
         sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
 
     } catch(error){
-        console.log('[11] ' + error);
+        console.log('[14]', error);
     }
 }
 
@@ -823,7 +867,7 @@ function askTime(user)
         createBtn(user, btnData);
 
     } catch(error){
-        console.log('[12] ' + error);
+        console.log('[15]', error);
     }
 }
 
@@ -847,7 +891,7 @@ function getSelectedAuthor(user, event)
         askTime(user);
 
     } catch(error){
-        console.log('[13] ' + error);
+        console.log('[16]', error);
     }
 }
 
@@ -883,11 +927,17 @@ function getSelectedTime(user, event)
         }
 
         posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
-            console.log('BODY RESP', body);
+
             try {
 
                 body = JSON.parse(body);
-                let sender = parseInt(body.sender);
+                sender = parseInt(body.sender);
+    
+            } catch(error){
+                console.log('PARSE ERROR [05]', error);
+            }
+
+            try {
 
                 if (body.hasError == false) {
                     sendTextMessage(allUsers[sender], [{text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}], 0, 1, function() {
@@ -896,12 +946,12 @@ function getSelectedTime(user, event)
                     });
                     return; 
                 }
-                console.log('ERROR ON BODY RESP', body.error);
+                console.log('[17]', error);
                 sendTextMessage(allUsers[sender], {text: body.error}); 
                 delete allUsers[sender];
             }
             catch (error) {
-                console.log('[2] ' + error);
+                console.log('[18]', error);
                 console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
             } 
         });
@@ -930,39 +980,34 @@ function posteriaRequest(uri, param, callback)
 
 function sendTextMessage(user, msgData, index, indexLimit, callback)
 {
-    try {
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token: VERIFY_TOKEN},
+        method: 'POST',
+        json: {
+            recipient: {id: user.sender},
+            message: (index != undefined) ? msgData[index] : msgData
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('[00] sendTextMessage', error);
+        }
+        else if (response.body.error) {
+            console.log('[01] sendTextMessage', response.body.error);
+            console.log('[01] msgData', msgData[index]);
+        }
 
-        request({
-            url: 'https://graph.facebook.com/v2.6/me/messages',
-            qs: {access_token: VERIFY_TOKEN},
-            method: 'POST',
-            json: {
-                recipient: {id: user.sender},
-                message: (index != undefined) ? msgData[index] : msgData
-            }
-        }, function(error, response, body) {
-            if (error) {
-                console.log('Error sending message: ', error);
-            }
-            else if (response.body.error) {
-                console.log('Text message Error: ', response.body.error);
-                console.log('msgData', msgData[index]);
-            }
-    
-            if (callback != undefined && index < indexLimit) {
-                callback(user, msgData, index + 1, indexLimit, callback);
-            }
-            else if ((user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
-                askTime(user);
-            }
-        });
-
-    } catch(error){
-        console.log('[14] ' + error);
-    }
+        if (callback != undefined && index < indexLimit) {
+            callback(user, msgData, index + 1, indexLimit, callback);
+        }
+        else if ((user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
+            askTime(user);
+        }
+    });
 }
 
-function createQuickReply(user, message, quickReplies) {
+function createQuickReply(user, message, quickReplies)
+{
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
@@ -976,16 +1021,16 @@ function createQuickReply(user, message, quickReplies) {
         }
     }, function(error, response, body) {
         if (error) {
-            console.log('Error quick reply: ', error);
+            console.log('[00] Quick Replies', error);
         }
         else if (response.body.error) {
-            console.log('[5] Error: ', response.body.error);
+            console.log('[01] Quick Replies', response.body.error);
         }
     });
 }
 
-function createBtn(user, btnData, index, indexLimit, callback) {
-    console.log('CREATE BTN');
+function createBtn(user, btnData, index, indexLimit, callback)
+{
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: VERIFY_TOKEN},
@@ -996,10 +1041,10 @@ function createBtn(user, btnData, index, indexLimit, callback) {
         }
     }, function(error, response, body) {
         if (error) {
-            console.log('Error sending message: ', error);
+            console.log('[00] createBtn', error);
         }
         else if (response.body.error) {
-            console.log('Button Error: ', response.body.error);
+            console.log('[01] createBtn', error);
         }
 
         if (callback != undefined && index < indexLimit) {
