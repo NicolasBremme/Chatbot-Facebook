@@ -885,7 +885,7 @@ function getSelectedTime(user, event)
             catch (error) {
                 console.log('[2] ' + error);
                 console.log("Une erreur s'est produite lors de l'enregistrement de l'article");
-            }
+            } 
         });
 
     } catch(error){
