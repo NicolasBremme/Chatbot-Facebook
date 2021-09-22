@@ -928,13 +928,12 @@ function getSelectedTime(user, event)
 
         posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
 
+            let sender = null;
+
             try {
 
                 body = JSON.parse(body);
-
-                console.log('BODY RESP', body);
-
-                sender = body.sender;
+                sender = parseInt(body.sender);
     
             } catch(error){
                 console.log('PARSE ERROR [05]', error);
