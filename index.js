@@ -701,11 +701,9 @@ function getSelectedCategory(user, event)
 {
     try {
 
-        console.log('GET SELECTED CATEGORY');
-
         let payload = event.postback.payload;
 
-        if (typeof(user.allCategoriesId[parseInt(payload, 10)]) == "undefined") {
+        if (typeof(user.allCategoriesId[parseInt(payload, 10)]) == 'undefined') {
             return;
         }
 
