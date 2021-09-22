@@ -489,31 +489,37 @@ function firstMessage(user, event)
 
 function actionFromMenu(user, event)
 {
-    console.log('ACTION FROM MENU');
-    console.log(event);
+    try {
+        
+        console.log('ACTION FROM MENU');
+        console.log(event);
 
-    if (event.message === undefined || event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
-        showMenu(user, "Je n'ai pas compris. ");
-        return;
+        if (event.message === undefined || event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
+            showMenu(user, "Je n'ai pas compris.");
+            return;
+        }
+
+        switch (event.message.quick_reply.payload) {
+            case "menu_curation":
+                user.fromMenu = true;
+                //sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
+                delete allUsers[sender].step;
+                allUsers[sender].step = createStepTree();
+                break;
+            case "menu_stat":
+                showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
+                break;
+            case "menu_config":
+                showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
+                break;
+            default:
+                showMenu(user, "Je n'ai pas compris. ");
+                break;
+        }
+
+    } catch(error){
+        console.log('[15] ' + error);
     }
-
-    switch (event.message.quick_reply.payload) {
-        case "menu_curation":
-            user.fromMenu = true;
-            //sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
-            delete allUsers[sender].step;
-            allUsers[sender].step = createStepTree();
-            break;
-        case "menu_stat":
-            showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
-            break;
-        case "menu_config":
-            showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
-            break;
-        default:
-            showMenu(user, "Je n'ai pas compris. ");
-            break;
-    } 
 }
 
 function checkURL(user, event)
