@@ -272,8 +272,10 @@ app.post('/webhook/', function (req, res)
             }
 
             if (event.message && event.message.text && (event.message.text).toLowerCase() == 'reset'){
-                res.sendStatus(200);
                 delete allUsers[sender].step;
+                allUsers[sender].step = createStepTree();
+                console.log('User '+sender+' reseted');
+                res.sendStatus(200);
                 return;
             }
 
