@@ -498,7 +498,8 @@ function actionFromMenu(user, event)
         case "menu_curation":
             user.fromMenu = true;
             sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
-            allUsers[sender].step = allUsers[sender].step.getNextStep('firstMessage');
+            delete allUsers[sender].step;
+            allUsers[sender].step = createStepTree();
             break;
         case "menu_stat":
             showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
