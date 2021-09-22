@@ -879,7 +879,7 @@ function getSelectedTime(user, event)
                     return; 
                 }
                 console.log('ERROR ON BODY RESP', body.error);
-                sendTextMessage(allUsers[sender], {text: body.error});
+                sendTextMessage(allUsers[sender], {text: body.error}); 
                 delete allUsers[sender];
             }
             catch (error) {
