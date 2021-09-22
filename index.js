@@ -257,13 +257,8 @@ app.post('/webhook/', function (req, res)
 {
     try {
 
-        let requestBody = req.body;
-
-        if (requestBody.object && requestBody.Object == 'page'){
-            return;
-        }
-
-        let messaging_events = requestBody.entry[0].messaging;
+        let messaging_events = req.body.entry[0].messaging;
+        console.log('messaging_events', messaging_events);
     
         for (let i = 0; i < messaging_events.length; i++){
 
