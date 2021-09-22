@@ -57,7 +57,6 @@ const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG, ENOTEMPTY } = require('constants');
 const { response } = require('express');
 const { fstat } = require('fs');
 const path = require('path');
-const { isWebUri } = require('valid-url');
 const replyBotId = 1651592678499031;
 
 const
@@ -65,7 +64,7 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     crypto = require('crypto');
-
+    validUrl = require('valid-url');
 
 let app = express();
 app.use(bodyParser.json());
@@ -537,9 +536,9 @@ function checkURL(user, event)
     }
 
     console.log('Url', text);
-    console.log('isWebUri', isWebUri(text));
+    console.log('isUri', validUrl.isUri(text));
 
-    if (!isWebUri(text)) {
+    if (!validUrl.isUri(text)) {
         if (!user.fromMenu) {
             user.step = user.step.getNextStep('actionFromMenu');
             user.step.stepFunction(allUsers[sender], event);
