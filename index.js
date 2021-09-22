@@ -869,17 +869,14 @@ function getSelectedTime(user, event)
                 let sender = parseInt(body.sender);
 
                 if (body.hasError == false) {
-                    sendTextMessage(allUsers[sender], [{text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}], 0, 1, function(user, msgData, index, indexLimit, callback) {
-                        let sender = user.sender;
-
-                        delete allUsers[sender];
-                        createUser(sender);
-                        //goToStep(allUsers[sender], 0, null, true);
+                    sendTextMessage(allUsers[sender], [{text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}], 0, 1, function() {
+                        delete allUsers[sender].step;
+                        allUsers[sender].step = createStepTree();
                     });
                     return; 
                 }
                 sendTextMessage(allUsers[sender], {text: body.error});
-                delete allUsers[sender]; 
+                delete allUsers[sender];
             }
             catch (error) {
                 console.log('[2] ' + error);
@@ -888,11 +885,8 @@ function getSelectedTime(user, event)
         });
 
     } catch(error){
-
         delete allUsers[user.sender];
-        
     }
-
 }
 
 function posteriaRequest(uri, param, callback)
