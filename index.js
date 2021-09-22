@@ -931,7 +931,7 @@ function getSelectedTime(user, event)
             try {
 
                 body = JSON.parse(body);
-                sender = parseInt(body.sender);
+                sender = body.sender;
     
             } catch(error){
                 console.log('PARSE ERROR [05]', error);
