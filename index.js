@@ -596,6 +596,8 @@ function checkURL(user, event)
             allUsers[sender].image = body.image;
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
+
+            console.log('allUsers[sender].allCategories', allUsers[sender].allCategories);
             
             if (!allUsers[sender].allCategories.length){
                 getCategoriesAndAuthors(allUsers[sender], askCategories);
