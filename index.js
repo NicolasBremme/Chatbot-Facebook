@@ -220,6 +220,7 @@ app.post('/proposeArticle/', (req, res) =>
 });
 
 app.get('/loginPosteria/', (req, res) => {
+    
     let code = null;
     let user = null;
     let sender = null;
@@ -242,13 +243,14 @@ app.get('/loginPosteria/', (req, res) => {
         }
     }
 
+    user.step = user.step.getNextStep('actionFromMenu');
     showMenu(user);
 
     let options = {
         root: path.join(__dirname)
     };
 
-    res.sendFile("loginPosteria.html", options);
+    res.sendFile('loginPosteria.html', options);
 });
 
 app.post('/webhook/', function (req, res)
@@ -569,7 +571,7 @@ function checkURL(user, event)
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
             
-            if (!allUsers[sender].categories.length){
+            if (!allUsers[sender].allCategories.length){
                 getCategoriesAndAuthors(allUsers[sender], askCategories);
             }
         }
