@@ -273,6 +273,8 @@ app.post('/webhook/', function (req, res)
                 createUser(sender);
             }
 
+            console.log('SENDER ID', sender);
+
             if (event.message && event.message.text && (event.message.text).toLowerCase() == 'reset'){
                 delete allUsers[sender].step;
                 allUsers[sender].step = createStepTree();
