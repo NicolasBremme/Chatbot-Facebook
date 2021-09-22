@@ -63,7 +63,7 @@ const
     request = require('request'),
     express = require('express'),
     bodyParser = require('body-parser'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
     validUrl = require('valid-url');
 
 let app = express();
