@@ -433,7 +433,6 @@ function showMenu(user, message) {
         }]
     );
     user.fromMenu = 0;
-    //goToStep(user, 1);
 }
 
 function firstMessage(user, event)
@@ -499,6 +498,7 @@ function actionFromMenu(user, event)
             user.fromMenu = true;
             sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
             allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
+            console.log('READY TO CURATE');
             //goToStep(user, 2, event, true);
             break;
         case "menu_stat":
