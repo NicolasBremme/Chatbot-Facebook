@@ -486,7 +486,8 @@ function firstMessage(user, event)
 
 function actionFromMenu(user, event)
 {
-    console.log('ACTIONFROMMENU');
+    console.log('ACTION FROM MENU');
+    console.log(event);
 
     if (event.message === undefined || event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
         showMenu(user, "Je n'ai pas compris. ");
@@ -496,9 +497,10 @@ function actionFromMenu(user, event)
     switch (event.message.quick_reply.payload) {
         case "menu_curation":
             user.fromMenu = true;
+            console.log('CURATION GO');
             sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
+            console.log('CURATION GO 2');
             allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
-            console.log('READY TO CURATE');
             //goToStep(user, 2, event, true);
             break;
         case "menu_stat":
@@ -510,7 +512,7 @@ function actionFromMenu(user, event)
         default:
             showMenu(user, "Je n'ai pas compris. ");
             break;
-    }
+    } 
 }
 
 function checkURL(user, event)
