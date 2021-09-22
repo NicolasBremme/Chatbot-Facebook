@@ -569,7 +569,9 @@ function checkURL(user, event)
             allUsers[sender].title = body.title;
             allUsers[sender].desc = body.description;
             
-            getCategoriesAndAuthors(allUsers[sender], true);
+            if (!allUsers[sender].categories.length){
+                getCategoriesAndAuthors(allUsers[sender], askCategories);
+            }
         }
         catch (error) {
             console.log('[3] ' + error);
@@ -578,7 +580,7 @@ function checkURL(user, event)
     });
 }
 
-function getCategoriesAndAuthors(user, _askCategories = false)
+function getCategoriesAndAuthors(user, callback = null)
 {
     posteriaRequest('/api/getCategoriesAndAuthors', {extern_id: user.sender}, function(err, res, body) {
         try {
@@ -604,8 +606,8 @@ function getCategoriesAndAuthors(user, _askCategories = false)
                 }
             }
 
-            if (_askCategories){
-                askCategories(allUsers[sender]);
+            if (callback){
+                callback(allUsers[sender]);
             }
         }
         catch (error) {
@@ -867,12 +869,11 @@ function getSelectedTime(user, event)
         posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
             console.log('BODY RESP', body);
             try {
-                
+
                 body = JSON.parse(body);
                 let sender = parseInt(body.sender);
 
                 if (body.hasError == false) {
-                    console.log('OK RESP', body.errorMsg);
                     sendTextMessage(allUsers[sender], [{text: rewardsPublishOk[getRandom(0, rewardsPublishOk.length)]}], 0, 1, function() {
                         delete allUsers[sender].step;
                         allUsers[sender].step = createStepTree();
