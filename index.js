@@ -560,6 +560,7 @@ function checkURL(user, event)
         return;
     }
  
+    console.log('GO SELECTED CATEGORY');
     user.articleUrl = text;
     user.step = user.step.getNextStep('getSelectedCategory');
  
