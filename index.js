@@ -497,11 +497,8 @@ function actionFromMenu(user, event)
     switch (event.message.quick_reply.payload) {
         case "menu_curation":
             user.fromMenu = true;
-            console.log('CURATION GO');
             sendTextMessage(user, {text: "Parfait! Envoyez-nous un article dont vous souhaiter faire la curation."});
-            console.log('CURATION GO 2');
-            allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
-            //goToStep(user, 2, event, true);
+            allUsers[sender].step = allUsers[sender].step.getNextStep('firstMessage');
             break;
         case "menu_stat":
             showMenu(user, "Cette fonctionnalitée n'est pas encore disponible. ");
@@ -517,7 +514,7 @@ function actionFromMenu(user, event)
 
 function checkURL(user, event)
 {
-    console.log('CHECKURL');
+    console.log('CHECK URL');
 
     let text = "null"; 
 
