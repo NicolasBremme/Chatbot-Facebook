@@ -274,7 +274,7 @@ app.post('/webhook/', function (req, res)
             let event = messaging_events[i];
             let sender = event.sender.id;
 
-            console.log('messaging_events', event.attachments);
+            console.log('messaging_events', event);
 
             if (sender == replyBotId){
                 res.sendStatus(200);
