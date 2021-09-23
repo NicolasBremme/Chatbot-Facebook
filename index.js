@@ -241,18 +241,14 @@ app.get('/loginPosteria/', (req, res) => {
         user = allUsers[sender];
     }
     if (user != null && user.isConnected == 0) {
-        if (code == 1 && sender != null) {
-            user.isConnected == 1;
-            getCategoriesAndAuthors(user);
-            return;
-        } else {
+        if (code != 1 || sender == null) {
             sendTextMessage(user, {text: 'Impossible de vous connecter à Posteria.'});
             return;
         }
     }
 
-    user.step = user.step.getNextStep('actionFromMenu');
-    showMenu(user);
+    user.isConnected = 1;
+    user.step = user.step.getNextStep('checkURL');
 
     let options = {
         root: path.join(__dirname)
@@ -274,13 +270,11 @@ app.post('/webhook/', function (req, res)
             let event = messaging_events[i];
             let sender = event.sender.id;
 
-            console.log('messaging_events', event.message.attachments);
-
             if (sender == replyBotId){
                 res.sendStatus(200);
                 return;
             }
-    
+
             if (!allUsers[sender]) {
                 createUser(sender);
             }
@@ -311,6 +305,7 @@ function createUser(sender)
 {
     allUsers[sender] = {
         sender: sender,
+        firstMessage : "",
         step: createStepTree(),
         currentPublicationProcess : '',
         isConnected: 0,
@@ -485,6 +480,9 @@ function firstMessage(user, event)
                     }
                 }
             });
+
+            user.firstMessage = event;
+
         } catch (x) {
             console.log('[05]', error);
             sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
