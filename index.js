@@ -267,6 +267,8 @@ app.post('/webhook/', function (req, res)
 
     try {
 
+        console.log('BODY RESP', req.body);
+
         let messaging_events = req.body.entry[0].messaging;
     
         for (let i = 0; i < messaging_events.length; i++){
@@ -310,6 +312,7 @@ function createUser(sender)
     allUsers[sender] = {
         sender: sender,
         step: createStepTree(),
+        currentPublicationProcess : '',
         isConnected: 0,
         fromMenu: 0,
         tmpContent: "",
@@ -493,7 +496,10 @@ function actionFromMenu(user, event)
 {
     try {
 
-        if (event.message === undefined || event.message.quick_reply === undefined || event.message.quick_reply.payload === undefined) {
+        if (event.message === undefined ||
+            event.message.quick_reply === undefined ||
+            event.message.quick_reply.payload === undefined) {
+            
             showMenu(user, "Je n'ai pas compris.");
             return;
         }
@@ -525,7 +531,7 @@ function checkURL(user, event)
 {
     let text = ''; 
 
-    if (event.postback && event.postback.payload && event.postback.payload == "do_curation") {
+    if (event.postback && event.postback.payload && event.postback.payload == 'do_curation') {
         confirmArticle(user);
         return;
     }
@@ -887,7 +893,7 @@ function getSelectedTime(user, event)
         let payload = event.postback.payload;
         user.time = payload;
 
-        if (user.time == "stop") {
+        if (user.time == 'stop') {
             sendTextMessage(user, {text: "Ok, la publication est annulée."});
             delete allUsers[user.sender];
             return;
