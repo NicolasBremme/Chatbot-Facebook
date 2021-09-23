@@ -281,6 +281,9 @@ app.post('/webhook/', function (req, res)
                 createUser(sender);
             }
 
+            console.log('attachments 0', event.message.attachments[0]);
+            console.log('payload', event.message.attachments[0].payload);
+
             if (event.message && event.message.text && (event.message.text).toLowerCase() == 'reset'){
                 delete allUsers[sender].step;
                 allUsers[sender].step = createStepTree();
@@ -459,9 +462,6 @@ function firstMessage(user, event)
                 return;
             }
 
-            console.log('0', event);
-            console.log('1', event.message);
-
             if (body.logged) {
                 allUsers[sender].isConnected = 1;
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
@@ -540,11 +540,19 @@ function checkURL(user, event)
         text = event.message.text;
     }
     else if (event.message && event.message.attachments) {
-        let url = event.message.attachments[0].url;
 
-        if (typeof(url) != 'undefined') {
-            url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
-            text = url;
+        if (event.message.attachments[0].type === 'image'){
+
+            //user.image = event.message.attachments[0].payload;
+
+        } else {
+
+            let url = event.message.attachments[0].url;
+
+            if (typeof(url) != 'undefined') {
+                url = decodeURIComponent(url.split('u=')[1].split('&h=')[0]);
+                text = url;
+            }
         }
     }
 
