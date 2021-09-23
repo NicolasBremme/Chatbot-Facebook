@@ -249,6 +249,8 @@ app.get('/loginPosteria/', (req, res) => {
 
     user.isConnected = 1;
     user.step = user.step.getNextStep('checkURL');
+    user.step.stepFunction(user, user.firstMessage);
+    user.firstMessage = "";
 
     let options = {
         root: path.join(__dirname)
@@ -288,7 +290,6 @@ app.post('/webhook/', function (req, res)
             }
 
             if (allUsers[sender].step !== undefined){
-                console.log('TRIGGER STEP FUNCTION', allUsers[sender].step.name);
                 allUsers[sender].step.stepFunction(allUsers[sender], event);
             }
         }
@@ -458,8 +459,10 @@ function firstMessage(user, event)
                 return;
             }
 
-            if (body.logged) {
+            console.log('0', event);
+            console.log('1', event.message);
 
+            if (body.logged) {
                 allUsers[sender].isConnected = 1;
                 allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
                 allUsers[sender].step.stepFunction(allUsers[sender], event);
