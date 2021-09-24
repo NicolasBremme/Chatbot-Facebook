@@ -1011,6 +1011,7 @@ function getSelectedTime(user, event)
                 extern_id: user.sender,
                 userDesc: user.descLong,
                 image: user.image,
+                time: user.time
             };
 
             actionUrl = 'addMediasChatbot';
