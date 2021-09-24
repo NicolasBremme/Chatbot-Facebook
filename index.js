@@ -78,12 +78,60 @@ app.use(express.static("public"));
 const getRandom = (min, max) => (Math.floor(Math.random() * ((max - min) + min)));
 var allUsers = {};
 
+function _request(options)
+{
+    return (new Promise(function (resolve, reject){
+
+        request(options, function (error, result, body){
+
+            if (error){
+
+                reject(error);
+
+            } else {
+
+                if (result.statusCode != 200){
+
+                    let statusError = {};
+                    if (error){
+                        statusError.error = error;
+                    }
+                    statusError.code = result.statusCode;
+
+                    reject(statusError);
+                }
+
+                resolve(body);
+            }
+        });
+    }));
+}
+
+async function _requestPosteria(uri, parameters)
+{
+    try {
+
+        await _request({
+            url: kuratorUrl + uri,
+            method: "POST",
+            headers: {
+                'User-Agent': 'Chatbot',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            form: parameters
+        });
+
+    } catch(error){
+        throw(error);
+    }
+
+}
+
 class Step {
 
-    constructor(name, eventType, stepFunction)
+    constructor(name, stepFunction)
     {
         this.name = name;
-        this.eventType = eventType;
         this.stepFunction = stepFunction;
     };
 
@@ -105,13 +153,13 @@ class Step {
 
 function createStepTree()
 {
-    var step_checkLogged = new Step("checkLogged", ["message", "attachments", "postback"], checkLogged);
-    var step_checkEvent = new Step("checkEvent", ["message", "attachments", "postback"], checkEvent);
-    var step_actionFromMenu = new Step("actionFromMenu", ["message", "attachments", "postback"], actionFromMenu);
-    var step_getSelectedCategory = new Step("getSelectedCategory", ["message", "attachments", "postback"], getSelectedCategory);
-    var step_getDescLong = new Step("getDescLong", ["message", "attachments", "postback"], getDescLong);
-    var step_getSelectedAuthor = new Step("getSelectedAuthor", ["message", "attachments", "postback"], getSelectedAuthor);
-    var step_getSelectedTime = new Step("getSelectedTime", ["message", "attachments", "postback"], getSelectedTime);
+    var step_checkLogged = new Step("checkLogged", checkLogged);
+    var step_checkEvent = new Step("checkEvent", checkEvent);
+    var step_actionFromMenu = new Step("actionFromMenu", actionFromMenu);
+    var step_getSelectedCategory = new Step("getSelectedCategory", getSelectedCategory);
+    var step_getDescLong = new Step("getDescLong", getDescLong);
+    var step_getSelectedAuthor = new Step("getSelectedAuthor", getSelectedAuthor);
+    var step_getSelectedTime = new Step("getSelectedTime", getSelectedTime);
 
     step_checkLogged.setNextStepArray([
         step_checkEvent
@@ -1044,7 +1092,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback)
         if (callback != undefined && index < indexLimit) {
             callback(user, msgData, index + 1, indexLimit, callback);
         }
-        else if ((user.step.name == 'media' || user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
+        else if ((user.currentPublicationProcess == 'media' || user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
             askTime(user);
         }
     });
