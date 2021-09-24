@@ -105,7 +105,7 @@ class Step {
 
 function createStepTree()
 {
-    var step_firstMessage = new Step("firstMessage", ["message", "attachments", "postback"], firstMessage);
+    var step_checkLogged = new Step("checkLogged", ["message", "attachments", "postback"], checkLogged);
     var step_checkURL = new Step("checkURL", ["message", "attachments", "postback"], checkURL);
     var step_actionFromMenu = new Step("actionFromMenu", ["message", "attachments", "postback"], actionFromMenu);
     var step_getSelectedCategory = new Step("getSelectedCategory", ["message", "attachments", "postback"], getSelectedCategory);
@@ -113,7 +113,7 @@ function createStepTree()
     var step_getSelectedAuthor = new Step("getSelectedAuthor", ["message", "attachments", "postback"], getSelectedAuthor);
     var step_getSelectedTime = new Step("getSelectedTime", ["message", "attachments", "postback"], getSelectedTime);
 
-    step_firstMessage.setNextStepArray([
+    step_checkLogged.setNextStepArray([
         step_checkURL
     ]);
 
@@ -142,11 +142,11 @@ function createStepTree()
         step_getSelectedTime
     ]);
 
-    return (step_firstMessage);
+    return (step_checkLogged);
 }
 
 const stepsDetails = [
-    {"event_type" : ["message", "attachments", "postback"], "function": firstMessage},
+    {"event_type" : ["message", "attachments", "postback"], "function": checkLogged},
     {"event_type" : ["message", "attachments", "postback"], "function": actionFromMenu},
     {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
     {"event_type" : ["postback"], "function": getSelectedCategory},
@@ -280,9 +280,6 @@ app.post('/webhook/', function (req, res)
             if (!allUsers[sender]) {
                 createUser(sender);
             }
-
-            console.log('attachments 0', event.message.attachments[0]);
-            console.log('payload', event.message.attachments[0].payload);
 
             if (event.message && event.message.text && (event.message.text).toLowerCase() == 'reset'){
                 delete allUsers[sender].step;
@@ -438,7 +435,7 @@ function showMenu(user, message) {
     user.fromMenu = 0;
 }
 
-function firstMessage(user, event)
+function checkLogged(user, event)
 {
     posteriaRequest('/api/autoLogin', {extern_id: user.sender}, function(err, res, body) {
 
@@ -541,9 +538,11 @@ function checkURL(user, event)
     }
     else if (event.message && event.message.attachments) {
 
+        console.log('payload', event.message.attachments[0].payload);
+
         if (event.message.attachments[0].type === 'image'){
 
-            //user.image = event.message.attachments[0].payload;
+            user.image = event.message.attachments[0].payload;
 
         } else {
 
