@@ -106,7 +106,7 @@ class Step {
 function createStepTree()
 {
     var step_checkLogged = new Step("checkLogged", ["message", "attachments", "postback"], checkLogged);
-    var step_checkURL = new Step("checkURL", ["message", "attachments", "postback"], checkURL);
+    var step_checkEvent = new Step("checkEvent", ["message", "attachments", "postback"], checkEvent);
     var step_actionFromMenu = new Step("actionFromMenu", ["message", "attachments", "postback"], actionFromMenu);
     var step_getSelectedCategory = new Step("getSelectedCategory", ["message", "attachments", "postback"], getSelectedCategory);
     var step_getDescLong = new Step("getDescLong", ["message", "attachments", "postback"], getDescLong);
@@ -114,14 +114,14 @@ function createStepTree()
     var step_getSelectedTime = new Step("getSelectedTime", ["message", "attachments", "postback"], getSelectedTime);
 
     step_checkLogged.setNextStepArray([
-        step_checkURL
+        step_checkEvent
     ]);
 
     step_actionFromMenu.setNextStepArray([
-        step_checkURL
+        step_checkEvent
     ]);
 
-    step_checkURL.setNextStepArray([
+    step_checkEvent.setNextStepArray([
         step_actionFromMenu,
         step_getSelectedCategory
     ]);
@@ -148,7 +148,7 @@ function createStepTree()
 const stepsDetails = [
     {"event_type" : ["message", "attachments", "postback"], "function": checkLogged},
     {"event_type" : ["message", "attachments", "postback"], "function": actionFromMenu},
-    {"event_type" : ["message", "attachments", "postback"], "function": checkURL},
+    {"event_type" : ["message", "attachments", "postback"], "function": checkEvent},
     {"event_type" : ["postback"], "function": getSelectedCategory},
     {"event_type" : ["message"], "function": getDescLong},
     {"event_type" : ["postback"], "function": getSelectedAuthor},
@@ -184,7 +184,7 @@ app.post('/proposeArticle/', (req, res) =>
         let content = body.bestContent.Content;
     
         createUser(sender);
-        allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
+        allUsers[sender].step = allUsers[sender].step.getNextStep('checkEvent');
         allUsers[sender].tmpContent = content;
 
         if (content.score == null) {
@@ -248,7 +248,7 @@ app.get('/loginPosteria/', (req, res) => {
     }
 
     user.isConnected = 1;
-    user.step = user.step.getNextStep('checkURL');
+    user.step = user.step.getNextStep('checkEvent');
     user.step.stepFunction(user, user.firstMessage);
     user.firstMessage = "";
 
@@ -395,7 +395,7 @@ function confirmArticle(user)
             }
 
             if (isLogged) {
-                allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
+                allUsers[sender].step = allUsers[sender].step.getNextStep('checkEvent');
             }
 
         } catch (error) {
@@ -461,7 +461,7 @@ function checkLogged(user, event)
 
             if (body.logged) {
                 allUsers[sender].isConnected = 1;
-                allUsers[sender].step = allUsers[sender].step.getNextStep('checkURL');
+                allUsers[sender].step = allUsers[sender].step.getNextStep('checkEvent');
                 allUsers[sender].step.stepFunction(allUsers[sender], event);
                 return;
             }
@@ -525,7 +525,7 @@ function actionFromMenu(user, event)
     }
 }
 
-function checkURL(user, event)
+function checkEvent(user, event)
 {
     let text = ''; 
 
@@ -538,11 +538,14 @@ function checkURL(user, event)
     }
     else if (event.message && event.message.attachments) {
 
-        console.log('payload', event.message.attachments[0].payload);
+        if (event.message.attachments[0].type === 'image'){ // MEDIA PUBLICATION
 
-        if (event.message.attachments[0].type === 'image'){
-
-            user.image = event.message.attachments[0].payload;
+            user.image = event.message.attachments[0].payload.url;
+            user.currentPublicationProcess = 'media';
+            
+            askLong(user);
+            user.step = user.step.getNextStep('getDescLong');
+            return;
 
         } else {
 
@@ -565,7 +568,8 @@ function checkURL(user, event)
  
     user.articleUrl = text;
     user.step = user.step.getNextStep('getSelectedCategory');
- 
+    user.currentPublicationProcess = 'article';
+
     let reqParam = {
         url: text,
         sender: user.sender
@@ -734,23 +738,25 @@ function getDescLong(user, event)
 
         let message = event.message.text;
 
-        if (message.length == 0) {
+        if (!message || !message.length) {
             return;
         }
     
         user.descLong = hashtagify(user, message);
-        if (user.platform == 'wordpress') {
+
+        if (user.currentPublicationProcess == 'article' && user.platform == 'wordpress') {
             askAuthor(user);
             user.step = user.step.getNextStep('getSelectedAuthor');
             return;
         }
-    
+
         user.step = user.step.getNextStep('getSelectedTime');
-    
-        if (user.tmpContentSelected == 0) {
+
+        if (!user.tmpContentSelected) {
             showPostInfo(user);
             return;
         }
+
         askTime(user);
 
     } catch(error){
@@ -819,25 +825,36 @@ function askAuthor(user)
 
 function showPostInfo(user)
 {
-    try {
+    let informations = [
+        {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"}
+    ];
 
-        let showInfoText = [
-            {text: rewardsInsightOk[getRandom(0, rewardsInsightOk.length)] + " Voici les informations de votre post :"},
-            {text: user.title},
-            {text: user.descLong},
-            {
-                attachment: {
-                    type: "image",
-                    payload: {
-                        url: kuratorUrl + user.image
-                    }
+    if (user.title.length){
+        informations.push({text: user.title});
+    }
+
+    
+    if (user.descLong.length){
+        informations.push({text: user.descLong});
+    }
+    
+    if (user.image.length){
+        informations.push({
+            attachment: {
+                type: "image",
+                payload: {
+                    url: kuratorUrl + user.image
                 }
             }
-        ];
+        });
+    }
+
+    try {
+
         let index = 0;
-        let indexLimit = showInfoText.length - 1;
+        let indexLimit = informations.length - 1;
     
-        sendTextMessage(user, showInfoText, index, indexLimit, sendTextMessage);
+        sendTextMessage(user, informations, index, indexLimit, sendTextMessage);
 
     } catch(error){
         console.log('[14]', error);
@@ -883,7 +900,7 @@ function getSelectedAuthor(user, event)
         user.author = user.allAuthorsId[parseInt(payload, 10)];
         user.step = user.step.getNextStep('getSelectedTime');
         
-        if (user.tmpContentSelected == 0) {
+        if (!user.tmpContentSelected) {
             showPostInfo(user);
             return;
         }
@@ -907,23 +924,41 @@ function getSelectedTime(user, event)
             return;
         }
 
-        let postInfos = {
-            extern_id: user.sender,
-            title: user.title,
-            description: user.desc,
-            image: user.image,
-            link: user.articleUrl,
-            categories: [user.categorie],
-            author: user.author,
-            userDesc: user.descLong,
-            time: user.time
-        };
+        let postInfos = {};
+        let actionUrl = null;
 
-        if (user.tmpContentSelected == 1 && user.tmpContent !== "") {
+        if (user.currentPublicationProcess == 'article'){
+
+            postInfos = {
+                extern_id: user.sender,
+                title: user.title,
+                description: user.desc,
+                image: user.image,
+                link: user.articleUrl,
+                categories: [user.categorie],
+                author: user.author,
+                userDesc: user.descLong,
+                time: user.time
+            };
+
+            actionUrl = 'addArticlesChatBot';
+
+        } else if (user.currentPublicationProcess == 'media'){
+
+            postInfos = {
+                extern_id: user.sender,
+                userDesc: user.descLong,
+                image: user.image,
+            };
+
+            actionUrl = 'addMediasChatbot';
+        }
+
+        if (user.tmpContentSelected == 1 && user.tmpContent !== '') {
             postInfos.contentId = user.tmpContent.id;
         }
 
-        posteriaRequest('/api/addArticlesChatBot', postInfos, function(err, res, body) {
+        posteriaRequest('/api/'+actionUrl, postInfos, function(err, res, body) {
 
             let sender = null;
 
