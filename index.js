@@ -123,7 +123,8 @@ function createStepTree()
 
     step_checkEvent.setNextStepArray([
         step_actionFromMenu,
-        step_getSelectedCategory
+        step_getSelectedCategory,
+        step_getDescLong
     ]);
 
     step_getSelectedCategory.setNextStepArray([
@@ -249,8 +250,6 @@ app.get('/loginPosteria/', (req, res) => {
 
     user.isConnected = 1;
     user.step = user.step.getNextStep('checkEvent');
-
-    console.log('GO CHECK EVENT WITH', user.firstMessage);
 
     user.step.stepFunction(user, user.firstMessage);
     user.firstMessage = "";
