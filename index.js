@@ -483,6 +483,8 @@ function checkLogged(user, event)
 
             user.firstMessage = event;
 
+            console.log('FIRST MESSAGE', user.firstMessage);
+
         } catch (x) {
             console.log('[05]', error);
             sendTextMessage(allUsers[sender], {text: "Une erreur s'est produite."});
@@ -952,10 +954,6 @@ function getSelectedTime(user, event)
             };
 
             actionUrl = 'addMediasChatbot';
-        }
-
-        if (user.tmpContentSelected == 1 && user.tmpContent !== '') {
-            postInfos.contentId = user.tmpContent.id;
         }
 
         posteriaRequest('/api/'+actionUrl, postInfos, function(err, res, body) {
