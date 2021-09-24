@@ -1016,6 +1016,8 @@ function getSelectedTime(user, event)
             actionUrl = 'addMediasChatbot';
         }
 
+        console.log('actionUrl', actionUrl);
+
         posteriaRequest('/api/'+actionUrl, postInfos, function(err, res, body) {
 
             let sender = null;
