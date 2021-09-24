@@ -590,7 +590,7 @@ function checkEvent(user, event)
     }
     else if (event.message && event.message.attachments) {
 
-        if (event.message.attachments[0].type === 'image'){ // MEDIA PUBLICATION
+        if (event.message.attachments[0].type === 'image' || event.message.attachments[0].type === 'video'){ // MEDIA PUBLICATION
 
             user.image = event.message.attachments[0].payload.url;
             user.currentPublicationProcess = 'media';
@@ -987,41 +987,30 @@ function getSelectedTime(user, event)
         }
 
         let postInfos = {};
-        let actionUrl = null;
+        let actionUrl = 'addMediasChatbot';
+
+        postInfos = {
+            extern_id: user.sender,
+            userDesc: user.descLong,
+            image: user.image,
+            time: user.time
+        };
 
         if (user.currentPublicationProcess == 'article'){
 
             postInfos = {
-                extern_id: user.sender,
                 title: user.title,
                 description: user.desc,
-                image: user.image,
                 link: user.articleUrl,
                 categories: [user.categorie],
                 author: user.author,
-                userDesc: user.descLong,
                 time: user.time
             };
 
             actionUrl = 'addArticlesChatBot';
-
-        } else if (user.currentPublicationProcess == 'media'){
-
-            postInfos = {
-                extern_id: user.sender,
-                userDesc: user.descLong,
-                image: user.image,
-                time: user.time
-            };
-
-            actionUrl = 'addMediasChatbot';
         }
 
-        console.log('actionUrl', actionUrl);
-
         posteriaRequest('/api/'+actionUrl, postInfos, function(err, res, body) {
-
-            console.log(body);
 
             let sender = null;
 
