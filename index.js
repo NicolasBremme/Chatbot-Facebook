@@ -233,9 +233,6 @@ app.get('/loginPosteria/', (req, res) => {
     let user = null;
     let sender = null;
 
-    console.log('loginPosteria', user.firstMessage);
-    sendTextMessage(user, {text: 'loginPosteria'});
-
     if (null != req.query.code) {
         code = parseInt(req.query.code, 10);
     }
