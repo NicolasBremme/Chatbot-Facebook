@@ -843,11 +843,17 @@ function showPostInfo(user)
     }
     
     if (user.image.length){
+
+        let imageUrl = user.image;
+        if (user.currentPublicationProcess == 'article'){
+            imageUrl = kuratorUrl + imageUrl;
+        }
+
         informations.push({
             attachment: {
                 type: "image",
                 payload: {
-                    url: kuratorUrl + user.image
+                    url: imageUrl
                 }
             }
         });
