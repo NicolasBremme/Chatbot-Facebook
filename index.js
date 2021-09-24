@@ -730,7 +730,7 @@ function askLong(user)
 
         let sentence = 'Entrez votre description :';
         if (user.currentPublicationProcess == 'article'){
-            sentence = rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)]  + sentence;
+            sentence = rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)]  + ' ' + sentence;
         }
 
         sendTextMessage(user, {text: sentence});
