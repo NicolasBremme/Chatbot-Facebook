@@ -728,8 +728,12 @@ function askLong(user)
 {
     try {
 
-        const textDescLong = {text: rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)] + " Entrez votre description :"};
-        sendTextMessage(user, textDescLong);
+        let sentence = 'Entrez votre description :';
+        if (user.currentPublicationProcess == 'article'){
+            sentence = rewardsCategoriesOk[getRandom(0, rewardsCategoriesOk.length)]  + sentence;
+        }
+
+        sendTextMessage(user, {text: sentence});
 
     } catch(error){
         console.log('[11]', error);
