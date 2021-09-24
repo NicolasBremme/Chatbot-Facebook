@@ -1044,7 +1044,7 @@ function sendTextMessage(user, msgData, index, indexLimit, callback)
         if (callback != undefined && index < indexLimit) {
             callback(user, msgData, index + 1, indexLimit, callback);
         }
-        else if ((user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
+        else if ((user.step.name == 'media' || user.platform == 'wall' || user.author.length != 0) && index >= indexLimit) {
             askTime(user);
         }
     });
