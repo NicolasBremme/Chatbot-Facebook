@@ -1020,6 +1020,8 @@ function getSelectedTime(user, event)
 
         posteriaRequest('/api/'+actionUrl, postInfos, function(err, res, body) {
 
+            console.log(body);
+
             let sender = null;
 
             try {
