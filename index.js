@@ -1012,6 +1012,8 @@ function getSelectedTime(user, event)
             postInfos['mediaType'] = user.currentMediaType;
         }
 
+        console.log('postInfos', postInfos);
+
         posteriaRequest('/api/'+actionUrl, postInfos, function(err, res, body) {
 
             let sender = null;
