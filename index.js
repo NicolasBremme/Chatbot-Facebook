@@ -1006,6 +1006,10 @@ function getSelectedTime(user, event)
             };
 
             actionUrl = 'addArticlesChatBot';
+
+        } else {
+
+            postInfos['mediaType'] = user.currentMediaType;
         }
 
         posteriaRequest('/api/'+actionUrl, postInfos, function(err, res, body) {
