@@ -359,6 +359,7 @@ function createUser(sender)
         firstMessage : "",
         step: createStepTree(),
         currentPublicationProcess : '',
+        currentMediaType : '',
         isConnected: 0,
         fromMenu: 0,
         tmpContent: "",
@@ -455,12 +456,8 @@ function confirmArticle(user)
     });
 }
 
-function showMenu(user, message) {
-
-    if (typeof(message) == "undefined") {
-        message = "";
-    }
-
+function showMenu(user, message = '')
+{
     createQuickReply(user, message + "Choisissez une action:", [
         {
             "content_type" : "text",
@@ -594,6 +591,7 @@ function checkEvent(user, event)
 
             user.image = event.message.attachments[0].payload.url;
             user.currentPublicationProcess = 'media';
+            user.currentMediaType = event.message.attachments[0].type;
             
             askLong(user);
             user.step = user.step.getNextStep('getDescLong');
@@ -896,16 +894,16 @@ function showPostInfo(user)
     
     if (user.image.length){
 
-        let imageUrl = user.image;
+        let mediaUrl = user.image;
         if (user.currentPublicationProcess == 'article'){
-            imageUrl = kuratorUrl + imageUrl;
+            imageUrl = kuratorUrl + mediaUrl;
         }
 
         informations.push({
             attachment: {
-                type: "image",
+                type: user.currentMediaType,
                 payload: {
-                    url: imageUrl
+                    url: mediaUrl
                 }
             }
         });
