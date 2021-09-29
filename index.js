@@ -204,6 +204,10 @@ const stepsDetails = [
     {"event_type" : ["postback"], "function": getSelectedTime},
 ];
 
+app.get('/', (req, res) => {
+    res.send('Chatbot ON')
+});
+
 app.get('/webhook/', (req, res) => {
 
     let mode = req.query['hub.mode'];
@@ -1011,8 +1015,6 @@ function getSelectedTime(user, event)
 
             postInfos['mediaType'] = user.currentMediaType;
         }
-
-        console.log('postInfos', postInfos);
 
         posteriaRequest('/api/'+actionUrl, postInfos, function(err, res, body) {
 
